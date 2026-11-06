@@ -142,11 +142,16 @@ class DramaHttpWorker(Worker):
             headers["Authorization"] = f"Bearer {value}"
         return headers
 
-    def _post_speech(self, text: str, seed: int, max_seconds: float, deadline_s: float, cancel: threading.Event):
+    def _speech_body(self, text: str, seed: int, max_seconds: float) -> dict:
         o = self.options
         body = {"model": o["model"], "input": text, "response_format": "wav", "seed": int(seed),
                 "max_tokens": int(math.ceil(max_seconds * FRAMES_PER_SECOND))}
         body.update(o["generation_options"])
+        return body
+
+    def _post_speech(self, text: str, seed: int, max_seconds: float, deadline_s: float, cancel: threading.Event):
+        o = self.options
+        body = self._speech_body(text, seed, max_seconds)
         try:
             response = self.ctx.http.request("POST", o["host"], o["port"], o["path"] + o["speech_path"],
                                              body=json.dumps(body).encode("utf-8"), headers=self._headers(), deadline_s=deadline_s,

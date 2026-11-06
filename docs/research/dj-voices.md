@@ -3,6 +3,19 @@
 Goal: a selection of DJ voices that cut the mustard for users, local first, with cloud options for those who want them.
 The user's recommendation stands: users connect their favourite agent, which writes the DJ copy; the voice speaks it.
 
+## Already on air: Jessica, a local Qwen voice
+
+Knight Shift Radio (the live station on the Intel Arc Pro B70) has been reading its hourly news desk with a **local
+Qwen3-TTS voice the whole time**: Jessica, Qwen3-TTS-12Hz-1.7B CustomVoice, speaker Vivian, run through PyTorch on the B70
+(not ElevenLabs), mastered to -14 LUFS and checked for gaps before airing. Her voice card also records a VoiceDesign
+description ("a young adult American woman reading a short radio news desk; bright, warm, clear…", seed 17). The desks are
+110 to 150 words, written to a beat (open models, local inference, agents, AI music) with every claim checked at its source.
+
+The same model runs in myradio's audio.cpp runtime: reading the 4:00 desk on the DGX Spark, CustomVoice "vivian" made
+127.2 s of speech in 47.3 s (**2.69× realtime**; the live take is 126.3 s) and VoiceDesign with her description 101.1 s in
+38.3 s (2.64×). 2.8 GB (Q8), Apache-2.0: free to use commercially. myradio's new `speech_http` worker serves her (or any
+audio.cpp voice) for the news (`update`) role or as the DJ.
+
 ## Local voices (rendered on the DGX Spark, toymaker)
 
 Same runtime as the music (audio.cpp), same box, every voice reading the same hype line and the same song lead-in while a
@@ -43,6 +56,8 @@ Going away: Hume's TTS (2026-11-13), PlayHT (closed 2025-12-31), OpenAI's tts mo
 
 ## What this means for users (to confirm by ear)
 
+- **Jessica (Qwen3-TTS CustomVoice) is proven on air** and is small (2.8 GB), quick (2.69× on the Spark) and Apache-2.0:
+  the natural local news anchor and a strong local DJ default.
 - **Everyone gets a voice that runs on their own machine and may be used commercially**: the MIT/Apache models above.
   Chatterbox and Chatterbox Turbo are the fastest expressive ones beside music; Kokoro is the tiny fallback for small
   machines (no emotion control).

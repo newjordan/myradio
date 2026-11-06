@@ -9,6 +9,7 @@
   const MUSIC = {label: 'Music maker · YuE2 Turbo Radio', bytes: 4.53e9};
   const VOICE = {
     elevenlabs: {label: 'DJ voice · ElevenLabs', bytes: 0, check: ['DJ voice connected', 'ElevenLabs accepted the key and read a test line.']},
+    qwen: {label: 'DJ voice · Qwen3-TTS (Jessica)', bytes: 2.82e9, check: ['DJ voice warmed up', 'Qwen3-TTS on this computer read a test line in Jessica’s voice.']},
     drama: {label: 'DJ voice · Drama 3 B70 Turbo', bytes: 24.3e9, check: ['DJ voice warmed up', 'Drama 3 on this computer: first audio in 0.3 s (the model card’s figure).']},
     none: {label: 'No DJ', bytes: 0, check: ['No DJ voice yet', 'Music only for now. Add a voice any time from the menu.']},
   };
