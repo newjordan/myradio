@@ -85,7 +85,7 @@ that aired was made fresh on the Mac during the run.
 
 ## Files
 
-Kept with the recordings, outside the repository: `hour-run-report.json`, `hour-run-log.jsonl` (every status check and DJ
+In the repository as zips under [`evidence/`](../../evidence/README.md): `hour-run-report.json`, `hour-run-log.jsonl` (every status check and DJ
 action), `renders.json` (per-job timings from `generation.job` provenance), a 25 s clip of each song as it aired, the
 terminal casts of the setup and the agent's tool calls, and four studio films (first run, first song on air, half an hour in,
 end of the hour).

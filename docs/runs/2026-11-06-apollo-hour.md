@@ -94,7 +94,7 @@ three fresh ones were waiting to air.
 
 ## Files
 
-Kept with the recordings, outside the repository: `hour-run-report.json`, `hour-run-log.jsonl` (every status check and DJ
+In the repository as zips under [`evidence/`](../../evidence/README.md): `hour-run-report.json`, `hour-run-log.jsonl` (every status check and DJ
 action), `renders.json` (per-job timings from `generation.job` provenance), a 25 s clip of each song as it aired, the
 terminal casts of the setup and the agent's tool calls, and studio films (first songs on the way, first song on air, half an
 hour in, end of the hour).
