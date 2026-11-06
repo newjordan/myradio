@@ -199,7 +199,7 @@ dialog.menu .lock{margin:4px 24px 20px;width:calc(100% - 48px)}
 /* ===== Game layer: Dial the station pet, levels, trophies, celebrations ===== */
 .pet{position:relative;flex-shrink:0;width:56px;height:56px;padding:0;min-height:0;border:0;background:transparent;border-radius:12px;cursor:pointer}
 .pet:hover{background:#ffffff0d}.pet:focus-visible{outline-offset:2px}
-.pet-img{width:52px;height:52px;display:block;margin:2px auto;filter:drop-shadow(0 3px 6px #0007)}
+.pet-img{width:52px;height:52px;display:block;margin:2px auto;filter:drop-shadow(0 2px 3px #0005)}
 .pet-img.missing,.pet-big.missing{visibility:hidden}
 .pet[data-mood=singing] .pet-img,.pet[data-mood=excited] .pet-img{animation:pet-bop .9s ease-in-out infinite}
 .pet[data-mood=sleepy] .pet-img{animation:pet-breathe 3.2s ease-in-out infinite}
