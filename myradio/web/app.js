@@ -561,6 +561,14 @@ function renderConsole(s) {
   $('transport-note').textContent = s.running ? (outputBusy ? 'Stop also ends the live stream.' : s.current ? `Playing ${s.current.title}` : 'Waiting for playable audio.') : s.library.length ? 'Your next sound is standing by.' : 'Import audio to start.';
   $('broadcast-note').textContent = outputBusy ? detail : b.configured ? 'Private until you say otherwise.' : 'No stream host saved yet.';
   $('guard').disabled = outputBusy; $('deck-disconnect').disabled = !outputBusy || b.state === 'stopping';
+  // On air, the guard burns like a warm fire; while connecting it is just catching.
+  const onAir = b.state === 'streaming', igniting = !onAir && outputBusy && b.state !== 'stopping';
+  $('guard').classList.toggle('on-air', onAir); $('guard').classList.toggle('igniting', igniting);
+  if (onAir !== ($('guard').dataset.live === '1')) {
+    $('guard').dataset.live = onAir ? '1' : '';
+    $('guard').innerHTML = onAir ? '<span><i class="ember-dot" aria-hidden="true"></i>ON AIR<span class="long"> · LIVE</span></span>' : GUARD_IDLE;
+    $('guard').setAttribute('aria-label', onAir ? 'On air: your station is live' : 'Lift the GO LIVE guard');
+  }
   $('deck-connect').hidden = outputBusy || b.configured; $('broadcast-note').hidden = !$('deck-connect').hidden;
   if (document.body.dataset.activeView === 'connect') renderLinks(s);
   document.body.classList.toggle('playing', !!s.current);
@@ -568,6 +576,7 @@ function renderConsole(s) {
 }
 
 // --- the GO LIVE guard (desk and Broadcast view)
+const GUARD_IDLE = $('guard').innerHTML;
 function updateGuard(s) {
   const b = s.broadcast, busy = b.active || b.state === 'stopping';
   $('go-live').disabled = busy || !s.running || !b.configured || !b.encoder_available;
