@@ -1,0 +1,15 @@
+.reference/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.DS_Store
+*.env
+.myradio/
+
+
+# local run evidence and tool state: kept out of the repository (run logs can hold private launch codes)
+reports/
+.angelX/

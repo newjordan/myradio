@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "catalog_version": "1.1.0",
+  "palettes": [
+    {
+      "id": "kora-river-ostinato", "name": "Kora River Ostinato", "family": "african",
+      "tags": ["kora", "ostinato", "acoustic", "flowing", "heritage-inspired"], "energy": "calm", "bpm": [72, 92], "meter": "12/8 (3+3+3+3)",
+      "moods": ["evening light on slow water", "patient, generous storytelling warmth"],
+      "leads": ["kora melody played on its upper strings", "wooden balafon melody played softly"], "supports": ["ngoni ostinato interlocking with the melody", "calabash and light shaker keeping the twelve-beat cycle"], "bass": "warm acoustic bass doubling the lowest ostinato notes",
+      "harmony": {"simple": "Center on one home chord with a single contrasting chord at the end of each cycle.", "layered": "Alternate the home chord with its neighbor a step above, letting the ostinato's top notes outline each change.", "intricate": "Move two ostinato notes to a neighboring tuning area for one cycle, then return to the home chord through the unchanged bass notes."},
+      "rhythm": {"simple": "A rolling twelve-beat cycle grouped in threes, with the shaker marking the groups.", "layered": "Let the melody lean on the second note of each group while the ostinato keeps all four groups even.", "intricate": "Phrase the melody in groups of four against the four groups of three, so the accents realign only at the end of a full cycle."},
+      "motifs": ["a rising run of three notes that circles back to the first", "a repeated high note answered by a descending stepwise phrase"],
+      "production": "Close, dry acoustic recording with natural string resonance and a soft room; no electronic percussion."
+    },
+    {
+      "id": "afrobeat-long-vamp", "name": "Afrobeat Long Vamp", "family": "african",
+      "tags": ["afrobeat", "groove", "horns", "hypnotic", "heritage-inspired"], "energy": "driving", "bpm": [100, 116], "meter": "4/4",
+      "moods": ["long, joyful, communal momentum", "confident groove that rewards patience"],
+      "leads": ["tenor saxophone phrases over the vamp", "muted trumpet lines in call and response"], "supports": ["two clean electric guitars playing interlocking parts", "a short repeating horn riff in unison"], "bass": "repeating electric bass ostinato that locks with the kick and leaves space",
+      "harmony": {"simple": "Hold a single minor-seventh chord for the whole vamp, with one dominant chord at the turnaround.", "layered": "Alternate the minor-seventh chord with its neighbor a fourth above, changing only when the horn riff changes.", "intricate": "Stay on the home chord while the horn riff outlines a different chord color above it each time, resolving to the dominant only at the very end of the vamp."},
+      "rhythm": {"simple": "A driving four-beat groove with the kick and bass locked together and steady eighth-note hi-hats.", "layered": "Interlock the two guitars so each plays the gaps the other leaves, with congas answering the snare.", "intricate": "Layer a three-against-four accent in the second guitar and let the horn riff land on a different beat each repeat, while the kick and bass never move."},
+      "motifs": ["a two-bar horn riff that ends on a held note", "a staccato guitar figure that climbs by step and drops an octave"],
+      "production": "Live-band warmth, dry and punchy, with the two guitars and the horns separated across the stereo field; a long vamp that grows by adding detail, not by getting louder."
+    },
+    {
+      "id": "amapiano-log-drum", "name": "Amapiano Log-Drum Groove", "family": "african",
+      "tags": ["amapiano", "dance", "electronic", "jazzy", "heritage-inspired"], "energy": "steady", "bpm": [108, 114], "meter": "4/4",
+      "moods": ["sunlit, unhurried dance-floor ease", "smooth late-afternoon optimism"],
+      "leads": ["jazzy piano chord riff with light embellishments", "airy synthesized flute melody"], "supports": ["warm electric piano chords", "soft shaker and rim-click groove"], "bass": "log-drum bass with pitch glides between chord roots",
+      "harmony": {"simple": "Loop two jazzy chords, a minor ninth and a dominant thirteenth, with a gentle turnaround every fourth bar.", "layered": "Voice the chords in open fourths and add a suspended fourth on the turnaround, moving the top note by step.", "intricate": "Replace one chord of the loop with a chromatic neighbor on the second pass, then restore the original loop while the piano riff keeps its top notes."},
+      "rhythm": {"simple": "A steady four-beat pulse with a soft kick, shuffled hi-hats and a light shaker.", "layered": "Let the log-drum bass answer the piano riff in the gaps, with a swung sixteenth-note feel in the hats.", "intricate": "Offset the piano riff by a sixteenth note against the kick on alternate bars, while the shaker keeps the grid steady."},
+      "motifs": ["a four-note piano riff that rises and then falls back to its start", "a syncopated bass answer that ends on a pitch glide"],
+      "production": "Smooth, spacious mix with a round low end and no harsh peaks; light analog warmth; the groove stays relaxed rather than hard-hitting."
+    },
+    {
+      "id": "maqam-courtyard-ensemble", "name": "Maqam Courtyard Ensemble", "family": "middle-eastern",
+      "tags": ["maqam-inspired", "ensemble", "acoustic", "ornamented", "heritage-inspired"], "energy": "steady", "bpm": [88, 108], "meter": "4/4",
+      "moods": ["warm courtyard evening conversation", "dignified, gently celebratory calm"],
+      "leads": ["oud melody with fretless ornaments", "ney flute with breathy ornamented lines"], "supports": ["qanun rolling accompaniment", "riq and darbuka playing a four-beat cycle"], "bass": "low string bass or cello sustaining the tonic and fifth",
+      "harmony": {"simple": "Stay in one mode in the Hijaz style, with its characteristic augmented second, around a steady tonic and fifth.", "layered": "Begin in Hijaz and visit a neighboring mode for the middle phrase through a shared pivot note, then return by repeating the opening ornament.", "intricate": "Answer the lead with the same phrase restated on a new tonic, hold a pivot note while the mode changes beneath it, and return to the opening mode with the original ornament intact."},
+      "rhythm": {"simple": "A four-beat cycle that pairs deep strokes with light, bright strokes.", "layered": "Let the riq decorate the off-beats while the darbuka keeps its low strokes steady.", "intricate": "Vary the cycle's ending with a short fill that lands exactly on the next downbeat, and let the lead anticipate the beat by a sixteenth note."},
+      "motifs": ["a turn around the second degree that resolves down to the tonic", "a held note ornamented with a quick upper neighbor"],
+      "production": "Warm acoustic ensemble in a stone room; fretless ornaments left audible; no piano or other fixed-pitch keyboards."
+    },
+    {
+      "id": "makam-aksak-evening", "name": "Makam Aksak Evening", "family": "middle-eastern",
+      "tags": ["makam-inspired", "odd-meter", "dance", "acoustic", "heritage-inspired"], "energy": "steady", "bpm": [100, 120], "meter": "9/8 (2+2+2+3)",
+      "moods": ["lively late-summer evening gathering", "buoyant, slightly breathless celebration"],
+      "leads": ["agile clarinet with quick ornaments", "long-necked saz melody"], "supports": ["kanun arpeggios and trills", "darbuka and frame drum playing the nine-beat cycle"], "bass": "warm upright bass sustaining the tonic and fifth",
+      "harmony": {"simple": "Stay in one Hicaz-flavored mode over a steady tonic drone, with the augmented second as its main color.", "layered": "Answer the first phrase a step higher in the same mode, then return to the tonic through a short descending run.", "intricate": "Pivot on one shared note into a neighboring mode for the middle phrase, then return to the opening mode with the original ornament."},
+      "rhythm": {"simple": "A nine-beat cycle grouped 2+2+2+3, with the long group landing as a lilt at the end.", "layered": "Let the lead phrase across the groups and rest on the final three-beat group while the drums keep all groups even.", "intricate": "Rotate the grouping to 3+2+2+2 for one pass, then return to 2+2+2+3 together on the downbeat."},
+      "motifs": ["a quick turn that lands on the long group's first beat", "a repeated two-note figure that stretches into the long group"],
+      "production": "Lively acoustic ensemble, close and dry, with the hand percussion clearly audible; no electronic drums."
+    },
+    {
+      "id": "raga-inspired-evening", "name": "Raga-Inspired Evening", "family": "indian",
+      "tags": ["raga-inspired", "drone", "acoustic", "meditative", "heritage-inspired"], "energy": "calm", "bpm": [58, 76], "meter": "10/8 (2+3+2+3)",
+      "moods": ["still, lamplit evening contemplation", "slow unfolding patience"],
+      "leads": ["sitar with sliding string bends", "bansuri flute with long breath phrases"], "supports": ["tabla playing the ten-beat cycle softly", "sarangi with sustained bowed lines"], "bass": "tanpura drone on the tonic and fifth with a low string sounding the foundation",
+      "harmony": {"simple": "Stay in one raga-inspired mode with a raised fourth, over a steady tonic and fifth drone.", "layered": "Introduce the scale slowly: tonic area first, then the raised fourth, then the upper octave, returning to the tonic after each.", "intricate": "Weave short phrases that touch the scale's notes in a winding order, pausing on the raised fourth before resolving to the tonic."},
+      "rhythm": {"simple": "A ten-beat cycle grouped 2+3+2+3, played softly with a clear first beat.", "layered": "Let the lead begin phrases just before the first beat and land with the tabla on it, while the tabla fills only the last group.", "intricate": "Compress one phrase into half the cycle, then spread the next over a cycle and a half, resolving together on the first beat."},
+      "motifs": ["a slow upward slide to the raised fourth and back", "a three-note phrase repeated three times, each ending on a higher note"],
+      "production": "Close, natural acoustic recording; clear string resonance and a soft tabla; no reverb wash, and no piano or other fixed-pitch keyboards."
+    },
+    {
+      "id": "carnatic-inspired-trio", "name": "South Indian Classical-Inspired Trio", "family": "indian",
+      "tags": ["carnatic-inspired", "trio", "acoustic", "rhythmic", "heritage-inspired"], "energy": "steady", "bpm": [76, 96], "meter": "8/4 (4+2+2)",
+      "moods": ["bright, precise morning clarity", "joyful interplay between melody and rhythm"],
+      "leads": ["violin with gliding ornaments", "bamboo flute with clean, rounded phrases"], "supports": ["mridangam answering in the gaps", "ghatam adding crisp accents"], "bass": "tambura drone on the tonic and fifth",
+      "harmony": {"simple": "Stay inside a five-note major-pentatonic mode over a steady drone.", "layered": "Move the phrase's resting note from the tonic to the fifth and back, ornamenting each return.", "intricate": "Sequence a short phrase through each degree of the scale in turn, ending every sequence on a longer note that realigns with the first beat."},
+      "rhythm": {"simple": "An eight-beat cycle grouped 4+2+2 with clear, even strokes.", "layered": "Let the mridangam answer the lead's phrases in the gaps, never during the held notes.", "intricate": "Set a three-note grouping across the eight-beat cycle so the pattern drifts, then lands on the first beat after the third repetition."},
+      "motifs": ["a rising five-note scale run that falls back by step", "a short phrase repeated with a different ornament each time"],
+      "production": "Clean, close acoustic recording with a bright, dry room; the percussion sits just behind the melody; no keyboards."
+    },
+    {
+      "id": "japanese-garden-ensemble", "name": "Garden Koto and Shakuhachi", "family": "east-asian",
+      "tags": ["koto", "shakuhachi", "acoustic", "spacious", "heritage-inspired"], "energy": "calm", "bpm": [56, 76], "meter": "4/4",
+      "moods": ["still garden after rain", "quiet attention to the silence between notes"],
+      "leads": ["shakuhachi with breathy, bending phrases", "shamisen melody with crisp, bright plucked notes"], "supports": ["koto arpeggios in a five-note tuning", "a soft taiko drum used sparingly"], "bass": "a 17-string bass koto marking the home note and its fifth",
+      "harmony": {"simple": "Stay inside a hirajoshi-flavored five-note scale around one home note.", "layered": "Shift the home note to a neighboring scale tone for the middle phrase, then return to the first home note.", "intricate": "Answer each phrase with its inversion inside the scale, so the ear hears the same shape reflected, and finish by returning to the home note."},
+      "rhythm": {"simple": "A slow, spacious pulse with silence between phrases; no steady drum groove.", "layered": "Let the plucked notes mark an unhurried four-beat pulse while the flute floats freely across it.", "intricate": "Stretch one phrase over six beats and its answer over four, then settle back into the four-beat pulse together."},
+      "motifs": ["a single long note that falls a half step and then rests", "a two-note pluck answered by a slow upward slide"],
+      "production": "Quiet room recording with natural breath and string noise; plenty of silence; no synthesizer pads or piano."
+    },
+    {
+      "id": "guzheng-erhu-river", "name": "Guzheng and Erhu River", "family": "east-asian",
+      "tags": ["guzheng", "erhu", "acoustic", "flowing", "heritage-inspired"], "energy": "calm", "bpm": [60, 80], "meter": "4/4",
+      "moods": ["slow river under soft mist", "tender, reflective warmth"],
+      "leads": ["erhu with sliding, voice-like bowed phrases", "dizi bamboo flute with a clear, bright tone"], "supports": ["guzheng glissandi and arpeggios", "pipa tremolo and light plucked accents"], "bass": "soft cello holding long roots under the melody",
+      "harmony": {"simple": "Keep a major-pentatonic melody over long, open fifths.", "layered": "Move the melody into its relative minor pentatonic for the middle phrase, then return to the major color.", "intricate": "Answer the first phrase a fourth higher in the same pentatonic set, then bring both phrases together over a held open fifth."},
+      "rhythm": {"simple": "An unhurried steady pulse with gentle plucked accents.", "layered": "Open in free time with the flute alone, then settle into an even four-beat pulse as the plucked strings enter.", "intricate": "Let the guzheng and pipa share a repeating figure that shifts by one beat each pass, resolving together at the cadence."},
+      "motifs": ["a rising slide that settles on a long, ornamented note", "a plucked figure of three notes that repeats and drifts upward"],
+      "production": "Intimate close-miked acoustic recording; natural bow noise and string slides audible; no synthesized strings."
+    },
+    {
+      "id": "gamelan-slendro-shimmer", "name": "Gamelan-Inspired Shimmer", "family": "southeast-asian",
+      "tags": ["gamelan-inspired", "metallophones", "acoustic", "cyclic", "heritage-inspired"], "energy": "calm", "bpm": [60, 84], "meter": "4/4",
+      "moods": ["a slow shimmer of metal and breath", "cyclic, meditative stillness"],
+      "leads": ["gender metallophone with shimmering paired-mallet patterns", "suling bamboo flute floating above the cycle"], "supports": ["bonang pot-gongs interlocking in two parts", "kendang drum guiding the cycle"], "bass": "a low slentem metallophone and a large hanging gong marking the end of each cycle",
+      "harmony": {"simple": "Keep a single five-tone slendro-like tuning, with the core melody sounding on every beat.", "layered": "Let the elaborating parts move in stepwise patterns one octave higher while the core melody stays unchanged.", "intricate": "Shift the emphasis to a different tone of the same five-tone tuning for the middle cycle, then return to the home tone as the large gong sounds."},
+      "rhythm": {"simple": "Four-beat phrases in a long cycle, with the large gong sounding at the end of every sixteen beats.", "layered": "Interlock two bonang parts so that together they sound a continuous pattern that neither plays alone.", "intricate": "Double the elaborating pattern's speed in the middle cycle, then halve it again, keeping the gong cycle's length unchanged."},
+      "motifs": ["a four-note core melody that falls by step and rests on its last tone", "a fast pair of notes that repeats and shifts one tone each cycle"],
+      "production": "Close acoustic recording of tuned metal with a long natural ring; keep the gentle beating between paired instruments; no piano or other equal-tempered instruments."
+    },
+    {
+      "id": "sunset-city-pop", "name": "Sunset City Pop", "family": "pop",
+      "tags": ["city-pop", "groove", "keys", "glossy", "heritage-inspired"], "energy": "steady", "bpm": [100, 116], "meter": "4/4",
+      "moods": ["glossy, wistful summer-evening romance", "bright nostalgia with a spring in its step"],
+      "leads": ["glassy electric piano melody", "smooth alto saxophone line"], "supports": ["clean funky guitar chops", "soft synthesized brass punctuation"], "bass": "round electric bass with light slapped accents",
+      "harmony": {"simple": "Loop four bright major-seventh and minor-seventh chords, resolving on a warm major-sixth chord.", "layered": "Add a secondary dominant before the loop restarts and a ninth on the final chord.", "intricate": "Lift the whole loop up a whole step for the final pass through a short pivot chord, keeping the melody's top notes the same."},
+      "rhythm": {"simple": "A bouncy four-beat groove with a crisp snare on two and four and sixteenth-note hi-hats.", "layered": "Let the guitar chops answer the bass in the gaps while the electric piano holds the melody's long notes.", "intricate": "Syncopate the synthesized brass a sixteenth note ahead of beat three while the drums and bass hold the grid."},
+      "motifs": ["a bright three-note pickup that leaps up a sixth", "a descending sequence of chord tones repeated a step lower"],
+      "production": "Polished, slightly glossy mix with a tight low end and warm analog character; keep the dynamics gentle rather than loud."
+    },
+    {
+      "id": "celtic-session-reels", "name": "Celtic Session Reels", "family": "celtic",
+      "tags": ["celtic-inspired", "reel", "acoustic", "dance", "heritage-inspired"], "energy": "driving", "bpm": [112, 126], "meter": "4/4",
+      "moods": ["warm back-room session energy", "friendly, quick-footed momentum"],
+      "leads": ["fiddle with lively bowed triplets", "wooden flute with rolls and cuts"], "supports": ["bodhran keeping a steady pulse with tipper accents", "bouzouki chords and countermelody"], "bass": "a low-tuned guitar playing open bass notes",
+      "harmony": {"simple": "Stay in one mode with a major tonic and the chord a whole step below it.", "layered": "Alternate the tonic chord with the lowered-seventh chord, and let a minor-fifth chord color the second part.", "intricate": "Change the mode between the first and second parts while keeping the tune's top notes recognizable, then return to the first mode for the last repeat."},
+      "rhythm": {"simple": "A steady reel pulse with two big beats in each bar, even eighth notes and a light off-beat lift.", "layered": "Group the eighth notes in a repeated 3+3+2 accent for one part, then return to even pairs.", "intricate": "Shift the accent a beat later on the repeat of a phrase, so the tune seems to chase itself, then realign at the final cadence."},
+      "motifs": ["a quick run that climbs a scale and drops back to the starting note", "a three-note roll on a long note, repeated an octave higher"],
+      "production": "Live-room warmth, dry and bright; fiddle and flute sit slightly forward of the guitar and bodhran; no drum kit."
+    },
+    {
+      "id": "slip-jig-parlour", "name": "Slip Jig Parlour", "family": "celtic",
+      "tags": ["celtic-inspired", "slip-jig", "acoustic", "lilting", "heritage-inspired"], "energy": "steady", "bpm": [100, 116], "meter": "9/8 (3+3+3)",
+      "moods": ["lilting parlour warmth", "gentle, rocking good humor"],
+      "leads": ["fiddle with smooth, lilting bowing", "concertina melody with light ornaments"], "supports": ["upright piano with rolling left-hand chords", "bodhran played softly with a soft tipper"], "bass": "upright bass marking the first beat of each group of three",
+      "harmony": {"simple": "Alternate a major tonic chord with its dominant, with a relative-minor chord at the end of the second phrase.", "layered": "Move through a descending bass line under the second phrase and resolve on a warm added-sixth chord.", "intricate": "Visit the relative minor for the second strain through a pivot chord, then return with the melody's opening notes reharmonized."},
+      "rhythm": {"simple": "A flowing nine-beat lilt in three groups of three, with the first beat of each group lightly stressed.", "layered": "Let the melody linger on the last note of the third group while the accompaniment keeps all three groups even.", "intricate": "Anticipate the second group with a tied note, then rejoin the full groups of three at the cadence."},
+      "motifs": ["a rocking three-note figure that circles up and down", "a long note that slips down by step into the next group"],
+      "production": "Intimate parlour acoustics with a natural room; the piano stays soft and rounded; no amplified instruments."
+    },
+    {
+      "id": "nordic-polska-fiddle", "name": "Nordic Polska Fiddle", "family": "european-folk",
+      "tags": ["nordic-inspired", "polska", "acoustic", "dance", "heritage-inspired"], "energy": "steady", "bpm": [96, 116], "meter": "3/4",
+      "moods": ["crisp winter-evening hall warmth", "lilting, slightly wild country-dance spirit"],
+      "leads": ["fiddle with ringing drone strings", "nyckelharpa with sympathetic-string resonance"], "supports": ["accordion chord answers", "acoustic guitar with a simple open-chord pulse"], "bass": "upright bass on the first beat with a soft drone fifth",
+      "harmony": {"simple": "Hold a drone fifth under a minor mode, changing chords only every two bars.", "layered": "Lift the second part to the relative major for its first half, then fall back to the minor mode with a small drop in the bass.", "intricate": "Let a drone on the fifth continue while the melody visits a Dorian color, resolving back through the minor tonic."},
+      "rhythm": {"simple": "A lilting three-beat dance with the second beat leaning slightly long.", "layered": "Let the accompaniment settle on the first beat while the melody bows across the second and third in uneven steps.", "intricate": "Alternate bars that lean on beat two with bars that lean on beat three, keeping the first beat firm in the bass."},
+      "motifs": ["a long note that tips down to a short pair of notes", "a leaping fifth answered by a rolling stepwise turn"],
+      "production": "Wooden-room acoustics with audible bow noise and ringing sympathetic strings; no electronic effects."
+    },
+    {
+      "id": "flamenco-compas-guitar", "name": "Flamenco Compas Guitar", "family": "flamenco",
+      "tags": ["flamenco-inspired", "guitar", "acoustic", "rhythmic", "heritage-inspired"], "energy": "steady", "bpm": [90, 112], "meter": "12/8 (3+3+2+2+2)",
+      "moods": ["serious, warm night-courtyard intensity", "restrained passion that never rushes"],
+      "leads": ["nylon-string flamenco guitar falsetas with rasgueado accents", "a warm flute answering the guitar"], "supports": ["palmas handclaps marking the twelve-beat cycle", "cajon with deep and sharp strokes"], "bass": "upright bass or low guitar notes outlining the strong beats",
+      "harmony": {"simple": "Repeat a Phrygian descent such as A minor, G, F and E, settling on the E major chord.", "layered": "Let a major third color the E chord as a bright Phrygian dominant, then return quietly to the minor home.", "intricate": "Pause on the dominant before a final descent, and reharmonize one pass with a chromatic neighbor chord on the way down."},
+      "rhythm": {"simple": "Accent counts twelve, three, six, eight and ten of a twelve-beat cycle, the 3+3+2+2+2 grouping carried by the handclaps.", "layered": "Let the guitar's rasgueado land on the accented counts while the cajon fills the unaccented ones.", "intricate": "Displace one falseta by a single count for a cycle, then realign on the accented count twelve."},
+      "motifs": ["a falling Phrygian run that ends on a sharp accent", "a rapid repeated note that opens into a sliding scale"],
+      "production": "Intimate nylon-string guitar recording with audible fingernail attack and handclaps close to the microphone; no drum kit."
+    },
+    {
+      "id": "klezmer-freylekh-dance", "name": "Klezmer Freylekh Dance", "family": "klezmer",
+      "tags": ["klezmer-inspired", "dance", "acoustic", "ornamented", "heritage-inspired"], "energy": "driving", "bpm": [112, 132], "meter": "2/4",
+      "moods": ["joyful wedding-dance abandon with a tear in it", "quick, laughing, bittersweet celebration"],
+      "leads": ["clarinet with sobbing ornaments and fast runs", "violin with bowed slides and quick turns"], "supports": ["accordion chord answers", "frame drum playing a steady pulse"], "bass": "tuba or upright bass playing oom-pah roots and fifths",
+      "harmony": {"simple": "Alternate a minor tonic with a major dominant in the freygish mode, whose second degree is lowered.", "layered": "Slide from the freygish mode into its relative major for the second strain, then return to the minor home.", "intricate": "Modulate in the middle strain to the related major with a pivot note, and end with a sudden return to the minor home."},
+      "rhythm": {"simple": "A bouncing two-beat oom-pah pulse with a strong off-beat accent.", "layered": "Add a quick triplet turn at the end of each phrase while the oom-pah pulse stays steady.", "intricate": "Let the lead stretch one phrase rubato over a sustained chord, then snap back together with the dance pulse on the downbeat."},
+      "motifs": ["a sobbing slide into a long note followed by a quick turn", "a repeated stepwise phrase that climbs a scale and tumbles down"],
+      "production": "Lively live-room acoustics with close clarinet and violin, dry and warm; no electric instruments."
+    },
+    {
+      "id": "kopanitsa-village-dance", "name": "Kopanitsa Village Dance", "family": "balkan",
+      "tags": ["balkan-inspired", "odd-meter", "dance", "acoustic", "heritage-inspired"], "energy": "driving", "bpm": [116, 140], "meter": "11/8 (2+2+3+2+2)",
+      "moods": ["bright village-green energy", "agile, springy outdoor celebration"],
+      "leads": ["gaida bagpipe melody over its drone", "gadulka with ringing sympathetic strings"], "supports": ["accordion chord answers", "tapan drum marking the long group"], "bass": "upright bass playing roots and drones, outlining the grouping",
+      "harmony": {"simple": "Hold a drone tonic and move between two chords a step apart.", "layered": "Add a flattened second as a passing color before returning to the drone tonic.", "intricate": "Answer the melody a step lower on the second pass, keep the drone unchanged, and cadence on the open fifth."},
+      "rhythm": {"simple": "An eleven-beat cycle grouped 2+2+3+2+2, with the long group sounding like a lift.", "layered": "Accent the long group firmly and keep the short groups light so the dancers feel the lift.", "intricate": "Rotate the long group to the end for one cycle, 2+2+2+2+3, then restore the original grouping together."},
+      "motifs": ["a quick turn that lands on the long group's first beat", "a leaping fourth answered by a stepwise run"],
+      "production": "Open-air acoustic feel, dry and bright, with the drum and bagpipe forward; no electronic instruments."
+    },
+    {
+      "id": "musette-waltz-accordion", "name": "Musette Waltz Cafe", "family": "european-folk",
+      "tags": ["musette-inspired", "waltz", "acoustic", "cafe", "heritage-inspired"], "energy": "steady", "bpm": [104, 126], "meter": "3/4",
+      "moods": ["sunlit cafe terrace swirl", "wistful, graceful twirling"],
+      "leads": ["accordion with a gentle vibrato shimmer", "clarinet with graceful turns"], "supports": ["acoustic guitar strumming the waltz pattern", "violin pizzicato countermelody"], "bass": "upright bass on the first beat with soft walking motion on beats two and three",
+      "harmony": {"simple": "Alternate a major tonic with its dominant, visiting the relative minor in the middle phrase.", "layered": "Add a circle-of-fifths sequence into the bridge and a chromatic passing chord before the final cadence.", "intricate": "Pivot to the relative minor with a diminished chord, and return to the major theme with the accordion melody reharmonized in thirds."},
+      "rhythm": {"simple": "A graceful three-beat waltz with a firm first beat and light second and third beats.", "layered": "Let the guitar play the waltz pattern steadily while the accordion's melody leans slightly behind the beat.", "intricate": "Suggest a two-against-three cross-rhythm in the accompaniment for a bar, then reunite the accents at the phrase end."},
+      "motifs": ["a leaping sixth that settles by step", "a fast upper-neighbor turn repeated on a longer note"],
+      "production": "Warm cafe-room acoustics; the accordion and clarinet sit forward; no electronic effects."
+    },
+    {
+      "id": "baroque-trio-sonata", "name": "Baroque Trio Sonata", "family": "classical",
+      "tags": ["baroque-inspired", "chamber", "counterpoint", "acoustic", "harpsichord"], "energy": "steady", "bpm": [84, 104], "meter": "4/4",
+      "moods": ["bright, orderly morning conversation", "elegant forward motion with a dancing step"],
+      "leads": ["first violin with ornamented lines", "baroque flute with clear, rounded phrases"], "supports": ["second violin in imitation", "harpsichord realizing the continuo chords"], "bass": "cello with a walking continuo bass line",
+      "harmony": {"simple": "Move through a circle-of-fifths sequence from the tonic back to the tonic.", "layered": "Include suspensions that resolve downward by step in the inner voices at each cadence.", "intricate": "Modulate to the dominant and then the relative minor with a pivot chord, returning through a descending-fifths sequence to a final authentic cadence."},
+      "rhythm": {"simple": "A steady four-beat pulse with continuous eighth-note motion in the bass.", "layered": "Pass a dotted figure between the two upper parts, never both at once.", "intricate": "Stagger the entries of a short subject by one bar in each voice, as in a fugue exposition, with the bass entering last."},
+      "motifs": ["a rising scale fragment answered by a falling sequence", "a repeated note that leaps up a fourth and walks down"],
+      "production": "Dry, close chamber acoustics with a gut-string character and no excess vibrato; no electric or electronic instruments."
+    },
+    {
+      "id": "old-time-clawhammer-porch", "name": "Old-Time Clawhammer Porch", "family": "folk",
+      "tags": ["old-time", "clawhammer", "acoustic", "porch", "heritage-inspired"], "energy": "steady", "bpm": [88, 108], "meter": "2/4",
+      "moods": ["slow-evening porch warmth", "easy, rolling front-porch gathering"],
+      "leads": ["fiddle with drone double stops", "clawhammer banjo melody"], "supports": ["flat-top guitar playing boom-chuck strums", "mountain dulcimer drone"], "bass": "upright bass walking roots and fifths in two",
+      "harmony": {"simple": "Stay in one mode with a drone fifth, changing chords only at the ends of phrases.", "layered": "Alternate the tonic chord with the chord a whole step below it, and add a relative-minor chord for the second part.", "intricate": "Move the second part to a neighboring mode by changing only one note of the scale, then return to the first mode for the last repeat."},
+      "rhythm": {"simple": "A steady two-beat bounce with the banjo's down-pick pattern on the beat.", "layered": "Let the fiddle's bowing lean on the off-beats while the banjo and guitar keep the bounce.", "intricate": "Shift the banjo's accent by an eighth note on the repeat of a phrase, then realign it with the fiddle at the cadence."},
+      "motifs": ["a bouncing figure that drops a fourth and climbs back", "a repeated open-string note answered by a quick scale run"],
+      "production": "Front-porch acoustics, close and dry, with string noise audible; no electric instruments."
+    },
+    {
+      "id": "porch-blues-slide", "name": "Porch Blues Slide", "family": "blues",
+      "tags": ["blues", "slide-guitar", "acoustic", "shuffle", "porch"], "energy": "calm", "bpm": [66, 88], "meter": "12/8 (3+3+3+3)",
+      "moods": ["slow evening porch with a kindly ache", "worn, warm, unhurried sincerity"],
+      "leads": ["bottleneck slide guitar with long gliding notes", "harmonica with bending notes"], "supports": ["steady foot stomp on beats one and three", "a second guitar fingerpicking a thumb-bass pattern"], "bass": "upright bass walking the changes in a relaxed shuffle",
+      "harmony": {"simple": "A twelve-bar blues in one key, using only the one, four and five chords.", "layered": "Add a quick change to the four chord in the second bar and a turnaround at the end.", "intricate": "Replace the turnaround with a descending chromatic line and let the last chorus pause on the five chord before resolving."},
+      "rhythm": {"simple": "A slow shuffle felt in twelve pulses grouped in threes, with the foot stomp on the first and third groups.", "layered": "Let the slide phrases answer the thumb-bass pattern in the gaps.", "intricate": "Delay a lick by one pulse each chorus, so the phrase lands on a different part of the group."},
+      "motifs": ["a slide up to a held note followed by a short falling answer", "a two-note call repeated once and answered by a bend"],
+      "production": "Raw but warm acoustic recording, with slide noise, breath and foot stomp audible; no drum kit and no heavy distortion."
+    },
+    {
+      "id": "ragtime-parlour-piano", "name": "Ragtime Parlour", "family": "early-jazz",
+      "tags": ["ragtime", "piano", "acoustic", "syncopated", "heritage-inspired"], "energy": "steady", "bpm": [88, 108], "meter": "2/4",
+      "moods": ["bright, polite parlour mischief", "bouncy, good-humored afternoon"],
+      "leads": ["syncopated upright piano right hand", "bright tenor banjo melody"], "supports": ["clarinet obbligato in the gaps", "soft snare brushes and a wood block"], "bass": "piano left-hand oom-pah bass alternating low roots and mid-register chords",
+      "harmony": {"simple": "Move from the tonic to the dominant in the first strain and to the subdominant in the trio.", "layered": "Add secondary dominants and a chromatic bass walk-up into each strain change.", "intricate": "Use a diminished passing chord to pivot into the trio, and bring the first strain back with a re-voiced final chord."},
+      "rhythm": {"simple": "A steady two-beat oom-pah in the left hand with a syncopated right-hand melody.", "layered": "Place syncopated accents between the beats while the left hand stays perfectly even.", "intricate": "Layer a three-note pattern in the right hand over the even two-beat pulse, resolving back to ordinary syncopation at the end of each strain."},
+      "motifs": ["a syncopated leap that lands off the beat and steps down", "a repeated chord tone that climbs a scale in sixths"],
+      "production": "Close upright-piano acoustics with a slightly bright room; the left hand stays even and light; no electric instruments."
+    },
+    {
+      "id": "second-line-brass-parade", "name": "Second-Line Brass Parade", "family": "early-jazz",
+      "tags": ["brass-band", "second-line", "parade", "acoustic", "heritage-inspired"], "energy": "driving", "bpm": [92, 112], "meter": "4/4",
+      "moods": ["joyful street-parade swagger", "rolling, communal good cheer"],
+      "leads": ["trumpet with bright, playful phrases", "trombone slides and smears"], "supports": ["clarinet obbligato runs", "snare and bass drum parade groove"], "bass": "sousaphone playing bouncing roots and fifths",
+      "harmony": {"simple": "Alternate the tonic and dominant chords in a joyful, singable tune.", "layered": "Add a quick sixth chord and diminished passing chords at the ends of phrases.", "intricate": "Move to the subdominant key for a contrasting strain, and return with a held dominant tag before the final repeat."},
+      "rhythm": {"simple": "A syncopated parade groove with the bass drum on the downbeats and the snare rolling in the gaps.", "layered": "Place a rolling snare accent just before beat two so the whole band leans into it.", "intricate": "Shift the accent a sixteenth note earlier for one repeated phrase, then settle the band back onto the backbeat together."},
+      "motifs": ["a bright call on a repeated note answered by a falling slide", "a stepwise climb that ends with a playful held note"],
+      "production": "Open-air acoustic brass and drums with natural room bounce, bright but never harsh; no electric instruments."
+    },
+    {
+      "id": "steel-guitar-waltz", "name": "Steel Guitar Waltz", "family": "country",
+      "tags": ["country", "waltz", "pedal-steel", "tender"], "energy": "calm", "bpm": [80, 100], "meter": "3/4",
+      "moods": ["slow dance in a quiet hall", "tender late-evening nostalgia"],
+      "leads": ["pedal steel with long gliding bends", "fiddle with sweet slides"], "supports": ["acoustic guitar playing a bass-strum waltz pattern", "soft brushes on the snare"], "bass": "upright bass on the first beat with a walk-up on cadences",
+      "harmony": {"simple": "Use the tonic, subdominant and dominant chords in a classic waltz progression.", "layered": "Add a relative-minor chord and a descending bass line before the turnaround.", "intricate": "Use a secondary dominant and a brief move to the relative minor for the bridge, and return with a warm added-sixth ending."},
+      "rhythm": {"simple": "A gentle three-beat waltz with a soft first beat and light brushes on the other two.", "layered": "Let the steel guitar's bends float over the beat while the brushes stay even.", "intricate": "Stretch one phrase across a bar line with a held note, then land on the first beat with the whole band together."},
+      "motifs": ["a long gliding bend that resolves up a step", "a falling three-note figure answered by a held note"],
+      "production": "Warm, spacious studio sound with a soft room; the steel guitar shimmers gently and the drums stay quiet."
+    },
+    {
+      "id": "string-swing-cafe", "name": "Acoustic String Swing", "family": "jazz",
+      "tags": ["jazz", "swing", "strings", "acoustic", "cafe"], "energy": "driving", "bpm": [124, 156], "meter": "4/4",
+      "moods": ["quick, charming sidewalk-cafe energy", "light-footed swing with a grin"],
+      "leads": ["lead guitar with fast arpeggios and chromatic runs", "violin with swinging phrases"], "supports": ["two rhythm guitars playing a driving four-to-the-bar pump", "clarinet answering in the gaps"], "bass": "upright bass walking quarter notes",
+      "harmony": {"simple": "Use a sixth-chord tonic and a quick ii-V back to the home chord in a major key.", "layered": "Insert a minor-key bridge and diminished passing chords between phrases.", "intricate": "Reharmonize the last eight bars with tritone substitutions and a chromatic pedal, returning to the theme's sixth chord."},
+      "rhythm": {"simple": "A driving four-beat pump on the rhythm guitars with a light swing.", "layered": "Let the lead anticipate beat one by an eighth note while the pump stays steady.", "intricate": "Stack a two-bar triplet phrase over the pump and rejoin on the downbeat."},
+      "motifs": ["a fast chromatic run that lands on a held sixth", "a repeated arpeggio that climbs a step each time"],
+      "production": "Dry, close acoustic strings in a small cafe room; no drum kit, since the pump supplies the rhythm; natural dynamics."
+    },
+    {
+      "id": "hard-bop-front-line", "name": "Hard Bop Front Line", "family": "jazz",
+      "tags": ["jazz", "hard-bop", "horns", "acoustic", "swinging"], "energy": "driving", "bpm": [132, 168], "meter": "4/4",
+      "moods": ["determined, confident city-night drive", "tight, joyful ensemble swing"],
+      "leads": ["trumpet and tenor saxophone playing the theme in unison", "tenor saxophone solo with bluesy bends"], "supports": ["piano comping with punchy chords", "drums with a propulsive ride cymbal and snare accents"], "bass": "upright bass walking quarter notes",
+      "harmony": {"simple": "A blues-based minor theme with a bright major turnaround.", "layered": "Use minor ii-V progressions leading to a surprising major chord in the bridge.", "intricate": "Substitute tritone chords in the turnaround and move the bridge up a minor third before returning to the theme."},
+      "rhythm": {"simple": "A swinging four-beat groove with a steady ride cymbal.", "layered": "Let the piano's chord stabs answer the horns' phrases on the off-beats.", "intricate": "Superimpose a three-beat phrase over the four-beat bar for two choruses, then reunite the accents at the bridge."},
+      "motifs": ["a bluesy minor-third bend that leaps up a fourth", "a repeated riff that climbs by half steps"],
+      "production": "Live small-group room sound with natural cymbal brightness and controlled horn peaks; no electronic instruments."
+    },
+    {
+      "id": "andean-huayno-altiplano", "name": "Andean Huayno Highlands", "family": "andean",
+      "tags": ["andean-inspired", "huayno", "acoustic", "panpipes", "heritage-inspired"], "energy": "steady", "bpm": [100, 116], "meter": "2/4",
+      "moods": ["bright high-valley morning", "wistful but dancing mountain warmth"],
+      "leads": ["quena flute with breathy, airy phrases", "zampona panpipes played in interlocking pairs"], "supports": ["charango strumming in a bright pattern", "bombo drum marking the pulse"], "bass": "soft guitar bass notes or low panpipe tones outlining the root and fifth",
+      "harmony": {"simple": "Alternate a minor-pentatonic tonic with its relative major in a simple two-chord pattern.", "layered": "Answer each phrase a minor third higher, in the relative major, before returning to the minor home.", "intricate": "Linger on the relative major's dominant before a final fall to the minor home, with the melody's last notes echoed an octave lower."},
+      "rhythm": {"simple": "A galloping two-beat pattern of one long note followed by two short notes.", "layered": "Let the panpipes alternate their phrases between the two players while the charango keeps the gallop.", "intricate": "Syncopate the bombo against the charango for one phrase, then bring them together on the cadence."},
+      "motifs": ["a falling minor third answered by a rising pentatonic run", "a long-short-short figure repeated on a higher step"],
+      "production": "Open, airy acoustic recording with natural breath on the pipes and a bright charango; no electronic instruments."
+    },
+    {
+      "id": "cumbia-accordion-slow", "name": "Slow Cumbia Accordion", "family": "latin",
+      "tags": ["cumbia-inspired", "accordion", "acoustic", "groove", "heritage-inspired"], "energy": "steady", "bpm": [84, 100], "meter": "4/4",
+      "moods": ["warm, swaying evening plaza", "easy, hip-swaying togetherness"],
+      "leads": ["accordion with bright, singing phrases", "gaita flute with a breathy, hopping line"], "supports": ["guacharaca scraper keeping the rhythm", "alegre and llamador drums in conversation"], "bass": "upright bass playing a swinging root-and-fifth pattern",
+      "harmony": {"simple": "Alternate a minor tonic with its dominant, resolving to the major tonic at the very end.", "layered": "Add the relative major as a brief, brighter color in the middle phrase.", "intricate": "Answer the accordion's phrase with the flute a fourth higher, and pivot to the relative major for one repeat before returning to the minor home."},
+      "rhythm": {"simple": "A steady four-beat sway, with the scraper marking the off-beats and the drums on the downbeats.", "layered": "Let the alegre drum answer the accordion's phrases in the gaps, while the llamador keeps the pulse.", "intricate": "Shift the alegre drum's answers one beat later on the repeat of a phrase, then realign on the cadence."},
+      "motifs": ["a short hopping figure that leaps up a third and steps down", "a repeated high note that falls into a slow turn"],
+      "production": "Warm plaza acoustics with hand drums close and dry and a rounded accordion; no drum kit."
+    },
+    {
+      "id": "son-jarocho-sesquialtera", "name": "Jarocho Sesquialtera", "family": "latin",
+      "tags": ["jarocho-inspired", "hemiola", "acoustic", "dance", "heritage-inspired"], "energy": "steady", "bpm": [96, 124], "meter": "6/8",
+      "moods": ["bright, rolling porch-dance spirit", "quick-footed festive warmth"],
+      "leads": ["requinto jarocho with quick melodic runs", "arpa jarocha melody with rolling bass strings"], "supports": ["jarana strumming a patterned rhythm", "tarima footwork as percussion"], "bass": "the harp's low strings alternating tonic and dominant",
+      "harmony": {"simple": "Alternate the tonic and dominant chords in a bright major key.", "layered": "Add the subdominant as a brief change of color before the dominant returns.", "intricate": "Pivot to the relative minor for one phrase, then return to the major with the melody's top notes unchanged."},
+      "rhythm": {"simple": "A six-beat cycle that the strumming alternates between two groups of three and three groups of two, the classic 6/8 against 3/4 lilt.", "layered": "Let the harp keep the groups of three while the jarana leans into groups of two.", "intricate": "Let the footwork follow the 3/4 feel while the harp stays in 6/8, and realign both on the cadence."},
+      "motifs": ["a bright repeating figure that shifts between two accents", "a quick run that ends on a held note in the second group"],
+      "production": "Natural festive acoustics with percussive footwork close to the microphone and strummed strings forward; no electronic instruments."
+    },
+    {
+      "id": "choro-roda-afternoon", "name": "Choro Roda Afternoon", "family": "brazilian",
+      "tags": ["choro-inspired", "acoustic", "counterpoint", "conversational", "heritage-inspired"], "energy": "steady", "bpm": [84, 104], "meter": "2/4",
+      "moods": ["friendly backyard afternoon", "quick-witted, affectionate conversation"],
+      "leads": ["silver flute with fluid ornaments", "clarinet with warm, agile runs"], "supports": ["cavaquinho playing bright rhythmic chords", "pandeiro with a rolling pattern"], "bass": "seven-string guitar playing counter-melodic bass runs",
+      "harmony": {"simple": "Move through the tonic, dominant and relative minor in a clear, singable theme.", "layered": "Add secondary dominants leading into each new section and a modulation to the subdominant for the contrasting strain.", "intricate": "Chain secondary dominants through a descending circle of fifths and return to the opening key with a chromatic bass line."},
+      "rhythm": {"simple": "A lively two-beat pulse with the pandeiro's steady sixteenth-note pattern.", "layered": "Let the guitar's bass runs answer the flute's phrases between the beats.", "intricate": "Syncopate the theme against the pandeiro for one phrase, then lock in with the pulse at the cadence."},
+      "motifs": ["a quick turn that dips to a lower neighbor and leaps up a sixth", "a chain of descending sixteenth notes ending on a held tone"],
+      "production": "Warm backyard acoustics with each instrument clearly audible; no electronic instruments."
+    },
+    {
+      "id": "steel-pan-calypso", "name": "Steelpan Calypso", "family": "caribbean",
+      "tags": ["calypso-inspired", "steelpan", "sunlit", "dance", "heritage-inspired"], "energy": "steady", "bpm": [100, 118], "meter": "4/4",
+      "moods": ["sunlit seaside afternoon", "carefree, swaying breeze"],
+      "leads": ["tenor steelpan melody with rolled notes", "double-second steelpan counter-melody"], "supports": ["rhythm guitar playing sunny upstrokes", "shaker and light congas"], "bass": "bass pan or electric bass playing bouncing syncopated roots",
+      "harmony": {"simple": "Move through bright major chords in a one-four-five pattern with a swinging turnaround.", "layered": "Add the relative minor in the middle phrase and a quick secondary dominant before the last chorus.", "intricate": "Lift the last chorus by a whole step through a pivot chord, keeping the steelpan melody's contour unchanged."},
+      "rhythm": {"simple": "A bouncing four-beat groove with a syncopated bass and a steady shaker.", "layered": "Let the rolled steelpan notes fill the gaps between the guitar upstrokes.", "intricate": "Place the melody's accents a sixteenth note ahead of the beat for two phrases, then settle back onto the beat with the bass."},
+      "motifs": ["a bright upward skip followed by a rolled descending line", "a repeated two-note call answered by a longer melodic phrase"],
+      "production": "Bright, open-air production with ringing pan tones and a warm low end; keep the level friendly rather than loud."
+    },
+    {
+      "id": "charanga-danzon-salon", "name": "Charanga Danzon Salon", "family": "latin",
+      "tags": ["danzon-inspired", "charanga", "acoustic", "elegant", "heritage-inspired"], "energy": "calm", "bpm": [60, 80], "meter": "2/4",
+      "moods": ["elegant evening salon", "courtly dance with a gentle sway"],
+      "leads": ["wooden flute with elegant turns", "violin section with sweet sustained lines"], "supports": ["piano with arpeggiated chords", "timbales and guiro keeping a courtly pulse"], "bass": "upright bass walking quietly with anticipated roots",
+      "harmony": {"simple": "Alternate a major tonic and dominant in a graceful, songlike theme.", "layered": "Add a relative-minor chord in the second section and a bright subdominant before the final return.", "intricate": "Modulate to the subdominant for the contrasting section and return to the opening key through a held dominant."},
+      "rhythm": {"simple": "A courtly two-beat pulse with a five-note figure on the percussion.", "layered": "Let the piano's arpeggios fill the gaps while the percussion repeats the five-note figure.", "intricate": "Superimpose a gentle syncopation in the violin line over the steady two-beat pulse, realigning at the cadence."},
+      "motifs": ["a graceful turn that rises a step and then falls a third", "a held note followed by a quick five-note descending pattern"],
+      "production": "Intimate salon acoustics with soft strings and flute, delicate percussion and a natural room; no electric instruments."
+    },
+    {
+      "id": "lofi-study-loops", "name": "Lo-Fi Study Loops", "family": "hiphop",
+      "tags": ["lo-fi", "hip-hop", "study", "warm"], "energy": "calm", "bpm": [68, 84], "meter": "4/4",
+      "moods": ["quiet rainy-afternoon focus", "cozy, gently hypnotic concentration"],
+      "leads": ["mellow electric piano melody", "muted clean guitar line"], "supports": ["dusty drum machine pattern with swung hats", "soft vinyl crackle and tape hiss"], "bass": "warm, rounded sub-bass following the chord roots",
+      "harmony": {"simple": "Loop a four-chord progression of minor-seventh and major-seventh chords.", "layered": "Add a chromatic approach chord before the loop restarts and vary the melody's top note each pass.", "intricate": "Swap the loop's third chord for a borrowed chord every second pass, while the melody keeps its original top notes."},
+      "rhythm": {"simple": "A slow, slightly late kick-and-snare pattern with swung hats.", "layered": "Hold the snare a touch behind the beat while the hats stay soft and the bass leaves space.", "intricate": "Stagger a two-bar melody against the four-bar loop so phrases land in different places each pass."},
+      "motifs": ["a lazy three-note phrase that falls and rests", "a repeated chord-top note that changes its last step each pass"],
+      "production": "Warm tape saturation, softly rolled-off highs and quiet vinyl noise; leave plenty of space; no loud peaks."
+    },
+    {
+      "id": "motorik-highway", "name": "Motorik Highway", "family": "rock",
+      "tags": ["motorik", "krautrock-inspired", "hypnotic", "guitar"], "energy": "driving", "bpm": [124, 140], "meter": "4/4",
+      "moods": ["steady open-road trance", "cool, forward-leaning calm"],
+      "leads": ["chiming electric guitar line", "analog synthesizer arpeggio melody"], "supports": ["a second synthesizer playing a steady sequence in eighth notes", "tight hi-hat and snare locked to the kick"], "bass": "unbroken eighth-note electric bass, changing roots only every two bars",
+      "harmony": {"simple": "Alternate two chords, tonic and subdominant, every two bars.", "layered": "Add a relative-minor chord at the end of each eight-bar block.", "intricate": "Lift the melody a fourth higher every sixteen bars while the bass holds its pattern, then drop back for the last block."},
+      "rhythm": {"simple": "An unbroken four-beat motorik beat: the kick on the downbeats, the snare on two and four, and hi-hats in steady eighth notes.", "layered": "Add a repeating sixteenth-note guitar figure over the beat while the snare stays steady.", "intricate": "Let the sequence drift by an eighth note against the beat for four bars, then snap back to the grid together."},
+      "motifs": ["a repeating two-note guitar figure that rises a step each block", "a long synthesizer note held across four bars"],
+      "production": "Dry, tight drums, crisp but not loud; a clean, wide guitar and a warm analog sequence; no heavy distortion."
+    },
+    {
+      "id": "dream-pop-haze", "name": "Dream-Pop Haze", "family": "pop",
+      "tags": ["dream-pop", "hazy", "guitar", "soft"], "energy": "calm", "bpm": [72, 96], "meter": "4/4",
+      "moods": ["slow, shimmering twilight drift", "soft-focus tenderness"],
+      "leads": ["chorused guitar melody swimming in reverb", "soft analog synthesizer line"], "supports": ["slowly strummed open guitar chords in a long reverb wash", "brushed drums with a soft snare"], "bass": "round bass guitar sliding between roots",
+      "harmony": {"simple": "Move between a major-seventh chord and an added-ninth chord a fourth away.", "layered": "Add a suspended fourth on the turnaround and let the top note drift by step across the chord changes.", "intricate": "Borrow one chord from the parallel minor for the second pass, then resolve back to the major-seventh chord with a held suspension."},
+      "rhythm": {"simple": "A slow, floating four-beat pulse with a soft snare on two and four.", "layered": "Let the strumming lag very slightly behind the drums while the bass stays on the beat.", "intricate": "Overlap two guitar delays at different lengths so the echoes drift in and out of alignment, without moving the drums."},
+      "motifs": ["a slow upward slide into a held note", "a two-note sigh repeated and echoed an octave higher"],
+      "production": "Soft, hazy mix with wide reverb and gentle chorus; the dynamics stay low and the sound blooms rather than roars; no heavy distortion."
+    },
+    {
+      "id": "two-step-garage", "name": "Two-Step Garage", "family": "electronic",
+      "tags": ["garage", "two-step", "dance", "shuffled"], "energy": "driving", "bpm": [130, 138], "meter": "4/4",
+      "moods": ["late-night city glow", "smooth, skipping night-bus motion"],
+      "leads": ["chopped electric piano chords", "airy synthesized flute melody"], "supports": ["shuffled hi-hats and ghost-note snares", "warm pad chords"], "bass": "warm sub-bass with rolling slides",
+      "harmony": {"simple": "Loop two lush chords, a minor ninth and a major seventh, with a short rising turnaround.", "layered": "Add a chromatic neighbor chord before the loop restarts and move the pad voicing by step.", "intricate": "Change the loop's second chord to a borrowed chord on alternate passes while the chopped melody keeps its top notes."},
+      "rhythm": {"simple": "A skipping two-step pattern with the kick on the first beat and a syncopated second kick, a snare on two and four, and shuffled hats.", "layered": "Hold the snare steady on two and four while ghost notes skip around it and the bass slides between them.", "intricate": "Shift the chopped chords a sixteenth note behind the beat for four bars, then land on the downbeat together."},
+      "motifs": ["a skipping three-note chord stab that rises a step", "a held pad note that slides up a half step into the next bar"],
+      "production": "Polished, spacious club mix with a deep, controlled low end and crisp hats; no distorted bass or abrasive peaks."
+    },
+    {
+      "id": "chiptune-quest", "name": "Chiptune Quest", "family": "electronic",
+      "tags": ["chiptune", "retro", "playful", "synthetic"], "energy": "steady", "bpm": [118, 138], "meter": "4/4",
+      "moods": ["bright, plucky adventure", "bouncy pixel-world optimism"],
+      "leads": ["pulse-wave lead with fast vibrato", "second pulse-wave lead in a lighter tone"], "supports": ["quick arpeggios that imply full chords on one channel", "noise-channel percussion"], "bass": "triangle-wave bass playing octave jumps",
+      "harmony": {"simple": "Stay in a bright major key, with arpeggios outlining the tonic, subdominant and dominant chords.", "layered": "Add a relative-minor section and let the arpeggios switch speed to show the change.", "intricate": "Modulate up a whole step for the last section, and let the two leads trade the melody and a harmony line."},
+      "rhythm": {"simple": "A steady four-beat pulse with noise-channel kicks on the downbeats and snares on two and four.", "layered": "Let the arpeggios run in sixteenth notes while the bass jumps in eighth notes.", "intricate": "Alternate two-bar phrases in a hopping rhythm with two-bar phrases in straight eighth notes, never using more than four voices at once."},
+      "motifs": ["a rising arpeggio that ends on a held note with vibrato", "a hopping two-note figure that jumps up an octave"],
+      "production": "Strictly four voices at a time, clean square and triangle tones, hard-edged and unprocessed; no reverb, and no sampled or acoustic instruments."
+    },
+    {
+      "id": "celesta-lullaby", "name": "Celesta Lullaby", "family": "classical",
+      "tags": ["lullaby", "celesta", "gentle", "acoustic"], "energy": "calm", "bpm": [56, 72], "meter": "6/8",
+      "moods": ["soft nursery-window moonlight", "tender, drowsy reassurance"],
+      "leads": ["celesta melody in a high register", "music-box melody with a clear, bell-like tone"], "supports": ["harp arpeggios in a gentle rocking pattern", "soft sustained strings"], "bass": "cello playing slow, warm single notes",
+      "harmony": {"simple": "Stay in a gentle major key with only the tonic, subdominant and dominant chords.", "layered": "Add a relative-minor chord and a suspended fourth before each cadence.", "intricate": "Borrow one chord from the parallel minor for the second phrase, then resolve back to the major with a held suspension."},
+      "rhythm": {"simple": "A soft six-beat rocking motion in two groups of three.", "layered": "Let the harp rock steadily while the melody floats across the groups with longer notes.", "intricate": "Slip the melody a beat behind the rocking for one phrase, then settle together on the first beat of the next."},
+      "motifs": ["a falling three-note sigh that rests on the last note", "a gentle rising sixth that settles by step"],
+      "production": "Very soft, close acoustic recording with a long, warm tail; the dynamics stay low and calm; no percussion."
+    },
+    {
+      "id": "phasing-mallets", "name": "Phasing Mallets", "family": "classical",
+      "tags": ["minimalism", "phasing", "mallets", "interlocking", "acoustic"], "energy": "steady", "bpm": [96, 120], "meter": "12/8 (3+3+3+3)",
+      "moods": ["bright, clockwork clarity", "calm, rhythmic wonder"],
+      "leads": ["marimba pattern in a high register", "vibraphone pattern with a soft motor"], "supports": ["a second marimba pattern that gradually phases", "bass clarinet and clarinet sustaining pulsing chords"], "bass": "low marimba notes and bass clarinet outlining the roots",
+      "harmony": {"simple": "Repeat one pattern of four chords, changing a single note each time around.", "layered": "Let the chord pattern change one note per cycle while the high pattern stays unchanged, so the harmony shifts slowly.", "intricate": "Build the pattern one note at a time, then remove one note at a time, so the same chords are heard in a new order on the way back."},
+      "rhythm": {"simple": "A twelve-beat cycle grouped in threes, with every part playing the same pattern in unison.", "layered": "Let the second part drift ahead by one beat at a time, creating new accent patterns, then return to unison.", "intricate": "Phase the second part by one beat every four cycles until it is three beats ahead, then phase it back to unison."},
+      "motifs": ["a bright repeated figure of five notes that shifts its accents when phased", "a rising scale fragment that stops on the same note each cycle"],
+      "production": "Clean, close acoustic recording with clear mallet attack; the two parts are panned left and right; no electronic instruments."
+    }
+  ]
+}

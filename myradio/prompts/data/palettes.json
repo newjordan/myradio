@@ -1,0 +1,326 @@
+{
+  "schema_version": 1,
+  "catalog_version": "1.0.0",
+  "palettes": [
+    {
+      "id": "warm-brush-jazz", "name": "Warm Brush Jazz", "family": "jazz",
+      "tags": ["jazz", "acoustic", "late-night", "warm"], "energy": "calm", "bpm": [62, 78], "meter": "4/4",
+      "moods": ["welcoming late-night warmth", "quiet optimism after the rain"],
+      "leads": ["breathy tenor saxophone", "rounded flugelhorn"], "supports": ["felted piano voicings", "soft hollow-body guitar chords"], "bass": "unhurried upright bass with melodic approaches",
+      "harmony": {"simple": "A clear major-sixth home with a brief ii-V turnaround.", "layered": "Major ninths and minor elevenths linked by descending inner voices; resolve the turnaround warmly.", "intricate": "Reharmonize the returning theme with tritone substitutions and a brief borrowed minor iv; preserve the singable top line."},
+      "rhythm": {"simple": "Soft brushed swing with a relaxed backbeat.", "layered": "Brushes imply triplets beneath syncopated melody pickups, leaving space after each answer.", "intricate": "Displace selected melody entries across the bar while brushes and bass keep an unmistakable slow swing."},
+      "motifs": ["a falling three-note sigh answered by a rising fourth", "a repeated pickup that opens into a long held note"],
+      "production": "Close acoustic room, rounded transients, natural instrument separation; no aggressive drum build."
+    },
+    {
+      "id": "modal-night-jazz", "name": "Modal Night Jazz", "family": "jazz",
+      "tags": ["jazz", "modal", "nocturnal", "acoustic"], "energy": "steady", "bpm": [84, 110], "meter": "4/4",
+      "moods": ["curious city-night movement", "reflective but quietly adventurous"],
+      "leads": ["dark tenor saxophone", "rounded trumpet"], "supports": ["quartal piano chords", "open vibraphone clusters"], "bass": "upright bass alternating a pedal tone with walking passages",
+      "harmony": {"simple": "A Dorian vamp with a contrasting suspended chord.", "layered": "Move between Dorian and Lydian colors over a shared pedal, using spacious fourth-based voicings.", "intricate": "Shift the modal center by a minor third for the middle passage, then return through a common-tone bridge rather than a hard cut."},
+      "rhythm": {"simple": "An even ride-cymbal pulse and patient snare responses.", "layered": "Alternate straight eighth-note lead phrases with lightly swung answers over a steady ride.", "intricate": "Use three-beat melodic groupings over the four-beat pulse; reconnect on every fourth bar."},
+      "motifs": ["a fourth-based question with a descending chromatic answer", "a short repeated note that expands into a wide upward leap"],
+      "production": "Natural small-club perspective, audible breath and room, controlled cymbal brightness."
+    },
+    {
+      "id": "bossa-courtyard", "name": "Bossa Courtyard", "family": "brazilian",
+      "tags": ["bossa", "nylon-guitar", "sunlit", "gentle"], "energy": "calm", "bpm": [90, 112], "meter": "4/4",
+      "moods": ["sunlit courtyard ease", "affectionate seaside reflection"],
+      "leads": ["nylon-string guitar melody", "soft breathy flute"], "supports": ["restrained electric piano", "a second nylon guitar playing sparse chords"], "bass": "warm bass outlining roots and fifths without crowding the guitar",
+      "harmony": {"simple": "Major sevenths with a clear ii-V-I return.", "layered": "Descending bass beneath major ninths, with a minor iv adding a brief wistful color.", "intricate": "Use chromatic inner-voice movement and secondary dominants to visit a nearby key; return through the opening bass figure."},
+      "rhythm": {"simple": "A gentle bossa guitar pattern and understated shaker.", "layered": "Interlock the guitar's offbeat chords with soft rim clicks, keeping the bass uncluttered.", "intricate": "Let melody anticipations cross the guitar accents while a consistent two-bar percussion pattern anchors the groove."},
+      "motifs": ["a descending stepwise line with one unexpected upward sixth", "a gently repeated syncopated phrase ending on a suspended note"],
+      "production": "Intimate dry guitar, delicate hand percussion, airy room; avoid a heavy kick or dramatic drops."
+    },
+    {
+      "id": "afro-cuban-session", "name": "Afro-Cuban Session", "family": "latin",
+      "tags": ["afro-cuban", "clave", "piano", "brass"], "energy": "driving", "bpm": [98, 126], "meter": "4/4",
+      "moods": ["celebratory ensemble conversation", "bright communal momentum"],
+      "leads": ["muted trumpet", "nimble flute"], "supports": ["piano montuno", "vibraphone doubling selected montuno accents"], "bass": "rounded tumbao bass with clear anticipated roots",
+      "harmony": {"simple": "A bright tonic-dominant vamp with a short minor contrast.", "layered": "Move a repeating montuno through ii-V cycles while keeping common tones audible.", "intricate": "Revoice the montuno through altered dominants and a relative-minor episode, resolving into the original bright vamp."},
+      "rhythm": {"simple": "Maintain a clear 2-3 son clave with congas and restrained shell patterns.", "layered": "Interlock conga responses and piano anticipations around the unchanged 2-3 son clave.", "intricate": "Add displaced brass answers and brief timbale fills that respect the 2-3 clave orientation; do not flip the clave mid-phrase."},
+      "motifs": ["a two-bar brass question answered in the piano gaps", "a rising arpeggio clipped by a playful repeated-note answer"],
+      "production": "Live ensemble punch, audible hand percussion, clear low end without oversized electronic drums."
+    },
+    {
+      "id": "ethiopian-jazz-evening", "name": "Ethiopian Jazz Evening", "family": "jazz",
+      "tags": ["ethio-jazz", "modal", "horns", "warm"], "energy": "steady", "bpm": [78, 98], "meter": "6/8",
+      "moods": ["hypnotic evening warmth", "patient, dignified celebration"],
+      "leads": ["smoky tenor saxophone", "mellow vibraphone"], "supports": ["restrained electric organ", "clean electric guitar ostinato"], "bass": "rounded repeating bass figure with measured variations",
+      "harmony": {"simple": "Keep a distinctive minor pentatonic center over a steady drone.", "layered": "Answer the pentatonic melody with open fourths and a contrasting bass pedal, without generic blues substitutions.", "intricate": "Use modal call-and-response and a common-tone change of tonal center; return to the original pentatonic contour."},
+      "rhythm": {"simple": "A rolling six-beat percussion cycle with an easy underlying sway.", "layered": "Let the guitar and hand percussion emphasize different points of the same six-beat cycle.", "intricate": "Alternate two groups of three with three groups of two in the melody while bass preserves the six-beat cycle."},
+      "motifs": ["a curling pentatonic phrase held back before its last note", "a repeated descending figure answered in a higher register"],
+      "production": "Warm ensemble recording with gentle tape color, audible modal phrasing, no anonymous cinematic overlay."
+    },
+    {
+      "id": "jazz-waltz", "name": "Jazz Waltz Lanterns", "family": "jazz",
+      "tags": ["jazz", "waltz", "acoustic", "lyrical"], "energy": "calm", "bpm": [86, 112], "meter": "3/4",
+      "moods": ["weightless afternoon optimism", "gentle movement through a quiet room"],
+      "leads": ["lyrical piano", "soft soprano saxophone"], "supports": ["sparse vibraphone answers", "hollow-body guitar shells"], "bass": "upright bass lightly marking the first beat",
+      "harmony": {"simple": "A lyrical major-key waltz with a minor bridge color.", "layered": "Use added ninths and descending inner voices across a circle-of-fifths passage.", "intricate": "Reharmonize the melody over a chromatic bass descent, visiting the relative minor before an understated major return."},
+      "rhythm": {"simple": "Three light beats with soft brushes and no heavy downbeat.", "layered": "Let two-bar melodic phrases float above the three-beat bass motion.", "intricate": "Suggest a two-against-three cross-rhythm in the accompaniment, then reunite the accents at phrase endings."},
+      "motifs": ["an upward sixth that settles down by step", "a three-note turn answered with a longer descending line"],
+      "production": "Transparent acoustic room, soft attack, intimate rather than orchestral scale."
+    },
+    {
+      "id": "chamber-jazz", "name": "Chamber Jazz Windows", "family": "jazz",
+      "tags": ["jazz", "chamber", "counterpoint", "acoustic"], "energy": "calm", "bpm": [66, 88], "meter": "4/4",
+      "moods": ["thoughtful conversation among friends", "open-hearted miniature storytelling"],
+      "leads": ["warm bass clarinet", "lyrical cello"], "supports": ["prepared-but-tonal piano", "delicate classical guitar"], "bass": "pizzicato double bass with breathing rests",
+      "harmony": {"simple": "A clear minor home with open fifths and a hopeful major close.", "layered": "Thread major sevenths through gently moving inner parts and occasional suspended cadences.", "intricate": "Use contrary-motion inner voices, common-tone modulations, and a delayed resolution beneath a recognizable melody."},
+      "rhythm": {"simple": "An understated four-beat pulse with brushed accents.", "layered": "Trade short phrases across the bar line without disturbing the underlying pulse.", "intricate": "Stagger imitative entries by one beat, leaving rests so the counterpoint stays conversational."},
+      "motifs": ["a narrow rising line answered by a wider falling interval", "a repeated long note surrounded by tiny ornamental turns"],
+      "production": "Small acoustic chamber, honest bow and breath textures, restrained percussion and wide dynamic detail."
+    },
+    {
+      "id": "soul-jazz-organ", "name": "Soul Jazz Organ Room", "family": "jazz",
+      "tags": ["jazz", "soul", "organ", "groove"], "energy": "steady", "bpm": [88, 112], "meter": "4/4",
+      "moods": ["convivial neighborhood warmth", "playful end-of-day release"],
+      "leads": ["drawbar organ upper manual", "clean hollow-body guitar"], "supports": ["short tenor saxophone responses", "muted guitar chord punctuations"], "bass": "round organ bass locking with the kick",
+      "harmony": {"simple": "A blues-informed tonic groove with a clear subdominant lift.", "layered": "Add gospel passing chords and ninth-rich turnarounds without losing the grounded riff.", "intricate": "Reharmonize the response with diminished passing chords and chromatic bass approaches, returning decisively to the riff."},
+      "rhythm": {"simple": "A relaxed backbeat with light swung hi-hat.", "layered": "Syncopated organ stabs answer the snare while guitar leaves space for the bass.", "intricate": "Place short triplet answers against the swung groove, then simplify the drums beneath the lead's busiest phrase."},
+      "motifs": ["a clipped blues call with a rising gospel answer", "a repeated chord stab that grows into a melodic fill"],
+      "production": "Warm rotary-speaker movement, close drum kit, rounded bass and unclipped ensemble peaks."
+    },
+    {
+      "id": "neo-soul", "name": "Neo-Soul Daylight", "family": "soul",
+      "tags": ["soul", "keys", "pocket", "warm"], "energy": "steady", "bpm": [72, 92], "meter": "4/4",
+      "moods": ["self-assured gentle optimism", "warm, unhurried human connection"],
+      "leads": ["expressive electric piano", "clean guitar with soft slides"], "supports": ["muted guitar chord fragments", "a softly filtered polyphonic synth"], "bass": "rounded fingerstyle bass with melodic slides",
+      "harmony": {"simple": "A warm minor-seventh to major-seventh loop with a clear home.", "layered": "Ninths and elevenths move through smooth inner-voice lines over a grounded bass.", "intricate": "Reharmonize alternate phrases with borrowed chords and chromatic mediants while retaining the original top-note contour."},
+      "rhythm": {"simple": "Laid-back kick and snare with sparse swung hats.", "layered": "Offset hats and ghost notes around the backbeat, keeping the bass deliberately relaxed.", "intricate": "Use subtle three-note subdivisions in the lead against swung sixteenths; keep snare placement stable and spacious."},
+      "motifs": ["a rising two-note pickup that resolves through a descending turn", "a repeated chord-top melody that changes its last note each return"],
+      "production": "Warm keys, tactile drums, clear bass, gentle saturation without exaggerated sidechain pumping."
+    },
+    {
+      "id": "pocket-funk", "name": "Pocket Funk Workshop", "family": "funk",
+      "tags": ["funk", "bass", "rhythmic", "playful"], "energy": "driving", "bpm": [98, 116], "meter": "4/4",
+      "moods": ["playful precision and confidence", "joyful ensemble teamwork"],
+      "leads": ["clavinet", "short clean guitar phrases"], "supports": ["tight brass punctuations", "dry electric piano stabs"], "bass": "syncopated fingerstyle bass with selective muted notes",
+      "harmony": {"simple": "A dominant-ninth vamp with one contrasting chord.", "layered": "Move upper chord extensions over a stable bass riff, saving harmonic change for the bridge.", "intricate": "Use chromatic upper-structure shifts and a brief minor-key bridge; the returning riff restores the original tonal center."},
+      "rhythm": {"simple": "A locked sixteenth-note pocket with strong rests.", "layered": "Interlock clipped guitar, bass anticipations, and snare ghost notes without filling every subdivision.", "intricate": "Rotate a three-sixteenth accent figure through the riff while kick and backbeat remain fixed; resolve the cycle together."},
+      "motifs": ["a one-bar clipped riff answered by a longer bass phrase", "a repeated offbeat chord with a tiny chromatic pickup"],
+      "production": "Dry and punchy, minimal reverb, independent bass and kick, preserve the rests."
+    },
+    {
+      "id": "deep-house", "name": "Deep House Skylight", "family": "electronic",
+      "tags": ["house", "dance", "warm", "keys"], "energy": "driving", "bpm": [116, 124], "meter": "4/4",
+      "moods": ["uplifting movement without urgency", "sunrise warmth and steady confidence"],
+      "leads": ["rounded electric-piano hook", "soft plucked synthesizer"], "supports": ["filtered chord pads", "short organ chord echoes"], "bass": "supple syncopated sub-bass with controlled sustain",
+      "harmony": {"simple": "A warm minor-seventh loop with a bright relative-major turn.", "layered": "Let upper chord extensions rise slowly over a repeated bass pattern.", "intricate": "Change inversions and introduce a borrowed major chord on the second cycle, then restore the first voicing for the return."},
+      "rhythm": {"simple": "Steady four-on-the-floor kick with light offbeat hats.", "layered": "Interlock swung shaker and delayed chord stabs around the unchanged four-beat kick.", "intricate": "Add a three-note sequencer accent against the four-beat grid, resolving every three bars without changing the dance pulse."},
+      "motifs": ["a short upward hook ending in a suspended note", "a repeated two-note chord-top figure with changing answers"],
+      "production": "Deep controlled low end, warm pads, restrained sidechain movement; no enormous riser or abrasive drop."
+    },
+    {
+      "id": "broken-beat", "name": "Broken Beat Mosaic", "family": "electronic",
+      "tags": ["broken-beat", "jazz", "syncopated", "keys"], "energy": "driving", "bpm": [108, 126], "meter": "4/4",
+      "moods": ["nimble, colorful inventiveness", "joyful off-center motion"],
+      "leads": ["agile electric piano", "percussive mallet synthesizer"], "supports": ["short brass-like synth chords", "clean guitar harmonics"], "bass": "springy bass with short anticipations and decisive rests",
+      "harmony": {"simple": "A minor-ninth vamp with a bright suspended response.", "layered": "Use quartal voicings and upper extensions that move in contrary motion to the bass.", "intricate": "Visit a chromatic mediant through common tones, then pivot back with a reharmonized version of the opening hook."},
+      "rhythm": {"simple": "A lopsided but repeatable kick-snare pattern with a clear four-beat cycle.", "layered": "Interlock shuffled hats, displaced snares, and bass pickups while preserving the same two-bar groove.", "intricate": "Alternate complementary syncopated drum cells and a three-over-four melodic accent; land all parts together at the turnaround."},
+      "motifs": ["an angular four-note figure answered with a smooth descending line", "a chord stab followed by two widely spaced single notes"],
+      "production": "Crisp drums, warm harmonic body, deliberate stereo separation and no crushed master."
+    },
+    {
+      "id": "liquid-drum-and-bass", "name": "Liquid Drum and Bass", "family": "electronic",
+      "tags": ["drum-and-bass", "liquid", "atmospheric", "melodic"], "energy": "driving", "bpm": [168, 176], "meter": "4/4",
+      "moods": ["hopeful forward motion", "clear-sky momentum with an intimate center"],
+      "leads": ["soft piano melody", "breathy melodic synthesizer"], "supports": ["slowly shifting string pads", "shimmering electric-piano chords"], "bass": "smooth sub-bass with a singable upper contour",
+      "harmony": {"simple": "A minor-key loop with a warm major lift.", "layered": "Use suspended ninths and common-tone movement while the bass changes beneath a sustained melody.", "intricate": "Reharmonize the half-time melody through a relative-major detour and a chromatic inner line, then restore the original bass descent."},
+      "rhythm": {"simple": "A clean rolling break at full tempo beneath a spacious half-time melody.", "layered": "Vary ghost snares and hat openings between phrases without disrupting the rolling break.", "intricate": "Trade short breakbeat variations every two bars, placing melodic anticipations over a stable snare framework."},
+      "motifs": ["a long ascending melody answered by a short descending echo", "a two-note piano call expanding to a wider interval on return"],
+      "production": "Smooth sub-bass, clear break transients, airy pads; no harsh reese lead or overwhelming festival drop."
+    },
+    {
+      "id": "dub-techno", "name": "Dub Techno Tides", "family": "electronic",
+      "tags": ["dub-techno", "minimal", "echo", "hypnotic"], "energy": "steady", "bpm": [112, 122], "meter": "4/4",
+      "moods": ["patient nocturnal immersion", "calm movement through shifting reflections"],
+      "leads": ["filtered minor-chord stabs", "soft metallic chord pulses"], "supports": ["a dim sustained pad", "sparse high-register plucks"], "bass": "restrained sub-bass pulses with long spaces",
+      "harmony": {"simple": "A minor suspended chord with a slowly changing upper note.", "layered": "Move the chord's inner voices by step over a shared pedal, leaving harmonic space between stabs.", "intricate": "Let an upper-voice sequence suggest a neighboring mode, then resolve through the original suspended chord rather than a new genre section."},
+      "rhythm": {"simple": "A muted four-beat kick and sparse offbeat percussion.", "layered": "Dotted-delay echoes answer the stabs while the kick remains even and unhurried.", "intricate": "Offset a five-eighth echo cell against the four-beat pulse, periodically clearing the delays to reveal the original groove."},
+      "motifs": ["a two-chord question answered only by its filtered echo", "a descending upper note appearing once per long phrase"],
+      "production": "Deep but bounded delay feedback, evolving filters, warm low end and generous silence; no giant drop."
+    },
+    {
+      "id": "ambient-garden", "name": "Ambient Garden", "family": "ambient",
+      "tags": ["ambient", "generative", "spacious", "restorative"], "energy": "calm", "bpm": [48, 64], "meter": "4/4",
+      "moods": ["restorative curiosity", "quiet wonder in changing light"],
+      "leads": ["soft bell-like synthesizer", "felt-piano single notes"], "supports": ["slow bowed-string harmonics", "a translucent granular pad"], "bass": "occasional low sustained tones rather than a busy bass line",
+      "harmony": {"simple": "Open fifths and a gently shifting added second.", "layered": "Sustain common tones while one inner voice moves between Lydian and major colors.", "intricate": "Create slowly resolving suspensions between independent upper voices, with a gradual common-tone modulation and an audible return home."},
+      "rhythm": {"simple": "A very faint four-beat pulse, without a drum groove.", "layered": "Let unevenly spaced note entrances float over a quiet recurring pulse.", "intricate": "Interleave repeating five-note and seven-note figures at low density, letting their meetings mark the long phrases."},
+      "motifs": ["a widely spaced three-note rising shape", "a single recurring bell note answered one step below"],
+      "production": "Soft transients, controlled long reverb, audible space between gestures; no beat drop or sudden loud climax."
+    },
+    {
+      "id": "synthwave-horizon", "name": "Synthwave Horizon", "family": "electronic",
+      "tags": ["synthwave", "retro", "melodic", "night-drive"], "energy": "steady", "bpm": [88, 108], "meter": "4/4",
+      "moods": ["hopeful night-drive adventure", "nostalgic confidence with an open horizon"],
+      "leads": ["rounded analog synth lead", "glass-edged digital keyboard melody"], "supports": ["warm polysynth chords", "soft octave arpeggios"], "bass": "steady octave synth bass with modest filter movement",
+      "harmony": {"simple": "A minor-key progression opening briefly into its relative major.", "layered": "Use suspended chords and a rising bass inversion to lift the refrain.", "intricate": "Reharmonize the hook through a borrowed major IV and a descending chromatic bass passage before the original progression returns."},
+      "rhythm": {"simple": "An even electronic backbeat with restrained tom fills.", "layered": "Place syncopated lead pickups over a constant eighth-note arpeggio.", "intricate": "Shift the arpeggio's accent every three notes while keeping kick and snare straight; resolve the accents before the final hook."},
+      "motifs": ["a rising octave leap followed by a descending three-note answer", "a repeated-note hook with a held high resolution"],
+      "production": "Warm stereo synths, controlled gated snare, clear melody; keep retro color without harsh clipping."
+    },
+    {
+      "id": "downtempo-trip-hop", "name": "Downtempo Window Seat", "family": "electronic",
+      "tags": ["downtempo", "trip-hop", "cinematic", "reflective"], "energy": "calm", "bpm": [68, 86], "meter": "4/4",
+      "moods": ["reflective travel with a hopeful turn", "rainy-window calm and quiet possibility"],
+      "leads": ["muted trumpet", "softly detuned electric piano"], "supports": ["short string-quartet swells", "clean guitar harmonics"], "bass": "deep melodic bass with long sustained roots",
+      "harmony": {"simple": "A minor-seventh progression with a warm major-seventh answer.", "layered": "Let chromatic inner voices move beneath a repeated upper note and slow bass descent.", "intricate": "Introduce a borrowed chord and a common-tone key pivot in the middle, then recover the opening progression one voice at a time."},
+      "rhythm": {"simple": "A slow broken drum pattern with a roomy backbeat.", "layered": "Add quiet ghost notes and late hi-hat accents around the same relaxed two-bar break.", "intricate": "Let the melody use short triplet pickups against swung sixteenth details, retaining the slow backbeat as the anchor."},
+      "motifs": ["a repeated descending third followed by a hopeful upward step", "a sustained note interrupted by a small answering flourish"],
+      "production": "Textured but intelligible drums, warm bass, restrained tape haze; no excessive crackle masking the music."
+    },
+    {
+      "id": "progressive-electronica", "name": "Progressive Electronica", "family": "electronic",
+      "tags": ["electronica", "progressive", "sequenced", "exploratory"], "energy": "steady", "bpm": [96, 118], "meter": "4/4",
+      "moods": ["patient discovery and forward movement", "playful mechanical curiosity"],
+      "leads": ["articulated analog sequencer", "rounded FM synthesizer"], "supports": ["slowly opening chord pads", "short processed mallet notes"], "bass": "pulsing synth bass that leaves gaps for the sequence",
+      "harmony": {"simple": "A modal center with a contrasting suspended chord.", "layered": "Move upper sequence notes through changing inversions over a stable bass pedal.", "intricate": "Transform the sequence through a common-tone modulation and contrary-motion bass, then reconstruct the original pitch pattern."},
+      "rhythm": {"simple": "A clear four-beat electronic pulse and an eight-note repeating sequence.", "layered": "Offset a second sequence by one eighth note while keeping the primary beat transparent.", "intricate": "Run a five-note accent cycle against the eight-note sequence, reuniting the voices at structural landmarks."},
+      "motifs": ["an ascending cell with its last interval reversed", "a repeated pitch interrupted by a widening leap"],
+      "production": "Clean sequencer articulation, purposeful filter development, controlled stereo space; avoid endless build with no resolution."
+    },
+    {
+      "id": "chamber-minimalism", "name": "Chamber Minimalism", "family": "classical",
+      "tags": ["minimalism", "chamber", "acoustic", "interlocking"], "energy": "steady", "bpm": [88, 116], "meter": "4/4",
+      "moods": ["optimistic patterned motion", "small changes becoming meaningful"],
+      "leads": ["clear upright piano", "wooden marimba"], "supports": ["pizzicato string ensemble", "soft clarinet pulses"], "bass": "cello and double bass sustaining structural roots",
+      "harmony": {"simple": "Consonant repeating triads over a stable bass.", "layered": "Change one chord tone at a time so major, suspended, and minor colors unfold gradually.", "intricate": "Use common-tone modulations and slowly crossing inner lines while the repeating cell remains recognizable."},
+      "rhythm": {"simple": "Even eighth notes with a clearly felt four-beat phrase.", "layered": "Introduce staggered entries of the same cell, with rests keeping each line distinct.", "intricate": "Extend one repeating cell by an eighth note against an unchanged partner, then align them again at the return."},
+      "motifs": ["a four-note arch that changes only its final note", "a rising broken triad answered by one repeated pitch"],
+      "production": "Clear chamber acoustics, soft mechanical details, natural dynamics; no cinematic percussion overlay."
+    },
+    {
+      "id": "impressionist-piano", "name": "Impressionist Piano", "family": "classical",
+      "tags": ["piano", "impressionist", "lyrical", "reflective"], "energy": "calm", "bpm": [54, 76], "meter": "6/8",
+      "moods": ["shimmering quiet wonder", "tender recollection with a bright conclusion"],
+      "leads": ["lyrical grand piano upper register", "rounded grand piano middle-register melody"], "supports": ["soft left-hand broken chords", "widely spaced piano chord colors"], "bass": "occasional low piano pedals, never a continuous rumble",
+      "harmony": {"simple": "Open major chords with added seconds and a clear tonal return.", "layered": "Blend parallel color chords with a sustained melody, resolving extended suspensions gently.", "intricate": "Pass through whole-tone color and common-tone mediants, retaining a tonal landmark that makes the homecoming audible."},
+      "rhythm": {"simple": "An easy six-beat rocking motion with breathing phrase ends.", "layered": "Let the melody stretch over a consistent six-beat left-hand pattern.", "intricate": "Place three-note melody groups over paired left-hand pulses, then ease both hands into a shared cadence."},
+      "motifs": ["a descending whole-step pair answered by a rising fourth", "a high repeated note that gradually blossoms into an arpeggio"],
+      "production": "Natural grand piano, sympathetic room resonance, clear pedaling and soft attacks without orchestral padding."
+    },
+    {
+      "id": "cinematic-orchestra", "name": "Cinematic New Horizons", "family": "classical",
+      "tags": ["orchestral", "cinematic", "hopeful", "thematic"], "energy": "steady", "bpm": [76, 100], "meter": "4/4",
+      "moods": ["earned hope and shared accomplishment", "exploration opening into a welcoming vista"],
+      "leads": ["lyrical French horn", "expressive upper strings"], "supports": ["woodwind answering phrases", "harp and soft middle strings"], "bass": "cellos and double basses moving in broad supportive phrases",
+      "harmony": {"simple": "A strong major-key theme with a contrasting minor passage.", "layered": "Use suspended chords, pedal tones, and a gradual rising bass to support the thematic return.", "intricate": "Transform the theme through chromatic mediants and independent inner voices, resolving the accumulated suspensions in the final return."},
+      "rhythm": {"simple": "Broad four-beat phrases with light timpani support.", "layered": "Let a quiet string ostinato support long brass phrases and occasional woodwind pickups.", "intricate": "Trade the ostinato among sections with staggered accents while long thematic phrases retain a clear downbeat."},
+      "motifs": ["a rising fourth followed by a descending stepwise answer", "a short repeated-note call opening into a broad major sixth"],
+      "production": "Natural orchestral perspective, wide but controlled dynamics; no trailer braams or constant impact hits."
+    },
+    {
+      "id": "string-quartet", "name": "String Quartet Conversations", "family": "classical",
+      "tags": ["strings", "chamber", "counterpoint", "acoustic"], "energy": "calm", "bpm": [66, 92], "meter": "4/4",
+      "moods": ["intimate and inquisitive", "warmly spirited exchange"],
+      "leads": ["first violin cantabile", "singing viola"], "supports": ["second violin answering line", "delicate violin pizzicato"], "bass": "cello grounding the harmony with occasional melodic replies",
+      "harmony": {"simple": "A clear tonic-dominant conversation with a relative-minor contrast.", "layered": "Use suspensions and contrary motion so every voice participates in the harmony.", "intricate": "Develop imitative inner lines through a nearby-key episode, then resolve a chain of suspensions into the home theme."},
+      "rhythm": {"simple": "Regular phrases with gentle bow articulation.", "layered": "Alternate legato melody and light offbeat accompaniment without losing the phrase pulse.", "intricate": "Stagger imitative entries across beats and briefly double the theme's note lengths against a moving inner voice."},
+      "motifs": ["a short rising question followed by a longer falling answer", "a repeated note leading to a semitone sigh"],
+      "production": "Four discernible players in a small hall, natural bow texture, no synthetic string pad or drum kit."
+    },
+    {
+      "id": "progressive-rock", "name": "Progressive Rock Observatory", "family": "rock",
+      "tags": ["progressive-rock", "odd-meter", "guitar", "thematic"], "energy": "driving", "bpm": [104, 132], "meter": "7/8 (2+2+3)",
+      "moods": ["adventurous but tuneful", "confident exploration and discovery"],
+      "leads": ["sustaining electric guitar", "rounded analog synthesizer"], "supports": ["electric piano chord movement", "clean rhythm guitar arpeggios"], "bass": "articulate electric bass reinforcing the 2+2+3 grouping",
+      "harmony": {"simple": "A modal riff with a strong tonal center and a contrasting major chord.", "layered": "Move bass notes under a recurring upper riff and introduce a lyrical relative-major passage.", "intricate": "Reharmonize the theme through common-tone mediants and contrary-motion bass, keeping its rhythmic identity intact."},
+      "rhythm": {"simple": "A stable seven-eighth groove grouped 2+2+3.", "layered": "Let drums vary the last three eighths while bass keeps the seven-eighth cycle clear.", "intricate": "Superimpose a short three-note lead accent cycle over repeated 2+2+3 bars, resolving the ensemble at each main section."},
+      "motifs": ["a rising fourth answered by a compact descending run", "a clipped three-note riff expanded into a sustained melody"],
+      "production": "Defined drums, articulate guitar sustain, dynamic instrumental separation; avoid relentless shredding."
+    },
+    {
+      "id": "post-rock", "name": "Post-Rock Open Roads", "family": "rock",
+      "tags": ["post-rock", "guitar", "atmospheric", "hopeful"], "energy": "steady", "bpm": [72, 96], "meter": "4/4",
+      "moods": ["patient hope growing in scale", "wide-open landscapes and forward resolve"],
+      "leads": ["clean delay guitar melody", "bowed electric-guitar line"], "supports": ["interlocking clean guitar arpeggios", "soft sustained piano chords"], "bass": "melodic bass moving in long supportive phrases",
+      "harmony": {"simple": "Open major and suspended chords over a repeating bass descent.", "layered": "Let upper guitar notes remain while the bass changes their harmonic meaning.", "intricate": "Build crossing guitar lines and a borrowed-minor detour, then recover the opening major color without simply increasing volume."},
+      "rhythm": {"simple": "An unhurried four-beat pulse with restrained toms.", "layered": "Interlock delayed eighth notes and a slow drum pattern, adding detail only at transitions.", "intricate": "Let one guitar phrase stretch across the bar while the other repeats a shorter cell; align them for the thematic return."},
+      "motifs": ["a rising three-note figure with a sustained last note", "a descending arpeggio answered by a single high harmonic"],
+      "production": "Wide guitar space, controlled reverb tails, clear bass; make contrast through orchestration rather than constant loud crescendos."
+    },
+    {
+      "id": "math-rock", "name": "Math Rock Sunroom", "family": "rock",
+      "tags": ["math-rock", "clean-guitar", "interlocking", "playful"], "energy": "driving", "bpm": [112, 140], "meter": "5/4 (3+2)",
+      "moods": ["bright intricate playfulness", "cheerful problem-solving energy"],
+      "leads": ["clean tapped guitar", "bell-like guitar harmonics"], "supports": ["a second clean guitar counterline", "short electric-piano punctuation"], "bass": "agile electric bass with a clear five-beat anchor",
+      "harmony": {"simple": "Bright added-ninth chords around one stable tonal center.", "layered": "Move suspended chord shapes through inversions while the melody retains a repeating top note.", "intricate": "Exchange chord tones between the guitars and use brief chromatic passing bass notes without abandoning the bright home key."},
+      "rhythm": {"simple": "A consistent five-beat groove grouped 3+2.", "layered": "Guitar answers emphasize the last two beats while drums preserve the five-beat cycle.", "intricate": "Stagger tapped cells across successive 3+2 bars, inserting coordinated rests before the ensemble reunites."},
+      "motifs": ["a high tapping figure answered an octave lower", "an ascending broken chord interrupted by a deliberate rest"],
+      "production": "Dry clean guitars, crisp but not oversized drums, audible rests and precise note separation."
+    },
+    {
+      "id": "psychedelic-folk", "name": "Psychedelic Folk Orchard", "family": "folk",
+      "tags": ["folk", "psychedelic", "acoustic", "pastoral"], "energy": "calm", "bpm": [68, 90], "meter": "6/8",
+      "moods": ["pastoral curiosity", "sun-dappled wonder with a playful edge"],
+      "leads": ["fingerpicked steel-string guitar", "warm wooden flute"], "supports": ["soft harmonium drones", "light mandolin tremolo"], "bass": "acoustic bass marking broad phrase changes",
+      "harmony": {"simple": "Open-string modal chords with a gentle major return.", "layered": "Let a ringing drone connect changing modal chords and a descending bass line.", "intricate": "Use a common-tone move into a neighboring mode, with contrary-motion fingerpicked voices returning to the opening drone."},
+      "rhythm": {"simple": "A gentle six-beat fingerpicking pattern with light hand percussion.", "layered": "Let the melody stretch across the rocking accompaniment while percussion marks only selected beats.", "intricate": "Alternate two-against-three accents between guitar and hand percussion, keeping the six-beat sway recognizable."},
+      "motifs": ["a small modal turn answered by a high open-string note", "a descending phrase with one unexpectedly bright raised note"],
+      "production": "Close acoustic strings, subtle tape movement, natural room; avoid a dense electric-rock wall."
+    },
+    {
+      "id": "bluegrass-trail", "name": "Bluegrass Trail", "family": "folk",
+      "tags": ["bluegrass", "acoustic", "strings", "uplifting"], "energy": "driving", "bpm": [104, 132], "meter": "4/4",
+      "moods": ["friendly shared momentum", "bright outdoor celebration"],
+      "leads": ["nimble mandolin", "lyrical fiddle"], "supports": ["rolling banjo", "steel-string guitar flatpicking"], "bass": "upright bass alternating roots and fifths",
+      "harmony": {"simple": "A clear major-key I-IV-V progression with a memorable refrain.", "layered": "Use passing diminished chords and a relative-minor turn while preserving the tune's open-string character.", "intricate": "Exchange melodic chord tones between fiddle and mandolin, with secondary-dominant turnarounds leading naturally back to the refrain."},
+      "rhythm": {"simple": "An even two-feel inside four beats with crisp offbeat chops.", "layered": "Interlock banjo rolls and offbeat mandolin chops, leaving room for fiddle pickups.", "intricate": "Shift roll accents across the beat and trade short syncopated lead answers, keeping the bass's two-feel steady."},
+      "motifs": ["a climbing major-pentatonic phrase with a quick descending answer", "a repeated pickup leading into a long open-string note"],
+      "production": "Acoustic ensemble around a close room perspective, crisp pick attack, no drum machine or orchestral pad."
+    },
+    {
+      "id": "highlife-guitar", "name": "Highlife Guitar Gathering", "family": "highlife",
+      "tags": ["highlife", "guitar", "interlocking", "sunlit"], "energy": "steady", "bpm": [100, 120], "meter": "4/4",
+      "moods": ["warm communal celebration", "light-footed optimism"],
+      "leads": ["bright clean electric guitar", "a concise trumpet melody"], "supports": ["a second interlocking guitar", "soft organ chord punctuations"], "bass": "melodic electric bass with buoyant anticipations",
+      "harmony": {"simple": "A bright major progression with a clear returning refrain.", "layered": "Let guitar inversions and melodic bass movement refresh a repeating major-key cycle.", "intricate": "Trade inner chord tones between the guitars and add a short relative-minor episode before a bright refrain return."},
+      "rhythm": {"simple": "A buoyant four-beat dance pulse with light bell and shaker.", "layered": "Interlock two complementary guitar figures around bell accents and bass anticipations.", "intricate": "Let a three-note guitar accent weave through the four-beat groove while the second guitar marks clear phrase boundaries."},
+      "motifs": ["a bright ascending guitar answer to a short descending call", "a repeated high note surrounded by nimble broken-chord figures"],
+      "production": "Clean guitars, open percussion, warm bass; maintain distinct ensemble roles rather than generic tropical effects."
+    },
+    {
+      "id": "desert-guitar", "name": "Desert Guitar Evening", "family": "desert-blues",
+      "tags": ["desert-blues", "guitar", "modal", "hypnotic"], "energy": "steady", "bpm": [82, 106], "meter": "6/8",
+      "moods": ["patient traveling momentum", "communal warmth under an open sky"],
+      "leads": ["dry electric guitar with expressive bends", "warm acoustic guitar single-note lines"], "supports": ["a second guitar drone figure", "light handclap and guitar answers"], "bass": "steady modal bass with small melodic deviations",
+      "harmony": {"simple": "A repeating modal center supported by open fifths.", "layered": "Let small changes in the guitar's modal notes color the drone without forcing frequent chord changes.", "intricate": "Develop two complementary modal lines, briefly shifting the bass pedal before returning to the original repeating figure."},
+      "rhythm": {"simple": "A rolling six-beat hand-percussion pulse.", "layered": "Interlock guitar pickups and handclaps around the unchanged six-beat cycle.", "intricate": "Trade two-against-three accents between guitars while the bass and percussion keep the repeating cycle grounded."},
+      "motifs": ["a bent note answered by a descending modal figure", "a repeated drone note opening into a short climbing phrase"],
+      "production": "Dry intimate guitars, tactile percussion, modest room ambience; preserve the hypnotic repetition without cinematic overlays."
+    },
+    {
+      "id": "balkan-chamber", "name": "Balkan Chamber Dance", "family": "balkan",
+      "tags": ["balkan", "odd-meter", "chamber", "dance"], "energy": "driving", "bpm": [108, 132], "meter": "7/8 (3+2+2)",
+      "moods": ["spirited precise celebration", "nimble communal dance"],
+      "leads": ["agile clarinet", "bright bowed violin"], "supports": ["accordion chord answers", "plucked acoustic strings"], "bass": "upright bass clearly marking the 3+2+2 grouping",
+      "harmony": {"simple": "A minor-mode melody with a strong dominant return.", "layered": "Use ornamental modal turns and a relative-major contrast while keeping the dance center clear.", "intricate": "Exchange chromatic approach notes and contrary-motion answers above a stable bass, with a short nearby-mode episode."},
+      "rhythm": {"simple": "Keep seven eighth notes clearly grouped 3+2+2.", "layered": "Let short accordion answers fill the gaps around the fixed 3+2+2 dance pattern.", "intricate": "Displace ornamented lead pickups across adjacent seven-eighth bars, with all instruments rejoining on the long first group."},
+      "motifs": ["an ornamented rising run ending in a clipped two-note answer", "a repeated high note resolving through a quick modal descent"],
+      "production": "Close acoustic ensemble, articulate ornaments, clear dance accents; no generic cinematic brass layer."
+    },
+    {
+      "id": "dub-reggae", "name": "Dub Reggae Courtyard", "family": "reggae",
+      "tags": ["dub", "reggae", "bass", "spacious"], "energy": "calm", "bpm": [68, 84], "meter": "4/4",
+      "moods": ["easy communal warmth", "unhurried playful resilience"],
+      "leads": ["melodica", "short muted-trumpet phrases"], "supports": ["dry offbeat guitar chops", "soft bubble-organ figures"], "bass": "deep melodic bass taking a prominent but uncluttered role",
+      "harmony": {"simple": "A major-key two-chord vamp with a clear melodic home.", "layered": "Use a relative-minor response and small upper-voice changes over the recurring bass line.", "intricate": "Reharmonize selected bass notes with suspended upper chords, returning to the original major vamp after a brief minor-color bridge."},
+      "rhythm": {"simple": "A relaxed one-drop pattern and light offbeat guitar.", "layered": "Interlock organ bubbles, guitar chops, and occasional percussion answers around the one-drop.", "intricate": "Use short delayed melodic answers across the bar and selective drum dropouts, preserving the underlying one-drop feel."},
+      "motifs": ["a simple three-note call answered by a delayed final note", "a rising fourth followed by a playful repeated-note descent"],
+      "production": "Warm prominent bass, controlled spring reverb and tape echoes, deliberate mutes; delays must not swallow the groove."
+    },
+    {
+      "id": "tango-nuevo", "name": "Tango Nuevo Crossroads", "family": "tango",
+      "tags": ["tango", "chamber", "dramatic", "counterpoint"], "energy": "steady", "bpm": [104, 126], "meter": "4/4",
+      "moods": ["poised dramatic conversation", "restless movement resolving into warmth"],
+      "leads": ["expressive bandoneon", "dark lyrical violin"], "supports": ["articulated piano chords", "clean classical-guitar figures"], "bass": "double bass alternating grounded attacks with lyrical connecting lines",
+      "harmony": {"simple": "A clear minor-key theme with a bright major contrast.", "layered": "Use chromatic bass approaches, extended dominant chords, and suspended resolutions beneath the melody.", "intricate": "Develop contrary-motion counterlines through a chromatic mediant passage, then bring the theme back over a reharmonized descending bass."},
+      "rhythm": {"simple": "A poised tango pulse with deliberate pauses.", "layered": "Alternate a 3+3+2 accent pattern with broad sustained answers inside the four-beat meter.", "intricate": "Trade the 3+3+2 accents between piano and bandoneon, using coordinated silences before the ensemble's decisive return."},
+      "motifs": ["a sharp repeated-note call opening into a long descending phrase", "a chromatic pickup followed by a wide expressive leap"],
+      "production": "Close chamber detail, expressive bellows and bow texture, punchy acoustic attacks with natural dynamic contrast."
+    }
+  ]
+}

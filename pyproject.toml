@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "myradio"
+version = "0.3.2"
+description = "A local-first radio studio with persistent playout and shared agent controls"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+myradio-prompts = "myradio.prompts.__main__:main"
+myradio = "myradio.server:main"
+myradio-mcp = "myradio.mcp:main"
+myradio-backup = "myradio.backup:main"
+
+[tool.setuptools.packages.find]
+include = ["myradio*"]
+
+[tool.setuptools.package-data]
+"myradio.prompts" = ["data/*.json"]
+"myradio" = ["web/*.html", "web/*.js", "web/*.css"]
+

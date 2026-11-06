@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "catalog_version": "1.1.0",
+  "arrangements": [
+    {
+      "id": "ground-and-variations", "name": "Ground and Variations",
+      "sections": {
+        "simple": ["State a short repeating foundation figure and a plain tune above it.", "Repeat the foundation unchanged while the tune is varied in rhythm.", "Return to the plain tune over the foundation and close on its last note."],
+        "layered": ["Establish a short repeating foundation figure alone, then add a plain tune.", "Keep the foundation unchanged while the upper line is varied in rhythm and register.", "Let an inner voice take a new countermelody above the same foundation.", "Return to the plain tune, thin the texture, and let the foundation sound once more by itself."],
+        "intricate": ["Expose the foundation figure alone so its length and shape are unmistakable.", "Add a plain tune, then vary it with ornamented and sparse versions on alternate passes.", "Alter one note of the foundation figure per pass and lighten the upper line to compensate.", "Pass the foundation to a middle voice while a new line takes the lowest register.", "Restore the original foundation, resolve the upper variations into the plain tune, and end on the foundation's last note."]
+      },
+      "development": {"simple": "Vary one thing per pass, such as rhythm, register or ornament, never all three at once.", "layered": "Treat each pass as a new variation that keeps the same underlying length.", "intricate": "Let each pass reveal a different relationship to the foundation figure, from consonant to suspended to displaced, while the foundation's length never changes."},
+      "dynamics": "Add voices and widen registers only as far as the chosen texture allows, then withdraw them before the end; interest comes from relationships, not volume.",
+      "ending": "End on the foundation's last note after the upper voices have resolved, and let it decay naturally."
+    },
+    {
+      "id": "verse-and-refrain", "name": "Verse and Refrain",
+      "sections": {
+        "simple": ["Present a verse: a plain tune with open space after each phrase.", "Present a refrain that is easier to remember and sits a little higher.", "Repeat the refrain with a short closing tag."],
+        "layered": ["Open with a short instrumental setting of the refrain's first phrase.", "Present a verse with open space after each phrase.", "Lift the harmony toward the refrain with a rising approach.", "Present the refrain at its fullest, then return to a reduced verse.", "Close with the refrain and a short tag."],
+        "intricate": ["Hint at the refrain with a short opening statement of its melody.", "Present the first verse with generous space between phrases.", "Raise the harmony into the refrain with a rising approach, and state the refrain plainly.", "Bring back the second verse with a changed inner voice and a hint of the refrain's contour.", "Offer a short bridge that borrows the refrain's last interval in a different harmonic setting.", "Return to the refrain with its final phrase extended, and close with the opening hint."]
+      },
+      "development": {"simple": "Make the refrain the easiest part to remember and keep the verse plainer.", "layered": "Let the verse prepare the refrain's rising shape, so the refrain feels answered rather than added.", "intricate": "Reuse the refrain's opening interval inside the verse's last phrase, then show how the refrain grows from it, so the return of the refrain feels inevitable."},
+      "dynamics": "Keep the verse conversational and let the refrain feel open, shaped by register and harmony rather than a simple rise in loudness.",
+      "ending": "Finish the final refrain with a clear closing phrase and a short tag, then let the sound decay without starting another cycle."
+    },
+    {
+      "id": "shrinking-exchanges", "name": "Shrinking Exchanges",
+      "sections": {
+        "simple": ["Trade long phrases between the lead and the accompaniment.", "Trade shorter phrases, then shorter again.", "Play together for a final short phrase."],
+        "layered": ["Trade four-bar phrases between the lead and an answering voice.", "Shorten the exchanges to two bars each.", "Shorten again to single bars so the voices answer almost at once.", "Merge the voices into one shared closing phrase."],
+        "intricate": ["State a four-bar phrase and let an answering voice reply with the same shape inverted.", "Trade two-bar fragments, each borrowing the last notes of the previous reply.", "Compress to one-bar fragments with overlapping entrances.", "Dissolve the exchanges into a single line split between the two voices, note by note.", "Restore a slow, shared phrase that completes the opening statement."]
+      },
+      "development": {"simple": "Make each exchange shorter than the last while the tune stays recognizable.", "layered": "Let every reply echo the last notes of the call, so the shortening feels like a conversation closing in.", "intricate": "Shorten the exchanges in steps while keeping the phrase's contour intact, then merge the voices into one composite line that the ear recognizes as the opening statement."},
+      "dynamics": "Keep both voices at a similar level so the shortening exchanges, not volume, create the excitement.",
+      "ending": "Let the merged phrase complete its cadence together and leave a short silence before the sound decays."
+    },
+    {
+      "id": "canon-and-release", "name": "Canon and Release",
+      "sections": {
+        "simple": ["State a simple melody alone.", "Repeat it while a second voice follows a bar behind.", "Release the imitation and finish together."],
+        "layered": ["State a short melody alone over a quiet foundation.", "Add a second voice that follows the melody a bar later.", "Add a third entrance in a different register, still following the same melody.", "Release the imitation, gather the voices, and close on a shared cadence."],
+        "intricate": ["State a melody designed to fit with itself when overlapped.", "Add a second voice one bar later, a fifth above the first.", "Add a third voice an octave below the first, entering two bars after the second.", "Tighten the entries by half a bar so the voices crowd the melody without hiding it.", "Release the imitation and let all voices settle on one closing chord tone."]
+      },
+      "development": {"simple": "Keep the melody the same in each voice so the overlap is easy to hear.", "layered": "Let each new voice begin in a different register while following the same contour.", "intricate": "Move the entry points closer together as the piece advances, so the melody overlaps itself more tightly, then release the voices."},
+      "dynamics": "Keep every voice at a similar level so the imitation stays audible; build interest through the number of voices, not volume.",
+      "ending": "Let the voices release one by one, leaving the melody's last note on its own before a clean decay."
+    },
+    {
+      "id": "expanding-phrases", "name": "Expanding Phrases",
+      "sections": {
+        "simple": ["Open with two-bar phrases.", "Lengthen them to four-bar phrases.", "Return to short phrases for the close."],
+        "layered": ["Open with two-bar phrases that finish on an open, unfinished note.", "Extend each phrase to three bars by adding a gentle sequence.", "Let the phrases reach four bars with a clear rest at the end of each.", "Contract to two-bar phrases and resolve the open note."],
+        "intricate": ["State a two-bar phrase that ends on an unresolved note.", "Repeat it with a one-bar extension that answers the unresolved note.", "Extend again to a four-bar phrase, adding a counterline in the gaps.", "Let the longest phrase span six bars, then split it into two three-bar halves that answer each other.", "Contract to a single two-bar phrase that resolves the original unresolved note."]
+      },
+      "development": {"simple": "Lengthen one phrase at a time while the opening idea stays recognizable.", "layered": "Let each extension answer the previous phrase's ending rather than repeat it.", "intricate": "Make each extension answer the last open note in a new way, then show that the long phrases are still one idea by folding them back into the opening two bars."},
+      "dynamics": "Let the growing phrases create breadth while the overall level stays steady, and shape the line through space and register.",
+      "ending": "Resolve the very first unresolved note and leave a short rest before the sound decays."
+    },
+    {
+      "id": "slow-tide", "name": "Slow Tide",
+      "sections": {
+        "simple": ["Rise gently from a quiet opening to a fuller middle.", "Pull back to a spare, reflective passage.", "Rise once more, a little higher, and settle."],
+        "layered": ["Begin with a quiet motif and a single supporting voice.", "Swell over several phrases to a fuller, warmer middle.", "Recede to a spare version of the motif with the harmony held still.", "Swell a second time, a little higher than before, then settle."],
+        "intricate": ["Present the motif in its quietest, most exposed form.", "Add voices one at a time, each entering on the motif's last note, as the first wave rises.", "At the first crest, hold the harmony still and let the motif's rhythm thin out.", "Recede through a spare passage that reharmonizes the motif softly.", "Rise a second time to a slightly higher crest than the first, then withdraw the voices in the reverse order they entered."]
+      },
+      "development": {"simple": "Repeat the same shape twice, the second time slightly larger.", "layered": "Let the second swell reuse the first swell's shape in a higher register.", "intricate": "Make the two waves the same shape at different sizes, with the second wave answering the harmony the first left unresolved."},
+      "dynamics": "Shape two slow waves through register and the number of voices; the second crest may be broader but never abrupt or harsh.",
+      "ending": "Withdraw the voices in reverse order and let the motif's last note decay naturally."
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "catalog_version": "1.0.0",
+  "arrangements": [
+    {
+      "id": "theme-and-return", "name": "Theme and Return",
+      "sections": {
+        "simple": ["State a short memorable theme over a clear accompaniment.", "Offer a contrasting answer with lighter accompaniment.", "Return to the opening theme and settle into a complete ending."],
+        "layered": ["Introduce the theme with only the lead and a quiet harmonic foundation.", "Repeat it with a complementary answering line.", "Move into a contrasting middle passage while preserving one recognizable fragment.", "Return to the theme with a changed inner voice, then let the ensemble settle."],
+        "intricate": ["Present the theme plainly so its shape is unmistakable.", "Develop a fragment through sequence while an independent answer emerges below it.", "Let the middle passage explore the palette's contrasting harmonic color.", "Rebuild the opening theme above the developed answering line.", "Resolve the harmonic tension and reduce the music to the opening gesture."]
+      },
+      "development": {"simple": "Keep the main tune intact and vary only its final answer.", "layered": "Pass a short fragment between registers without losing the tune.", "intricate": "Combine a shortened motif with a longer answering line; make the final return recognizably related, not a new unrelated tune."},
+      "dynamics": "Begin intimate, broaden through the middle, and make the return warm rather than simply louder.",
+      "ending": "Finish with the opening gesture over a resolved home harmony and allow its final resonance to decay."
+    },
+    {
+      "id": "call-and-response", "name": "Call and Response",
+      "sections": {
+        "simple": ["The lead poses a short question with a clear rest afterward.", "The accompaniment answers in the space without talking over the lead.", "Combine the question and answer into one final phrase."],
+        "layered": ["State a short call and a distinct complementary answer.", "Trade their registers and slightly extend the answering phrase.", "Let the answer briefly become the main line while the call supports it.", "Bring both roles together for a concise final exchange."],
+        "intricate": ["Establish two contrasting but related phrase shapes.", "Trade them between lead and accompaniment with staggered entrances.", "Invert the contour of the answer while the call retains its original rhythm.", "Overlap the phrases briefly as clear two-part counterpoint.", "Restore space between the voices and finish with their shared resolution."]
+      },
+      "development": {"simple": "Repeat the question but change the last two notes of each answer.", "layered": "Let the answer borrow one interval from the call, gradually revealing their relationship.", "intricate": "Build complementary lines from the same motif, using contrary motion and deliberate rests rather than simultaneous virtuoso runs."},
+      "dynamics": "Shape each exchange like a friendly conversation, allowing the answering voice equal presence.",
+      "ending": "Unite the two phrases in a short final answer, then leave a clean sustained resolution."
+    },
+    {
+      "id": "gradual-bloom", "name": "Gradual Bloom",
+      "sections": {
+        "simple": ["Begin with a small melodic cell and a quiet foundation.", "Introduce a complementary layer and reveal the full tune.", "Remove the added layer and return to the opening idea."],
+        "layered": ["Expose a single recurring cell before the accompaniment enters.", "Introduce supporting parts one at a time, each with a distinct role.", "Reveal a fuller melodic statement above the interlocking texture.", "Withdraw the parts in a different order, leaving a transformed opening cell."],
+        "intricate": ["Begin with an incomplete fragment and generous space.", "Introduce a second line that fills the fragment's rests.", "Change one inner note at each return, revealing the palette's deeper harmonic color.", "Let the complete theme emerge from the interacting fragments.", "Thin the texture while retaining the evolved harmony, then resolve to the original seed."]
+      },
+      "development": {"simple": "Add one note to the cell before returning to its original shape.", "layered": "Expand the cell into a longer phrase while keeping its first interval recognizable.", "intricate": "Let small changes accumulate into a new full phrase, then show how that phrase contains the original motif."},
+      "dynamics": "Grow through register, articulation, and instrumental color; respect the chosen density instead of stacking every part.",
+      "ending": "Let the last supporting voice fall away before the original fragment resolves on its own."
+    },
+    {
+      "id": "theme-and-variations", "name": "Theme and Variations",
+      "sections": {
+        "simple": ["State an uncomplicated theme with a clear cadence.", "Play a variation that changes the register and final phrase.", "Restate the theme with a short closing tag."],
+        "layered": ["Introduce a plainly phrased theme.", "Vary the rhythm while keeping the melodic outline.", "Keep the rhythm but change the harmonic support within the palette.", "Return to the original theme carrying one detail from each variation."],
+        "intricate": ["State the theme with its characteristic rhythm exposed.", "Shorten its notes into an agile variation above steady accompaniment.", "Lengthen the same theme above a moving counterline.", "Reharmonize the contour using the palette's intricate harmonic vocabulary.", "Synthesize the variations in a clear reprise rather than adding a disconnected final section."]
+      },
+      "development": {"simple": "Change one musical property at a time so the family resemblance stays audible.", "layered": "Separate rhythmic variation from harmonic variation before combining their best details.", "intricate": "Use rhythmic diminution, augmentation, and selective reharmonization; preserve the motif's identifying intervals throughout."},
+      "dynamics": "Give each variation a distinct articulation or register, not merely a higher volume.",
+      "ending": "End with the simplest version of the theme and an intentional cadence, not a loop cut."
+    },
+    {
+      "id": "interlocking-lines", "name": "Interlocking Lines",
+      "sections": {
+        "simple": ["Introduce one repeating phrase with clear gaps.", "Add an answering line that occupies those gaps.", "Bring both lines together for a short ending."],
+        "layered": ["Expose a short repeating line on its own.", "Introduce a complementary line in a different register.", "Let the two parts exchange their rhythmic roles.", "Reunite their opening shapes above a settled harmonic foundation."],
+        "intricate": ["Present the primary line without competing detail.", "Add a delayed imitation whose rests reveal the primary line.", "Let the second line move in contrary motion while the first is shortened.", "Exchange foreground and background roles without losing the underlying pulse.", "Align the two lines at the return and resolve their final suspension together."]
+      },
+      "development": {"simple": "Use two clearly related lines with different rhythms.", "layered": "Let a fragment migrate between the two lines while each keeps its own register.", "intricate": "Use imitation and invertible two-part counterpoint in short passages; clarity matters more than the number of notes."},
+      "dynamics": "Keep the foreground line clear and soften the other; swap emphasis as their roles change.",
+      "ending": "Let the lines converge on a consonant interval, then resolve to the home harmony."
+    },
+    {
+      "id": "rondo-path", "name": "Rondo Path",
+      "sections": {
+        "simple": ["Establish a memorable refrain.", "Visit a short contrasting episode.", "Return to the refrain with a conclusive closing phrase."],
+        "layered": ["State the refrain with an identifiable opening gesture.", "Visit an episode using a different register and lighter accompaniment.", "Bring the refrain back with a small answering figure.", "Offer a brief second episode before one final refrain and close."],
+        "intricate": ["Present the refrain clearly and compactly.", "Develop a rhythmic fragment in the first contrasting episode.", "Return to the refrain over changed inner voices.", "Let a second episode explore the palette's contrasting harmonic colors.", "Return with both episode ideas woven beneath the recognizable refrain, then close."]
+      },
+      "development": {"simple": "Keep the refrain recognizable on every return.", "layered": "Borrow the refrain's final interval to connect each episode to the home theme.", "intricate": "Make episodes develop different aspects of one motif, then integrate their discoveries into the final refrain."},
+      "dynamics": "Make episodes distinct by touch and register while keeping the refrain's emotional identity constant.",
+      "ending": "Give the last refrain a shortened final answer and a decisive natural cadence."
+    },
+    {
+      "id": "arch-form", "name": "Arch Form",
+      "sections": {
+        "simple": ["Begin with a restrained theme.", "Open into a contrasting central passage.", "Return to the opening material with a calmer closing gesture."],
+        "layered": ["Introduce an intimate opening idea.", "Move into a more active related passage.", "Reveal a broad central statement of the motif.", "Retrace the related passage and return to the opening, now gently changed."],
+        "intricate": ["State a spare outer theme.", "Develop a contrasting inner idea from the outer theme's intervals.", "Combine both ideas in a central passage with the richest harmonic movement.", "Return through the inner idea with its roles reversed.", "Restate the outer theme with one transformed detail and a fully resolved close."]
+      },
+      "development": {"simple": "Let the final theme retain one small detail learned in the middle.", "layered": "Connect the central statement to the outer sections through shared intervals.", "intricate": "Mirror the sequence of ideas without mechanically reversing the audio; make the return feel like a changed perspective."},
+      "dynamics": "Shape a single broad arch through color and register, with a measured center and an intimate close.",
+      "ending": "Close on the opening theme's last interval, now supported by a settled final chord."
+    },
+    {
+      "id": "pedal-and-release", "name": "Pedal and Release",
+      "sections": {
+        "simple": ["Build a small melody over a stable bass pedal.", "Allow the bass to move and reveal a contrasting chord.", "Return to the original pedal and resolve the melody."],
+        "layered": ["Establish a pedal and a recurring upper motif.", "Change the upper harmonies while the bass remains stable.", "Release the pedal into a moving bass phrase.", "Return to the opening foundation with a more complete melodic answer."],
+        "intricate": ["Expose the pedal and a simple upper line.", "Let changing inner voices create suspensions against the fixed bass.", "Pass the pedal's role briefly to an inner voice while the bass moves.", "Resolve the accumulated dissonance through the palette's home harmony.", "Return to the original pedal as a calm memory and finish the motif."]
+      },
+      "development": {"simple": "Keep the recurring motif short and make its final resolution clear.", "layered": "Change the meaning of the motif by moving the chords beneath it.", "intricate": "Use the motif as a common-tone thread through shifting harmony; tension must come from voice leading rather than loudness."},
+      "dynamics": "Build expectation with harmonic color and controlled suspensions, keeping the bass warm and uncluttered.",
+      "ending": "Resolve the suspended upper notes before allowing the final bass tone to decay."
+    },
+    {
+      "id": "register-relay", "name": "Register Relay",
+      "sections": {
+        "simple": ["Present the tune in a comfortable middle register.", "Answer it in a higher or lower register.", "Return to the original range for a complete closing phrase."],
+        "layered": ["Introduce a tune in the lead's middle range.", "Pass a fragment to a supporting voice in a contrasting register.", "Let the lead answer while the support continues a simplified fragment.", "Reunite the roles in the original range and close."],
+        "intricate": ["State the motif with a clear register and articulation.", "Transfer its contour to a contrasting voice without changing its identity.", "Let the new voice augment the motif while the original voice adds a short counterline.", "Exchange the roles again over the palette's developed harmony.", "Restore the opening register with the best detail from the relay and resolve."]
+      },
+      "development": {"simple": "Keep the melody intact while changing its register.", "layered": "Let each register add one distinct ending to the same phrase.", "intricate": "Explore register, articulation, and note length as variations; avoid introducing extra instruments merely to make the relay busier."},
+      "dynamics": "Balance the voices so changes of register remain gentle and intelligible.",
+      "ending": "Return to the opening range and let the melody finish with a quiet supporting response."
+    },
+    {
+      "id": "contrast-bridge", "name": "Contrast Bridge",
+      "sections": {
+        "simple": ["Establish a clear tune and groove.", "Introduce a brief bridge with contrasting accompaniment.", "Restore the opening tune and give it a final answer."],
+        "layered": ["Introduce the tune over a recognizable groove.", "Repeat it with a complementary inner line.", "Use a bridge to change harmonic color and thin the texture.", "Restore the groove with a more complete version of the opening melody."],
+        "intricate": ["State the main theme with a clear rhythmic identity.", "Develop its ending into a short secondary idea.", "Build a bridge from that idea using the palette's contrasting harmonic color.", "Reconnect through a shared interval rather than an abrupt unrelated cut.", "Restate the opening theme above a transformed inner line and close decisively."]
+      },
+      "development": {"simple": "Link the bridge to the main tune with one shared interval.", "layered": "Let the bridge reveal a longer answer to the opening motif.", "intricate": "Use the motif's final notes as the bridge's first notes, then reinterpret the bridge's ending as the main theme's pickup."},
+      "dynamics": "Create bridge contrast with space and harmonic color, not an obligatory loud build or drum drop.",
+      "ending": "Finish the final main-theme phrase without starting another cycle, then leave a natural tail."
+    },
+    {
+      "id": "evolving-cycle", "name": "Evolving Cycle",
+      "sections": {
+        "simple": ["Introduce a repeating harmonic cycle and a small hook.", "Vary the hook's ending while the cycle continues.", "Break the repetition with a deliberate closing cadence."],
+        "layered": ["Establish a short cycle with distinct bass and lead roles.", "Change one inner voice on each return.", "Let the hook expand into a longer melody above the familiar cycle.", "Reduce the pattern and resolve it as a complete composition."],
+        "intricate": ["Present a simple cycle with a memorable fragment.", "Change one rhythmic accent at a time without obscuring the underlying meter.", "Introduce the palette's richer voice leading while preserving a shared upper note.", "Reveal a longer phrase that spans several cycles.", "Reconcile the evolved phrase with the opening fragment and end intentionally."]
+      },
+      "development": {"simple": "Keep repetition useful by varying only one ending at a time.", "layered": "Make each cycle change a specific note, register, or answering gesture.", "intricate": "Develop long-range phrasing across the cycle; variation must alter musical relationships, not just automate filters."},
+      "dynamics": "Use small purposeful changes in articulation and register rather than an endless rise in intensity.",
+      "ending": "Interrupt the expectation of another loop with a clear final answer and a resolved sustained chord."
+    },
+    {
+      "id": "miniature-journey", "name": "Miniature Journey",
+      "sections": {
+        "simple": ["Introduce a compact opening idea.", "Explore a contrasting answer derived from that idea.", "Bring the opening back in a changed but recognizable form and close."],
+        "layered": ["Introduce a quiet opening gesture with room to grow.", "Transform it into a more mobile central passage.", "Pause on a sparse reflection of the original gesture.", "Join the mobile and reflective ideas in a concise final statement."],
+        "intricate": ["Present an economical motif with a distinctive interval.", "Turn it into a moving sequence using the palette's rhythmic vocabulary.", "Recast the same intervals as a slower reflective passage.", "Bring the active and reflective versions into a short, clear dialogue.", "Conclude with a transformed opening gesture whose final harmony feels earned."]
+      },
+      "development": {"simple": "Tell one small musical story rather than chaining unrelated sections.", "layered": "Connect every section through a recurring interval and an audible change of role.", "intricate": "Transform the motif's rhythm and harmonic setting across the journey while preserving enough contour for the ending to feel inevitable."},
+      "dynamics": "Make the emotional arc perceptible through phrasing, rests, and register within the selected energy level.",
+      "ending": "Complete the transformed opening gesture and allow a clean natural decay, with no abrupt cutoff."
+    }
+  ]
+}
