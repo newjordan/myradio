@@ -237,3 +237,5 @@ body[data-active-view="start"] .welcome{display:none}
 .ob-render-meta span:first-child{font:13px ui-monospace,monospace;color:var(--cream);font-variant-numeric:tabular-nums}
 @media(max-width:600px){.ob-steps{gap:6px}.ob-steps li{font-size:12px;flex-direction:column;align-items:flex-start;gap:4px}.ob-panel h3{font-size:21px}.ob-model,.ob-voice{grid-template-columns:auto minmax(0,1fr)}.ob-size{grid-column:2}}
 @media(prefers-reduced-motion:reduce){.ob-stages li.busy::before{box-shadow:none}}
+
+.x-pretend{margin-top:12px;width:auto;font-size:13px;border-style:dashed}

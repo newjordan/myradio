@@ -178,3 +178,21 @@ dialog.menu .lock{margin:4px 24px 20px;width:calc(100% - 48px)}
  .sheet-top{padding-top:calc(10px + env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
  .sheet-body{padding:16px max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
  .sheet .operator{height:calc(100dvh - 110px)}.brand{font-size:1.45rem}}
+/* ===== Connect your agent ===== */
+.connect .section-heading button{width:auto}
+.kit-options{display:flex;flex-wrap:wrap;gap:6px 22px;border:0;padding:0;margin:0 0 12px;min-width:0}
+.kit-options legend{font-size:13px;color:var(--muted);padding:0;margin-bottom:6px}
+.kit-options .check{margin:0;min-height:44px;font-size:14px}
+.kit-text{margin:0;max-height:min(46dvh,420px);overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12.5px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#dbe6cf;background:#121823;border:1px solid #3a4252;border-radius:8px;padding:14px 16px}
+.kit-text:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.kit-copied{min-height:1.4em;margin:8px 0 0;font-size:13px;color:var(--accent)}
+.link-status{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.link-status li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--border)}
+.link-status li:first-child{border-top:0}
+.link-status .ico{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;border:1px solid #6b7488;color:var(--muted)}
+.link-status li.ok .ico{border-color:var(--accent);color:var(--accent);background:#2c3a2a}
+.link-status li.stale .ico{border-color:var(--cream);color:var(--cream)}
+.link-status strong{display:block;font-size:14px}.link-status small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.stream-parsed{min-height:1.4em;font-size:13px;color:var(--muted);margin:-6px 0 12px;overflow-wrap:anywhere}.stream-parsed.error{color:var(--error)}
+.connect code{font:12px ui-monospace,monospace;color:var(--cream);overflow-wrap:anywhere}
+.deck-link{display:block;color:var(--accent);text-decoration:none}.deck-link:hover{text-decoration:underline}

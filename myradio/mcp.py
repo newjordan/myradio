@@ -15,13 +15,14 @@ from .chat import tools
 
 
 class Client:
-    def __init__(self, port, token):
+    def __init__(self, port, token, client="mcp"):
         self.base = f"http://127.0.0.1:{port}"
         self.token = token
+        self.client = client   # tells the studio an agent is using the station, so its Connect panel can show it
         self.http = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
     def request(self, path, body=None):
-        headers = {"X-Myradio-Token": self.token}
+        headers = {"X-Myradio-Token": self.token, "X-Myradio-Client": self.client}
         if body is not None:
             headers["Content-Type"] = "application/json"
         req = urllib.request.Request(self.base + path, None if body is None else json.dumps(body).encode(), headers)

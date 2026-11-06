@@ -99,6 +99,10 @@ The endpoint must support OpenAI-compatible `/chat/completions` and function too
 
 The model can inspect state and propose station operations, but **proposals do not run until you approve each action** in the chat panel. Proposals expire after two minutes and a new message invalidates outstanding proposals. This prevents a hallucinated tool call from silently changing playout. The model cannot generate audio, browse, or run programs. It can propose starting/stopping a previously configured broadcast, with the same per-action approval. Never paste source passwords into chat. It is request-driven, not an autonomous background agent.
 
+### Connect your agent in one copy
+
+In the studio, open **☰ Menu → Connect your agent** (the desk also offers it until a stream is saved). Press **Copy** and paste the text into Claude Code, Codex or any agent with MCP on this computer. The text holds a ready MCP configuration with this computer's real Python, myradio folder, data folder and port, a DJ brief (keep 3 to 6 carts queued, plan the flow with `queue_add`, `queue_move`, `queue_remove` and `transport_skip`, queue the station's spoken carts about every 15 minutes, never delete audio or go live unless asked), and optional steps for setting up the outbound stream. It contains nothing secret: the adapter reads the control code from the data folder. The panel shows when your agent last used the station and what it did, and whether a stream is saved. Spoken DJ lines need the DJ voice, which is not connected yet; until then the agent programs the station and queues existing spoken carts.
+
 ### Connect your existing MCP agent
 
 Start the station, then configure your MCP-capable agent with a stdio server:
@@ -171,6 +175,8 @@ The dashboard’s **Broadcast to the world** card sends the same station clock t
 3. Save, import audio you have broadcast rights to, and start the station locally. Review the displayed saved destination. **Go live…** requires a separate confirmation and may make your station public. Saved configuration and local start never connect automatically.
 4. Verify audio through your host’s public listener player. The dashboard shows source state, bytes sent, connections, retries and a sanitized failure reason—not listener counts or delivery confirmation. The mount is sent with `Ice-Public: 0` (no directory-listing request); that does **not** make its listener URL private.
 5. **Disconnect broadcast** leaves local playout running. **Stop station** disconnects both. Locking/closing the dashboard leaves the service and an existing broadcast running. A service restart never resumes outbound transmission automatically.
+
+From a terminal or an agent, `python3 -m myradio.connect --data-dir <data folder> --port <port> stream --url https://host:8443/live.mp3` saves the destination with the password taken from `MYRADIO_SOURCE_PASSWORD` (or `--password-file`), never from the command line, and never prints it; `... status` shows what is saved. Set the variable from wherever the password already is, not by typing it into a command, so it never lands in an agent's chat. The studio's **Connect your agent** sheet also takes a pasted `icecast://source:PASSWORD@host:port/mount` address. Saving never goes live.
 
 Credentials are atomically saved with mode 0600 in `broadcast.json`, not exposed in agent status, encoder arguments, encoder environment, or encoder diagnostics. Your authenticated browser can review the destination URL but never retrieves the saved password. Local OS-account access is not isolated; protect backups. Change credentials only while disconnected. They currently cannot be forgotten via the UI; stop the service and remove `broadcast.json` to forget them.
 

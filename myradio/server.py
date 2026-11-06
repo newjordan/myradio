@@ -13,7 +13,9 @@ import re
 import secrets
 import socket
 import struct
+import sys
 import threading
+import time
 from urllib.parse import parse_qs, urlsplit
 import webbrowser
 
@@ -42,7 +44,19 @@ class Server(ThreadingHTTPServer):
         self.session_lock = threading.Lock()
         self.slots = threading.BoundedSemaphore(32)
         self.upload_slot = threading.BoundedSemaphore(1)
+        self.agent_lock = threading.Lock()
+        self.agent_seen = {"seen_at": None, "last": None}
         super().__init__(address, Handler)
+
+    def note_agent(self, what):
+        """Remember when an external agent (the MCP adapter or the connect command) last used the station, and for what."""
+        what = what if isinstance(what, str) and re.fullmatch(r"[a-z][a-z0-9_.\-/]{0,59}", what) else "request"
+        with self.agent_lock:
+            self.agent_seen = {"seen_at": time.time(), "last": what}
+
+    def agent_status(self):
+        with self.agent_lock:
+            return dict(self.agent_seen)
 
     def process_request(self, request, client_address):
         if not self.slots.acquire(blocking=False):
@@ -158,6 +172,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self.panel_asset(asset.group(1))
             if not self.authorized():
                 return self.respond(401, {"error": "Unlock with the launch code from your launcher."})
+            if self.agent_client():
+                self.server.note_agent("status" if path == "/api/status" else path.removeprefix("/api/"))
+            if path == "/api/connect":
+                return self.respond(200, self.connect_info())
             if path == "/api/operations":
                 return self.respond(200, self.server.station.operations())
             if path == "/api/panels":
@@ -169,7 +187,7 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/broadcast":
                 return self.respond(200, self.server.station.broadcast.settings_summary())
             if path == "/api/status":
-                return self.respond(200, self.server.station.status())
+                return self.respond(200, {**self.server.station.status(), "agent_link": self.server.agent_status()})
             if path == "/stream.wav":
                 return self.stream()
             return self.respond(404, {"error": "Not found."})
@@ -220,6 +238,8 @@ class Handler(BaseHTTPRequestHandler):
             if path.startswith("/api/x/"):
                 return self.extension_route("POST", path)
             body = self.json_body()
+            if self.agent_client():
+                self.server.note_agent(body.get("operation") if path == "/api/action" else path.removeprefix("/api/"))
             if path == "/api/agent":
                 result = self.server.chat.configure(body)
             elif path == "/api/broadcast":
@@ -245,6 +265,17 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             self.close_connection = True
             self.respond(500, {"error": "The station could not complete that request. No retry was performed; inspect status before retrying."})
+
+    def agent_client(self):
+        return self.headers.get("X-Myradio-Client", "") in ("mcp", "connect")
+
+    def connect_info(self):
+        """What the studio's Connect your agent panel needs to write a ready-to-paste MCP setup for this computer. No secrets:
+        agents read the private control code from the data folder themselves."""
+        station = self.server.station
+        return {"python": sys.executable, "package_dir": str(Path(__file__).resolve().parent.parent), "data_dir": str(station.directory),
+                "port": self.server.server_address[1], "station": station.status()["station"].get("name", "My radio"),
+                "agent_link": self.server.agent_status()}
 
     def panel_asset(self, name):
         """Serve a UI panel script/stylesheet only if a running extension declares it."""

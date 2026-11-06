@@ -239,3 +239,24 @@ checks, optional music/voice generation and independent acceptance remain open.
 - Not done: the first-run setup flow (download the models, link them, choose the station style and DJ sets, first songs) is
   still a planned design in the private preview; ElevenLabs, recommended for DJ voices, has no adapter yet; the DROP NEXT pads
   and Autopilot are not wired; the lanes built on 2026-11-05 are not connected to the studio.
+
+## Connect your agent — source increment, 2026-11-06
+
+- A **Connect your agent** sheet (Menu, the desk until a stream is saved, and the operator chat) with one **Copy** button.
+  The copied text gives an MCP-capable agent a ready configuration for this computer (`/api/connect` supplies the real
+  Python, myradio folder, data folder and port), a DJ brief and optional stream-setup steps. It never contains the control
+  code. A status card shows when an agent last used the station and what it did (the MCP adapter and the connect command
+  label their requests with `X-Myradio-Client`; only those are recorded, and odd operation names are shown as "request").
+  The desk adds "Agent DJ seen N min ago".
+- `python3 -m myradio.connect stream|status`: saves an Icecast destination with the password from an environment variable
+  or file, never the command line, never printed; refuses a password embedded in the URL; the station's own rules still apply
+  (remote destinations need HTTPS). The sheet also takes a pasted `icecast://` or `https://` source address and reads it
+  back without the password. Saving never goes live.
+- Honest limits: the agent can program the station (queue, order, skip, schedule) but cannot speak new lines until the DJ
+  voice is connected; external agents act without the built-in operator's approval step, as before; only Icecast-compatible
+  MP3 output exists (no YouTube or other RTMP output yet).
+- Verified: `tests/test_connect.py` (5 tests: the connect data needs the launch code and never contains it, only agent
+  requests are recorded, the MCP adapter moves a cart and the studio sees it, the command saves a stream without printing the
+  password and refuses a missing or embedded one); the browser acceptance run (70 checks) copies the text from the studio,
+  runs the exact MCP command it contains as a separate process, moves a cart through it, and sees the studio's agent light
+  turn green; then pastes a stream address and saves it, still private.

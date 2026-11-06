@@ -39,9 +39,9 @@ body = must(body, '\n<dialog id="unlock">', '\n' + read('dialogs.html') + '\n<di
 
 # ---- the real app.js, with the preview's adjustments (more sections; in-page confirm, since the viewer blocks confirm())
 app = js
-app = must(app, "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator'];",
-                "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'start', 'shows', 'team', 'discover'];")
-app = must(app, "help: 'Guide', operator: 'Station operator'};", "help: 'Guide', operator: 'Station operator', start: 'Set up your station', shows: 'Shows', team: 'On-air team', discover: 'Researchers'};")
+app = must(app, "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect'];",
+                "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect', 'start', 'shows', 'team', 'discover'];")
+app = must(app, "connect: 'Connect your agent'};", "connect: 'Connect your agent', start: 'Set up your station', shows: 'Shows', team: 'On-air team', discover: 'Researchers'};")
 app = must(app, "const route = location.hash.slice(1), selected",
                 "const route = (h => h === 'my-station' ? 'settings' : /^start-/.test(h) ? 'start' : h)(location.hash.slice(1)), selected")
 app = must(app, "if (dangerous && !confirm('Delete this audio", "if (dangerous && !await uiConfirm('Delete this audio")

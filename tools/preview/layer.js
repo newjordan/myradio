@@ -245,5 +245,11 @@
   if (typeof original === 'function') window.render = function (s) { original(s); onState(s); };
   setInterval(() => { if (window.__lastStatus && demo.state().warm) renderAuto(window.__lastStatus); }, 1000);
 
+  // Connect your agent: nothing real can connect to a preview, so let the reviewer see the connected state.
+  const pretend = document.createElement('button'); pretend.type = 'button'; pretend.className = 'x-pretend';
+  pretend.textContent = 'Preview only: pretend my agent connected';
+  pretend.addEventListener('click', () => { demo.pretendAgent(); pretend.disabled = true; });
+  const linkCard = q('#link-title') && q('#link-title').closest('.card'); if (linkCard) linkCard.append(pretend);
+
   renderShows(); renderTeam(); renderSpots(); renderRes();
 })();

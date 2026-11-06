@@ -9,8 +9,8 @@ if (fragment.has('token')) {
   history.replaceState(null, '', location.pathname + location.search);
 }
 // One page: the studio is always there. Every other section opens as a sheet over it; forms stay mounted, so drafts survive.
-const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator'];
-const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator'};
+const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect'];
+const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator', connect: 'Connect your agent'};
 function showView(moveFocus = false) {
   const route = location.hash.slice(1), selected = route === 'import' ? 'library' : viewNames.includes(route) ? route : 'studio';
   for (const name of viewNames.filter(name => name !== 'studio')) $('view-' + name).hidden = name !== selected;
@@ -29,6 +29,7 @@ function showView(moveFocus = false) {
     sheet.querySelector('.sheet-body').scrollTop = 0;
   }
   if (route === 'import') $('import').open = true;
+  if (selected === 'connect') setTimeout(() => loadConnect(), 0);
   if (moveFocus && selected !== 'studio') (selected === 'operator' ? $('message') : route === 'import' ? $('file') : $('sheet-title')).focus({preventScroll: true});
 }
 // Closing a sheet (×, Escape, or a link to the studio) always lands back on the studio; the browser returns focus to what opened it.
@@ -553,11 +554,14 @@ function renderConsole(s) {
   $('play-label').textContent = b.state === 'streaming' && s.current ? 'ON AIR · LIVE STREAM' : s.current ? 'PLAYING · LOCAL PLAYOUT' : s.running ? 'LOCAL PLAYOUT · WAITING FOR AUDIO' : 'LOCAL PLAYOUT · STOPPED';
   const next = queueItems[0];
   $('next-readout').textContent = next ? `UP NEXT → ${next.title}${next.artist ? ' · ' + next.artist : ''}` : s.station.auto_fill ? 'UP NEXT → music rotation' : 'UP NEXT → add a cart to the wall';
-  $('local-status').lastChild.textContent = `Playout ${s.running ? 'running' : 'stopped'} · Monitor ${monitorOn ? 'on' : 'off'}`;
+  const agentAge = s.agent_link && s.agent_link.seen_at ? Date.now() / 1000 - s.agent_link.seen_at : null;
+  $('local-status').lastChild.textContent = `Playout ${s.running ? 'running' : 'stopped'} · Monitor ${monitorOn ? 'on' : 'off'}` + (agentAge !== null && agentAge < 1800 ? ` · Agent DJ seen ${ago(agentAge)}` : '');
   $('local-status').firstChild.style.color = s.running ? 'var(--accent)' : 'var(--muted)';
   $('transport-note').textContent = s.running ? (outputBusy ? 'Stop also ends the live stream.' : s.current ? `Playing ${s.current.title}` : 'Waiting for playable audio.') : s.library.length ? 'Your next sound is standing by.' : 'Import audio to start.';
   $('broadcast-note').textContent = outputBusy ? detail : b.configured ? 'Private until you say otherwise.' : 'No stream host saved yet.';
   $('guard').disabled = outputBusy; $('deck-disconnect').disabled = !outputBusy || b.state === 'stopping';
+  $('deck-connect').hidden = outputBusy || b.configured; $('broadcast-note').hidden = !$('deck-connect').hidden;
+  if (document.body.dataset.activeView === 'connect') renderLinks(s);
   document.body.classList.toggle('playing', !!s.current);
   renderTape(s); updateGuard(s);
 }
@@ -620,6 +624,109 @@ function setVolume() {
   if (graph) { graph.gain.gain.value = value / 100; $('audio').volume = 1; } else $('audio').volume = value / 100;
 }
 $('volume').addEventListener('input', setVolume); setVolume();
+
+// ===== Connect your agent: one copy-paste so an agent can DJ the station and set up its outbound stream =====
+let connectInfo = null, connectLoading = false;
+function ago(seconds) {
+  if (seconds < 60) return `${Math.max(1, Math.round(seconds))} s ago`;
+  if (seconds < 3600) return `${Math.round(seconds / 60)} min ago`;
+  return `${Math.round(seconds / 3600)} h ago`;
+}
+const AGENT_DID = {'queue.move': 'moved a cart', 'queue.add': 'added a cart', 'queue.remove': 'removed a cart', 'transport.skip': 'skipped a track',
+                   'transport.start': 'started the station', 'transport.stop': 'stopped the station', status: 'checked the station', broadcast: 'saved the stream',
+                   'schedule.add': 'scheduled a moment', 'program.add': 'added a weekly program', 'broadcast.start': 'went live', 'broadcast.stop': 'disconnected the stream'};
+async function loadConnect() {
+  if (connectLoading || !unlocked) return;
+  connectLoading = true;
+  try { connectInfo = await api('/api/connect'); renderKit(); if (state) renderLinks(state); }
+  catch (error) { notice(error.message); }
+  finally { connectLoading = false; }
+}
+function kitText(info, dj, stream) {
+  const config = JSON.stringify({mcpServers: {myradio: {command: info.python, args: ['-m', 'myradio.mcp', '--data-dir', info.data_dir, '--port', String(info.port)], cwd: info.package_dir}}}, null, 2);
+  const job = dj && stream ? 'DJ my radio station and set up its outbound stream' : dj ? 'DJ my radio station' : stream ? 'set up the outbound stream for my radio station' : 'connect to my radio station';
+  const cli = `"${info.python}" -m myradio.connect --data-dir "${info.data_dir}" --port ${info.port}`;
+  const lines = [`You are going to ${job}. The station is "${info.station}", running in myradio on this computer.`, '',
+    '1. Connect to the station', 'Add this MCP server to your MCP settings, then reload your tools:', '', config, '',
+    'The adapter reads the station’s private control code from that data folder by itself. Never ask me for it, print it or copy it anywhere.',
+    'Check the connection by calling station_status. The studio’s Connect your agent panel shows when you do.'];
+  let n = 2;
+  if (dj) lines.push('', `${n++}. Be the DJ`,
+    '- Keep 3 to 6 carts queued and plan a flow: vary energy and tempo, avoid the same artist twice in a row, and don’t repeat a song within an hour.',
+    '- Your tools: station_status, queue_add (position 0 plays next), queue_move, queue_remove, transport_start, transport_skip, schedule_add and program_add.',
+    '- About every 15 minutes, queue one of the station’s spoken carts (library kind "speech": station IDs and links). You can’t say new lines yet: that needs the DJ voice, which is still being set up.',
+    '- Don’t delete library audio, rename the station, or call broadcast_start or broadcast_stop unless I ask. broadcast_start makes the station public.',
+    '- Check station_status every few minutes. After each change, tell me in one line what you did and why.');
+  if (stream) lines.push('', `${n++}. Set up the outbound stream`,
+    'myradio sends 128 kbit/s MP3 to an Icecast-compatible server. A remote server needs HTTPS with a valid certificate; plain http only works to this computer, which is fine for a test.',
+    '- If I don’t have a server yet, help me choose: my own Icecast or AzuraCast server, or a host that gives Icecast source details (mount URL, source user, source password). For a quick private test you can run Icecast on this computer.',
+    '- Save the destination with this command. It reads the source password from MYRADIO_SOURCE_PASSWORD, so the password never appears in our chat. Set the variable from wherever the password already is (for example a file your server setup wrote), never by typing it into a command:',
+    `  MYRADIO_SOURCE_PASSWORD="$(cat /path/to/source-password)" ${cli} stream --url "https://your-host:8443/live.mp3"`,
+    '- If only I know the password, ask me to paste the stream address into the studio’s "Or connect a stream yourself" box instead.',
+    `- Check it with: ${cli} status`,
+    '- Then tell me it’s ready. Going live is my decision: I press GO LIVE in the studio, or I tell you to call broadcast_start.');
+  return lines.join('\n');
+}
+function renderKit() { if (connectInfo) $('kit-text').textContent = kitText(connectInfo, $('kit-dj').checked, $('kit-stream').checked); }
+for (const id of ['kit-dj', 'kit-stream']) $(id).addEventListener('change', () => { renderKit(); $('kit-copied').textContent = ''; });
+$('kit-copy').addEventListener('click', async () => {
+  if (!connectInfo) await loadConnect();
+  const text = $('kit-text').textContent;
+  try { await navigator.clipboard.writeText(text); $('kit-copied').textContent = 'Copied. Paste it into your agent.'; }
+  catch {
+    const range = document.createRange(); range.selectNodeContents($('kit-text'));
+    const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range);
+    $('kit-copied').textContent = 'Selected. Press Ctrl+C (⌘C on a Mac) to copy it.';
+  }
+});
+let destinationAsked = false;
+function renderLinks(s) {
+  if (!connectInfo) loadConnect();
+  const link = s.agent_link || {}, age = link.seen_at ? Math.max(0, Date.now() / 1000 - link.seen_at) : null, agent = $('link-agent');
+  agent.className = age === null ? 'waiting' : age < 900 ? 'ok' : 'stale';
+  agent.querySelector('.ico').textContent = age === null ? '…' : '✓';
+  $('link-agent-text').textContent = age === null ? 'Not seen yet. This turns green when your agent first checks the station.'
+    : `Last used the station ${ago(age)}${link.last ? `: ${AGENT_DID[link.last] || link.last}` : ''}.`;
+  const b = s.broadcast, stream = $('link-stream');
+  if (b.configured && !broadcastDestination && !destinationAsked) { destinationAsked = true; api('/api/broadcast').then(r => { broadcastDestination = r.url || ''; }).catch(() => {}); }
+  stream.className = b.state === 'streaming' ? 'ok' : b.configured ? 'ok' : 'waiting';
+  stream.querySelector('.ico').textContent = b.configured ? '✓' : '…';
+  $('link-stream-text').textContent = b.state === 'streaming' ? 'LIVE: connected to your stream host.'
+    : b.configured ? `Saved: ${broadcastDestination || 'a destination'}. Press GO LIVE on the desk when you’re ready.` : 'No stream saved yet.';
+}
+function parseStream(text) {
+  const raw = text.trim();
+  if (!raw) return null;
+  const icecast = /^icecast:\/\//i.test(raw);
+  let address;
+  try { address = new URL(icecast ? raw.replace(/^icecast:\/\//i, 'https://') : raw); }
+  catch { return {error: 'That doesn’t look like a stream address. It starts with icecast:// or https://.'}; }
+  const local = ['127.0.0.1', 'localhost', '[::1]'].includes(address.hostname);
+  const scheme = icecast ? (local ? 'http:' : 'https:') : address.protocol;
+  if (!['http:', 'https:'].includes(scheme)) return {error: 'Use an icecast://, https:// or (to this computer) http:// address.'};
+  const password = decodeURIComponent(address.password), username = decodeURIComponent(address.username) || 'source';
+  if (!password) return {error: 'Add the source password: icecast://source:PASSWORD@host:port/mount'};
+  if (!address.pathname || address.pathname === '/') return {error: 'Add the mount at the end, for example /live.mp3'};
+  return {url: `${scheme}//${address.host}${address.pathname}`, username, password};
+}
+$('stream-address').addEventListener('input', () => {
+  const parsed = parseStream($('stream-address').value), out = $('stream-parsed');
+  out.textContent = !parsed ? '' : parsed.error ? parsed.error : `Host ${new URL(parsed.url).host} · mount ${new URL(parsed.url).pathname} · user ${parsed.username} · password ${'•'.repeat(Math.min(12, parsed.password.length))}`;
+  out.classList.toggle('error', !!(parsed && parsed.error));
+});
+$('stream-paste').addEventListener('submit', async event => {
+  event.preventDefault();
+  const parsed = parseStream($('stream-address').value), out = $('stream-parsed');
+  if (!parsed || parsed.error) { out.textContent = parsed ? parsed.error : 'Paste your stream address first.'; out.classList.add('error'); return; }
+  $('stream-save').disabled = true;
+  try {
+    await api('/api/broadcast', parsed);
+    broadcastDestination = parsed.url; $('stream-address').value = '';
+    out.classList.remove('error'); out.textContent = `Saved ${parsed.url}. Press GO LIVE on the desk when you’re ready.`;
+    toast('Stream saved. Going live is still your call, on the desk.'); await refresh();
+  } catch (error) { out.textContent = error.message; out.classList.add('error'); }
+  finally { $('stream-save').disabled = false; }
+});
 
 // --- decorative motion (paper trace): pausable, and off for reduced motion
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');

@@ -106,6 +106,7 @@
       capabilities: {music_generation: false, speech_generation: false, external_broadcast: true, agent_model: false},
       stream: {listeners: 0, dropped: 0}, chat_mode: 'commands',
       broadcast: {...D.broadcast, format: 'MP3 · 128 kbit/s · 44.1 kHz stereo', encoder_available: true, last_sent: null},
+      agent_link: D.agentLink || {seen_at: null, last: null},
       imports: {conversion_available: true, max_upload_bytes: 104857600, max_decoded_bytes: 104857600},
     };
   }
@@ -203,6 +204,8 @@
     const p = url.pathname, method = (init.method || 'GET').toUpperCase();
     const body = () => { try { return JSON.parse(init.body || '{}'); } catch (e) { return {}; } };
     if (p === '/api/status') return json(status());
+    // Sample paths: in your own studio these are this computer's real Python, myradio folder and data folder.
+    if (p === '/api/connect') return json({python: '/usr/bin/python3', package_dir: '/home/you/myradio', data_dir: '/home/you/.myradio', port: 8765, station: D.station.name, agent_link: D.agentLink || {seen_at: null, last: null}});
     if (p === '/api/session' || p === '/api/logout') return json({ok: true});
     if (p === '/api/agent') {
       if (method === 'GET') return json({configured: false, url: '', model: '', key_saved: false, environment_managed: false, error: null});
@@ -254,6 +257,8 @@
     },
     setMaker(kind, ready) { D.makers[kind] = !!ready; refresh(); },
     // The mocked first-run onboarding: models "installed", the station named, the first song made and on air.
+    // Preview only: what the studio shows once a real agent has connected and made its first DJ move.
+    pretendAgent() { D.agentLink = {seen_at: Date.now() / 1000, last: 'queue.move'}; if (D.queue.length > 1) D.queue.unshift(D.queue.pop()); refresh(); },
     completeOnboarding(o) {
       D.station.name = o.name; D.station.tagline = o.tagline; D.makers = {music: true, voice: o.voice !== 'none'}; D.setup = {saved: true, host: o.voice};
       const song = mk('first' + (++seq), o.title, o.name, o.seconds, 'music'); D.library.push(song);
