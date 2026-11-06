@@ -247,22 +247,15 @@ body.motion-off .confetti{display:none}
 @media(max-width:850px){.pet{width:46px;height:46px}.pet-img{width:42px;height:42px}.pet-say{max-width:170px}}
 @media(max-width:600px){.pet-stage{flex-direction:column;text-align:center}.pet-big{width:128px;height:128px}}
 @media(max-width:600px){.masthead{gap:8px}.masthead .station-id{display:none}.pet{width:42px;height:42px}.pet-img{width:40px;height:40px}.level-chip{padding:6px 8px}}
-/* GO LIVE guard on air: a warm fire glow around the button */
-.guard.on-air,.guard.on-air:disabled{opacity:1;cursor:default;background:radial-gradient(ellipse at 50% 120%,#a8401c 0%,#5e2418 55%,#341714 100%);color:#fff1dc;border-color:#ffb067;
-  box-shadow:0 0 0 1px #ffb06788,0 0 12px 2px #ff7a2e99,0 0 30px 8px #ff4d1a55,0 0 60px 14px #ff3a1022,inset 0 0 14px #ffc27a55,inset 0 -6px 12px #ff6a2a44;
-  text-shadow:0 0 8px #ffb067,0 0 2px #fff1dc;animation:ember 2.6s ease-in-out infinite;z-index:1}
-.guard.on-air:before{background:linear-gradient(90deg,#ff7a2e,#ffd27a,#ff7a2e);box-shadow:0 0 8px #ffb067}
-.guard.on-air:after{content:'';position:absolute;inset:-6px;border-radius:12px;pointer-events:none;
-  background:radial-gradient(ellipse at 20% 100%,#ff8a3d55,transparent 55%),radial-gradient(ellipse at 80% 100%,#ff5a1f44,transparent 55%),radial-gradient(ellipse at 50% 0%,#ffcf7a33,transparent 60%);
-  filter:blur(6px);animation:flicker 1.7s steps(1,end) infinite;z-index:-1}
-.guard.on-air .ember-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:#ffe9b8;box-shadow:0 0 6px #ffb067,0 0 12px #ff6a2a;vertical-align:1px;animation:ember-dot 1.2s ease-in-out infinite}
-.guard.igniting{border-color:#d98a55;box-shadow:0 4px #1b1315,0 0 10px 1px #ff7a2e55,inset 0 3px #ff946e44;animation:ember 1.4s ease-in-out infinite}
-@keyframes ember{
-  0%,100%{box-shadow:0 0 0 1px #ffb06788,0 0 12px 2px #ff7a2e99,0 0 30px 8px #ff4d1a55,0 0 60px 14px #ff3a1022,inset 0 0 14px #ffc27a55,inset 0 -6px 12px #ff6a2a44}
-  25%{box-shadow:0 0 0 1px #ffc27a99,0 0 16px 3px #ff8a3daa,0 0 38px 10px #ff5a1f66,0 0 70px 18px #ff3a1030,inset 0 0 18px #ffd27a66,inset 0 -8px 14px #ff7a2e55}
-  45%{box-shadow:0 0 0 1px #ffa05c77,0 0 10px 2px #ff6a2a88,0 0 26px 7px #ff4d1a4d,0 0 54px 12px #ff3a101d,inset 0 0 12px #ffb36b4d,inset 0 -5px 10px #ff6a2a3d}
-  70%{box-shadow:0 0 0 1px #ffc27aaa,0 0 18px 4px #ff8a3dbb,0 0 42px 12px #ff5a1f70,0 0 76px 20px #ff3a1036,inset 0 0 20px #ffd27a70,inset 0 -9px 15px #ff7a2e5e}}
-@keyframes flicker{0%{opacity:.85;transform:scale(1)}20%{opacity:1;transform:scale(1.02,1.04)}35%{opacity:.75;transform:scale(.99,1)}55%{opacity:.95;transform:scale(1.01,1.03)}75%{opacity:.8;transform:scale(1,.99)}90%{opacity:1;transform:scale(1.02,1.05)}}
-@keyframes ember-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.8)}}
-body.motion-off .guard.on-air,body.motion-off .guard.on-air:after,body.motion-off .guard.on-air .ember-dot,body.motion-off .guard.igniting{animation:none}
-@media(prefers-reduced-motion:reduce){.guard.on-air,.guard.on-air:after,.guard.on-air .ember-dot,.guard.igniting{animation:none}}
+/* On air: the console lamp gets a thin glowing tube of light set into its frame; the desk button a quiet warm outline */
+.state-lamp.live{position:relative;border-color:#160d0c;box-shadow:inset 0 0 15px #0008,0 1px #ffffff12}
+.state-lamp.live:after{content:'';position:absolute;inset:3px;border-radius:3px;pointer-events:none;border:1.5px solid #ffb27a;
+  box-shadow:0 0 3px #ff9a5c,0 0 7px #ff6a2acc,inset 0 0 3px #ff9a5c,inset 0 0 8px #ff6a2a55;animation:tube 3.2s ease-in-out infinite}
+@keyframes tube{0%,100%{opacity:1}50%{opacity:.72}}
+.guard.on-air,.guard.on-air:disabled{opacity:1;cursor:default;background:linear-gradient(180deg,#4a2620,#33191a);color:#ffe7d2;border-color:#e08a5c;
+  box-shadow:0 4px #1b1315,inset 0 0 0 1px #ff9a5c55,0 0 6px #ff6a2a44}
+.guard.on-air:before{background:#e9a06f}
+.guard.on-air .ember-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:#ffd6a8;box-shadow:0 0 5px #ff8a3d;vertical-align:1px;animation:tube 2.4s ease-in-out infinite}
+.guard.igniting{border-color:#c98458;box-shadow:0 4px #1b1315,inset 0 0 0 1px #ff9a5c33}
+body.motion-off .state-lamp.live:after,body.motion-off .guard.on-air .ember-dot{animation:none}
+@media(prefers-reduced-motion:reduce){.state-lamp.live:after,.guard.on-air .ember-dot{animation:none}}
