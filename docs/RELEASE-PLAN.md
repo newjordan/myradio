@@ -28,7 +28,7 @@ clip of every song as it aired) are the raw material for the launch films.
 | 3. Get the music runtime for this machine | Linux + NVIDIA: a ready CUDA build is published (`apollo/runtime/full-song/audiocpp_cli` in YuE2-Turbo-Radio). Mac: built locally. Intel Arc: built locally | Publish a Mac (Metal) build next to the CUDA one so setup can download it; Intel Arc next |
 | 4. Hook up | Done by hand: one settings file per machine (runtime, model files, the published speed settings) | Setup writes it from a per-platform table and runs one test song |
 | 5. Pick a station style, first songs | The walk-through in the preview (Menu → Set up your station); agents do it today through Connect your agent | The real first-run flow in the studio |
-| 6. DJ | Connect your agent works today (MCP, one Copy): the agent writes the DJ copy. Local voices run today through the dual loader: Drama 3 (Spark run) and Qwen3-TTS (Jessica, on air on the B70) | Setup offers the voice packages: Qwen3-TTS / Jessica (2.8 GB, Apache-2.0), Drama 3 B70 Turbo (23 GB), Chatterbox and Kokoro for small machines, or ElevenLabs (cloud) |
+| 6. DJ | Connect your agent works today (MCP, one Copy): the agent writes the DJ copy. Local voices run today through the dual loader: Drama 3 (Spark run) and Qwen3-TTS (Jessica, on air on the B70) | Setup offers the voice packages, local in the user's order: Qwen3-TTS CustomVoice / Jessica (2.8 GB, Apache-2.0), Drama 3 B70 Turbo with style-C prompting (23 GB), IndexTTS2 (3.6 GB); or ElevenLabs (cloud) |
 
 ## Checklist
 

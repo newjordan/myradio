@@ -54,7 +54,17 @@ performed reads (16 to 19 s for the line against 11 to 13 s for the others). Goo
 
 Going away: Hume's TTS (2026-11-13), PlayHT (closed 2025-12-31), OpenAI's tts models (retiring 2027-01-06).
 
-## What this means for users (to confirm by ear)
+## The user's ear (2026-11-06)
+
+Local recommendations, in the user's order:
+
+1. **Qwen3-TTS CustomVoice** (Jessica's model): "really good, possibly top choice". 2.8 GB, Apache-2.0, proven on air.
+2. **Drama 3 B70 Turbo with prompt style C** (tone tags through the line), seed 202 as the DJ's cloned voice reference.
+3. **IndexTTS2**: "really good" (bilibili licence, conditional for very large companies).
+
+Also noted: Chatterbox is "decent" (MIT, clones any voice, 1.42× beside music).
+
+## What this means for users
 
 - **Jessica (Qwen3-TTS CustomVoice) is proven on air** and is small (2.8 GB), quick (2.69× on the Spark) and Apache-2.0:
   the natural local news anchor and a strong local DJ default.
