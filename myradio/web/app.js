@@ -117,7 +117,7 @@ async function action(operation, args = {}) {
   try { await api('/api/action', {operation, arguments: args}); notice(''); await refresh(); }
   catch (error) { notice(error.message); }
 }
-for (const [id, op] of [['start','transport.start'],['stop','transport.stop'],['skip','transport.skip']]) {
+for (const [id, op] of [['start','transport.start'],['stop','transport.stop'],['skip','transport.fade_next']]) {
   $(id).addEventListener('click', () => action(op));
 }
 async function loadAgentSettings() {
@@ -632,7 +632,7 @@ function ago(seconds) {
   if (seconds < 3600) return `${Math.round(seconds / 60)} min ago`;
   return `${Math.round(seconds / 3600)} h ago`;
 }
-const AGENT_DID = {'queue.move': 'moved a cart', 'queue.add': 'added a cart', 'queue.remove': 'removed a cart', 'transport.skip': 'skipped a track',
+const AGENT_DID = {'queue.move': 'moved a cart', 'queue.add': 'added a cart', 'queue.remove': 'removed a cart', 'transport.skip': 'skipped a track', 'transport.fade_next': 'faded to the next track',
                    'transport.start': 'started the station', 'transport.stop': 'stopped the station', status: 'checked the station', broadcast: 'saved the stream',
                    'schedule.add': 'scheduled a moment', 'program.add': 'added a weekly program', 'broadcast.start': 'went live', 'broadcast.stop': 'disconnected the stream'};
 async function loadConnect() {
@@ -653,8 +653,8 @@ function kitText(info, dj, stream) {
   let n = 2;
   if (dj) lines.push('', `${n++}. Be the DJ`,
     '- Keep 3 to 6 carts queued and plan a flow: vary energy and tempo, avoid the same artist twice in a row, and don’t repeat a song within an hour.',
-    '- Your tools: station_status, queue_add (position 0 plays next), queue_move, queue_remove, transport_start, transport_skip, schedule_add and program_add.',
-    '- About every 15 minutes, queue one of the station’s spoken carts (library kind "speech": station IDs and links). You can’t say new lines yet: that needs the DJ voice, which is still being set up.',
+    '- Your tools: station_status, queue_add (position 0 plays next), queue_move, queue_remove, transport_start, transport_fade_next (fades out and plays the next cart straight away), transport_skip, schedule_add, program_add and generation_enqueue.',
+    '- You write the DJ’s words. If the station has a DJ voice (station_status shows the voice maker ready), write short, lively lines yourself: a lead-in naming the next song every 2 or 3 songs and a station ID about every 15 minutes. Ask for each with generation_enqueue (role host_break or id, priority 85 so it is made now), then queue it right before its song. Without a DJ voice, queue the station’s spoken carts (library kind "speech") instead.',
     '- Don’t delete library audio, rename the station, or call broadcast_start or broadcast_stop unless I ask. broadcast_start makes the station public.',
     '- Check station_status every few minutes. After each change, tell me in one line what you did and why.');
   if (stream) lines.push('', `${n++}. Set up the outbound stream`,

@@ -138,6 +138,7 @@
         if (D.current) { D.queue.unshift(qrow(D.current)); finish('stopped'); }
         break;
       case 'transport.skip': finish('skipped'); if (D.running) startNext(); break;
+      case 'transport.fade_next': finish('faded to next'); if (D.running) startNext(); break;
       case 'queue.add': {
         track(need('track_id')); if (D.queue.length >= 1000) throw new Error('Queue is full (1,000 items).');
         if ('position' in a && !(Number.isInteger(a.position) && a.position >= 0)) throw new Error('Invalid position.');

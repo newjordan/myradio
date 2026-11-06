@@ -10,6 +10,8 @@ import json
 import os
 from pathlib import Path
 import queue
+import sys
+from array import array
 import sqlite3
 import shutil
 import threading
@@ -28,6 +30,7 @@ CHANNELS = 2
 WIDTH = 2
 FRAMES = 4410  # 100 ms; one clock drives every listener.
 SILENCE = bytes(FRAMES * CHANNELS * WIDTH)
+FADE_SECONDS = 2.0  # transport.fade_next: how long the current track takes to fade out before the next one starts
 MAX_UPLOAD = 100 * 1024 * 1024
 
 
@@ -52,6 +55,7 @@ OPERATIONS = {
     "transport.start": "Start station playout. Does not open an external broadcast.",
     "transport.stop": "Stop station playout and return the current track to the queue.",
     "transport.skip": "Skip the current track.",
+    "transport.fade_next": "Fade the current track out over two seconds, then play the next one straight away.",
     "queue.add": "Add a library track by track_id: at the end, or at position (0 plays next) when one is given.",
     "queue.move": "Move a queued entry (queue_id) to position: 0 plays next; a position past the end moves it to the end.",
     "queue.remove": "Remove a queued entry by queue_id.",
@@ -65,7 +69,7 @@ OPERATIONS = {
 
 ARGUMENTS = {
     "station.update": {"name": "string", "tagline": "string", "auto_fill": "boolean"},
-    "transport.start": {}, "transport.stop": {}, "transport.skip": {},
+    "transport.start": {}, "transport.stop": {}, "transport.skip": {}, "transport.fade_next": {},
     "broadcast.start": {}, "broadcast.stop": {},
     "queue.add": {"track_id": "string", "position": "integer"}, "queue.remove": {"queue_id": "string"},
     "queue.move": {"queue_id": "string", "position": "integer"},
@@ -157,6 +161,7 @@ class Station:
         self.current = None
         self.reader = None
         self.elapsed = 0.0
+        self.fade = None  # [frames left, total frames] while transport.fade_next is fading the current track
         self.last_track = None
         self.subscribers = set()
         self.dropped = 0
@@ -212,6 +217,7 @@ class Station:
         reader, self.reader = self.reader, None
         self.current = None
         self.elapsed = 0.0
+        self.fade = None
         # Each cleanup is independent: rollback/close failures must not kill the clock.
         for cleanup in (self.broadcast.stop, reader.close if reader else lambda: None, self.db.rollback):
             try:
@@ -301,6 +307,7 @@ class Station:
                                        "Unavailable audio is excluded from rotation. Repair and retry it in the library." if unavailable else "")},
                 "station": settings, "running": self.running,
                 "current": self.public(self.current) if self.current else None,
+                "fading": self.fade is not None,
                 "elapsed": round(self.elapsed, 2), "error": self.error,
                 "queue": [dict(r) for r in self.db.execute("SELECT q.id,t.id AS track_id,t.title,t.artist,t.duration,t.kind FROM queue q JOIN tracks t ON t.id=q.track_id ORDER BY q.pos,q.id")],
                 "library": [self.public(dict(r)) for r in self.db.execute("SELECT t.*, (f.track_id IS NULL) AS available, f.message AS playback_error FROM tracks t LEFT JOIN media_failures f ON f.track_id=t.id ORDER BY t.title,t.id")],
@@ -447,6 +454,14 @@ class Station:
                 self._finish("stopped")
             elif operation == "transport.skip":
                 self._finish("skipped")
+            elif operation == "transport.fade_next":
+                # Fading needs a track on air; otherwise the next block simply starts the next one, as after a skip.
+                if self.running and self.current and self.reader:
+                    if self.fade is None:
+                        total = max(1, round(FADE_SECONDS * RATE))
+                        self.fade = [total, total]
+                else:
+                    self._finish("skipped")
             elif operation == "queue.add":
                 self._track(args["track_id"])
                 if self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= 1000:
@@ -529,6 +544,7 @@ class Station:
                 pass
         self.current = self.reader = None
         self.elapsed = 0.0
+        self.fade = None
         self._setting("playing", None)
 
     def _queue_place(self, entry_id, index):
@@ -646,8 +662,12 @@ class Station:
                         self._finish("finished")
                         attempts += 1
                         continue
+                    if self.fade is not None:
+                        pcm = self._fade_out(pcm)
                     block.extend(pcm)
                     self.elapsed += len(pcm) / (RATE * CHANNELS * WIDTH)
+                    if self.fade is not None and self.fade[0] <= 0:
+                        self._finish("faded to next")   # the next track fills the rest of this same block
             block.extend(bytes(len(SILENCE) - len(block)))
             self.db.commit()
             if not self.running and self.broadcast.active:
@@ -655,6 +675,24 @@ class Station:
             self.broadcast.offer(bytes(block))
             self._deliver(bytes(block))
             return bytes(block)
+
+    def _fade_out(self, pcm):
+        """Apply the next stretch of the fade to ``pcm`` (16-bit stereo) and drop whatever lies past its end."""
+        left, total = self.fade
+        frames = min(len(pcm) // (WIDTH * CHANNELS), left)
+        samples = array("h")
+        samples.frombytes(pcm[:frames * WIDTH * CHANNELS])
+        if sys.byteorder == "big":
+            samples.byteswap()
+        for frame in range(frames):
+            gain = ((left - frame) / total) ** 2   # a squared ramp sounds like an even fade rather than a sudden drop
+            base = frame * CHANNELS
+            for channel in range(CHANNELS):
+                samples[base + channel] = int(samples[base + channel] * gain)
+        if sys.byteorder == "big":
+            samples.byteswap()
+        self.fade[0] = left - frames
+        return samples.tobytes()
 
     def _deliver(self, block):
         for subscriber in tuple(self.subscribers):
