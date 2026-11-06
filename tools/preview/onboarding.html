@@ -1,0 +1,47 @@
+<section id="view-start" class="view onboard" aria-label="Set up your station" hidden>
+<ol class="ob-steps" aria-label="Setup steps"><li data-step="install"><span>1</span>Install</li><li data-step="hookup"><span>2</span>Hook up</li><li data-step="prompt"><span>3</span>Your sound</li><li data-step="first"><span>4</span>First song</li></ol>
+<p class="ob-sim"><span class="x-planned">◇ PLANNED</span> A walk-through of the first run. Nothing downloads, nothing is installed and no audio plays here. Sizes and speeds are the real models’ figures; waits are shortened.</p>
+<p id="ob-announce" class="sr-only" aria-live="polite"></p>
+
+<section class="ob-panel" data-panel="install" aria-labelledby="ob-h-install">
+<h3 id="ob-h-install" tabindex="-1">Install the models</h3>
+<p class="ob-lead">Your station makes its own music and its own DJ. Choose a voice for your DJ, then press Install. Most of the wait is the download.</p>
+<div class="ob-model"><span class="ob-icon" aria-hidden="true">♫</span><div><strong>Music maker · YuE2 Turbo Radio</strong><small>Makes every song on this computer’s graphics card. From Frosty40/YuE2-Turbo-Radio on Hugging Face. Free for non-commercial use (CC BY-NC 4.0).</small></div><span class="ob-size">4.53 GB</span></div>
+<fieldset class="ob-voices"><legend>Your DJ’s voice</legend>
+<label class="ob-voice"><input type="radio" name="ob-voice" value="elevenlabs" checked><span><strong>ElevenLabs <span class="ob-tag">RECOMMENDED</span></strong><small>The best-sounding DJ today. Needs an ElevenLabs account and an API key; what your DJ says counts against your ElevenLabs plan. Only the DJ’s script text is sent to them, never your music.</small></span><span class="ob-size">Cloud</span></label>
+<label class="ob-voice"><input type="radio" name="ob-voice" value="drama"><span><strong>On this computer · Drama 3 B70 Turbo</strong><small>Private, with no per-use fees. Needs a graphics card with about 32 GB of memory. Fish Audio community license.</small></span><span class="ob-size">24.3 GB</span></label>
+<label class="ob-voice"><input type="radio" name="ob-voice" value="none"><span><strong>No DJ for now</strong><small>Music only. Add a voice any time later.</small></span><span class="ob-size">0 GB</span></label>
+</fieldset>
+<div id="ob-key-row" class="ob-key"><label for="ob-key">ElevenLabs API key<input id="ob-key" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key (any text works in this preview)"></label><small>Kept in a private file on this computer. Create one in your ElevenLabs account.</small></div>
+<p id="ob-install-error" class="x-error" role="alert" hidden></p>
+<div class="ob-actions"><button id="ob-install" class="primary" type="button">Install</button><span id="ob-install-hint" class="x-hint"></span></div>
+<div id="ob-downloads" class="ob-downloads" hidden></div>
+</section>
+
+<section class="ob-panel" data-panel="hookup" aria-labelledby="ob-h-hookup" hidden>
+<h3 id="ob-h-hookup" tabindex="-1">Hooking it all up</h3>
+<p class="ob-lead">myradio finds your graphics card, loads each model and makes a short test, so you know it all works before your first song.</p>
+<ul id="ob-checks" class="ob-checks"></ul>
+<div class="ob-actions"><button id="ob-hookup-next" class="primary" type="button" disabled>Next: your sound →</button></div>
+</section>
+
+<section class="ob-panel" data-panel="prompt" aria-labelledby="ob-h-prompt" hidden>
+<h3 id="ob-h-prompt" tabindex="-1">What should your station sound like?</h3>
+<p class="ob-lead">A sentence is plenty. Your station takes it from there.</p>
+<label for="ob-vibe" class="sr-only">Describe your station’s sound</label>
+<textarea id="ob-vibe" rows="3" maxlength="300" placeholder="Late-night lo-fi and slow beats for stargazers and people who build things."></textarea>
+<div id="ob-ideas" class="ob-ideas" role="group" aria-label="Ideas to start from"></div>
+<div class="form-row"><label>Station name<input id="ob-name" maxlength="60" autocomplete="off" placeholder="Porchlight FM"></label><label>Tagline<input id="ob-tagline" maxlength="120" autocomplete="off" placeholder="Late-night sounds for stargazers and makers."></label></div>
+<p id="ob-prompt-error" class="x-error" role="alert" hidden></p>
+<div class="ob-actions"><button id="ob-make" class="primary" type="button">▶ Make my first song</button><span class="x-hint">Everything here can be changed later.</span></div>
+</section>
+
+<section class="ob-panel" data-panel="first" aria-labelledby="ob-h-first" hidden>
+<h3 id="ob-h-first" tabindex="-1">Making your first song</h3>
+<p id="ob-first-lead" class="ob-lead"></p>
+<ol id="ob-stages" class="ob-stages"></ol>
+<progress id="ob-render" max="1" value="0" aria-label="First song progress"></progress>
+<p class="ob-render-meta"><span id="ob-render-clock">0:00 of 0:00 made</span><span class="x-hint">A full song takes about a minute and a half on a fast graphics card. Shortened here.</span></p>
+<div class="ob-actions"><button id="ob-skip-render" type="button">Skip the wait</button></div>
+</section>
+</section>

@@ -1,0 +1,52 @@
+<section id="view-shows" class="view" aria-label="Shows" hidden>
+<div class="view-heading"><p class="eyebrow">WHEN WHAT PLAYS <span class="x-planned">◇ PLANNED</span></p><h2>Your station’s week.</h2><p>Shows decide the style, the host and the rhythm of each part of the day. Start with the defaults and change only what you like.</p></div>
+<section class="card"><div class="section-heading"><h2>A day on the air</h2><div id="show-days" class="x-days" role="group" aria-label="Which days"></div></div>
+<div id="show-strip" class="x-strip" role="group" aria-label="Shows across 24 hours"></div>
+<div class="x-hours" aria-hidden="true"><span>12 am</span><span>3</span><span>6</span><span>9</span><span>12 pm</span><span>3</span><span>6</span><span>9</span><span>12 am</span></div>
+<ul id="show-list" class="items x-showlist" aria-label="Shows"></ul>
+<div class="x-actions" style="margin-top:14px"><button id="show-add" type="button">＋ Add a show</button><span id="show-msg" class="x-hint" role="status"></span></div></section>
+
+<section id="show-editor" class="card"><div class="section-heading"><h2 id="show-editor-title">Edit show</h2><span id="show-time" class="badge"></span></div>
+<div class="form-row"><label>Show name<input id="se-name" maxlength="40" autocomplete="off"></label><label>Music style<select id="se-style"></select></label></div>
+<div class="form-row"><label>Starts<select id="se-from"></select></label><label>Ends<select id="se-to"></select></label></div>
+<div class="form-row"><label>Host<select id="se-host"></select></label>
+<fieldset class="x-seg"><legend>Talk breaks</legend><div class="x-opts"><label><input type="radio" name="se-talk" value="rare"><span>Rarely</span></label><label><input type="radio" name="se-talk" value="some"><span>Sometimes</span></label><label><input type="radio" name="se-talk" value="often"><span>Often</span></label></div></fieldset></div>
+<div class="x-rw"><label class="x-rl" for="se-energy" style="margin:0">Energy</label><input id="se-energy" class="x-range" type="range" min="0" max="100"><div class="x-rends"><span>Calm</span><span>Lively</span></div></div>
+<label class="x-switch"><input id="se-spots" type="checkbox"><span class="x-track" aria-hidden="true"></span><span>Allow spots in this show<small>Sponsor messages and your own promos, in short breaks.</small></span></label>
+<label class="x-switch"><input id="se-news" type="checkbox"><span class="x-track" aria-hidden="true"></span><span>Include a short update<small>From one of your <a href="#discover">researchers</a>. If nothing is new, music keeps playing.</small></span></label>
+<p id="se-error" class="x-error" role="alert" hidden></p>
+<div class="x-actions"><button id="se-save" class="primary" type="button">Save show</button><button id="se-remove" class="danger" type="button">Remove show</button></div></section>
+
+<section class="card"><div class="section-heading"><h2>Inside one hour of <span id="clock-name">this show</span></h2><span class="badge">AN EXAMPLE HOUR</span></div>
+<div class="x-clock"><svg id="clock-svg" viewBox="0 0 200 200" role="img" aria-label="An example hour"></svg><ul id="clock-legend" class="x-legend"></ul></div>
+<p class="x-hint" style="margin-top:12px">Your station builds each hour from this recipe, then shuffles within it so no two hours sound alike.</p></section>
+
+<section class="card"><div class="section-heading"><h2>One-time and repeating moments</h2></div><p class="subtle">Play one recording at an exact time, or repeat it every week. These work today.</p><a class="button" href="#schedule">Open the schedule →</a></section>
+</section>
+
+<section id="view-team" class="view" aria-label="On-air team" hidden>
+<div class="view-heading"><p class="eyebrow">WHO’S ON THE MIC <span class="x-planned">◇ PLANNED</span></p><h2>Your on-air team.</h2><p>Hosts talk between songs and read short updates. Spots carry sponsor messages. Scripts are built from facts the station has, like your station name and song titles.</p></div>
+<section class="card"><div class="section-heading"><h2>Hosts and anchors</h2><span id="team-count" class="count"></span></div><div id="team-hosts" class="x-hosts"></div>
+<div class="x-actions" style="margin-top:16px"><button id="host-new" type="button">＋ Create a host</button><span class="x-hint">Describe a personality in a sentence. Needs a connected AI operator.</span></div></section>
+
+<section class="card"><div class="section-heading"><h2>Spots</h2><span class="badge">SPONSOR MESSAGES</span></div>
+<ul id="team-spots" class="x-rows"></ul>
+<h3 style="font-size:.95rem;margin:20px 0 8px">Add a spot</h3>
+<form id="spot-form"><div class="form-row"><label>Who is it for?<input id="spot-who" maxlength="60" placeholder="Corner Bike Co." autocomplete="off" required></label>
+<fieldset class="x-seg"><legend>How often?</legend><div class="x-opts"><label><input type="radio" name="spot-freq" value="light"><span>Light</span></label><label><input type="radio" name="spot-freq" value="regular" checked><span>Regular</span></label><label><input type="radio" name="spot-freq" value="often"><span>Often</span></label></div></fieldset></div>
+<label>What should it say?<textarea id="spot-text" rows="3" maxlength="400" placeholder="Fixing bikes since 1998. Mention the station for a free tune-up." required></textarea></label>
+<label class="x-switch"><input id="spot-disclose" type="checkbox" checked disabled><span class="x-track" aria-hidden="true"></span><span>Say that it’s sponsored<small>Always on. Listeners should know a message is paid for.</small></span></label>
+<label class="x-switch"><input id="spot-rights" type="checkbox"><span class="x-track" aria-hidden="true"></span><span>I’m allowed to use this voice for paid spots<small>Check the voice license first. You can upload a recorded spot instead.</small></span></label>
+<p id="spot-error" class="x-error" role="alert" hidden></p>
+<div class="x-actions"><button id="spot-add" class="primary" type="submit">Add the spot</button></div></form></section>
+</section>
+
+<section id="view-discover" class="view" aria-label="Researchers" hidden>
+<div class="view-heading"><p class="eyebrow">THINGS YOU CARE ABOUT <span class="x-planned">◇ PLANNED</span></p><h2>Your researchers.</h2><p>Each one watches the sources you choose and brings back short, sourced updates. By default you review each update before it airs. If nothing is new, your music just keeps playing.</p></div>
+<section class="card"><div class="section-heading"><h2>Researchers</h2><span id="res-count" class="count"></span></div><ul id="res-list" class="x-rows"></ul></section>
+<section class="card"><div class="section-heading"><h2>Add a researcher</h2></div>
+<label for="res-new">What would you like to hear about?</label>
+<textarea id="res-new" rows="2" maxlength="300" placeholder="A short, upbeat update on synth builders and tiny record labels. Skip celebrity news."></textarea>
+<p id="res-msg" class="x-hint" role="status"></p>
+<div class="x-actions"><button id="res-draft" class="primary" type="button">Draft it</button><span class="x-hint">Needs a connected AI operator; this preview uses a simple stand-in. You review the draft before anything airs.</span></div></section>
+</section>

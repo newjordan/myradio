@@ -214,7 +214,8 @@ checks, optional music/voice generation and independent acceptance remain open.
   name and tagline with Add audio, Operator and Menu; the Library, Schedule, Broadcast, Settings, Guide and the operator chat open
   as sheets (native modal dialogs, full screen on phones) over the studio, and × or Escape returns to it. Routes such as
   `#library` and `#import` still work and open their sheet. The private design preview is built by
-  `tools/preview/build_preview.py` from the real files.
+  `tools/preview/build_preview.py` from the real files plus the preview layer in that folder (demo backend, planned
+  designs, and the clickable first-run walk-through).
 - Honesty rules kept: the lamp says LIVE only while the broadcast state is `streaming` (stream connected, not listeners); the
   display says "PLAYING · LOCAL PLAYOUT" otherwise. The level meter is measured from the audio this browser's monitor is
   playing and reads MONITOR OFF when the monitor is off; it never animates on its own. The paper trace is decorative motion
