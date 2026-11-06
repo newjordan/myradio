@@ -1,0 +1,1313 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>myradio Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{color-scheme:dark;--bg:#10131d;--surface:#1b202c;--border:#343a49;--text:#f4f2ed;--muted:#afb6c5;--accent:#d8edac;--coral:#ff946e;--error:#ffb4ab;font:14px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}a{color:var(--accent)}button,input,select,textarea{font:inherit}button,.button{min-height:44px;padding:.65rem 1rem;border:1px solid #4c5364;background:#292f3d;color:var(--text);border-radius:10px;cursor:pointer;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}button:hover,.button:hover{background:#3a4252}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--coral);border-color:var(--coral);color:#211b1c}.primary:hover{background:#ffb396}.quiet{background:transparent}button.danger{color:var(--error);background:transparent}input,select,textarea{width:100%;min-height:44px;border:1px solid #525c70;background:#141a26;border-radius:8px;color:var(--text);padding:.65rem .75rem}input[type=file]{font-size:.85rem}input[type=checkbox]{width:19px;min-height:19px;accent-color:var(--accent);flex-shrink:0}textarea{resize:vertical;max-height:240px}label{display:block;color:#c8ced9;font-size:.85rem;font-weight:600;margin-bottom:1rem}label input,label select{margin-top:.4rem}.check{display:flex;align-items:center;gap:.65rem}h1,h2,h3,p{margin:0}h1{font-size:2.15rem;letter-spacing:-.055em;font-weight:650;line-height:1.2;overflow-wrap:anywhere}h2{font-size:1.1rem;font-weight:650}h3{font-size:1.2rem;letter-spacing:-.025em;overflow-wrap:anywhere}p{color:var(--muted);overflow-wrap:anywhere}
+.rail{position:fixed;inset:0 auto 0 0;width:90px;border-right:1px solid var(--border);background:#141822;display:flex;flex-direction:column;align-items:center;padding:24px 7px 16px;gap:16px;z-index:5;overflow:auto}.rail a{display:flex;flex-direction:column;align-items:center;text-decoration:none;font-size:.72rem;color:var(--muted);width:100%;border-radius:10px;padding:7px 2px;gap:3px;min-height:54px}.rail a span{font-size:1.65rem;line-height:1.2}.rail a:hover{background:#252d3b;color:var(--text)}.rail a[aria-current]{color:var(--accent);background:#272f29}.rail .rail-logo{width:48px;min-height:48px;display:grid;place-content:center;font-size:1.65rem;font-weight:850;letter-spacing:-3px;color:#201e26;background:var(--coral);border-radius:14px;margin-bottom:22px}.rail .rail-bottom{margin-top:auto}.rail .mobile-operator{display:none}.app-shell{margin-left:90px;padding:0 34px;max-width:1800px}
+header{height:86px;display:flex;align-items:center;border-bottom:1px solid var(--border);gap:20px}.brand{display:flex;align-items:center;text-decoration:none;color:var(--text);font-size:1.9rem;font-weight:800;letter-spacing:-.07em}.brand-period{color:var(--coral)}.edition{font-size:.65rem;letter-spacing:.16em;color:var(--muted);border-left:1px solid var(--border);padding-left:20px}.header-right{margin-left:auto;display:flex;gap:18px;align-items:center;font-size:.75rem;color:var(--muted)}.header-right button{font-size:.75rem}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 354px;gap:24px;padding:28px 0;align-items:start}.studio{min-width:0}.welcome{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 25px}.welcome p{margin-top:7px}.welcome .add-audio{flex-shrink:0;font-size:.8rem}.eyebrow{font-size:.65rem;letter-spacing:.18em;color:var(--muted);font-weight:650;margin-bottom:9px}.badge{font-size:.63rem;letter-spacing:.06em;color:#c9ced9;border:1px solid #4a5060;padding:.35rem .6rem;border-radius:20px;max-width:100%;overflow-wrap:anywhere}.badge.external{color:#ffc2a6;border-color:#93634c}.pill{font-size:.66rem;font-weight:700;letter-spacing:.1em;color:#c0c7d4}.pill.running{color:var(--coral)}.card{border:1px solid var(--border);border-radius:17px;background:var(--surface);padding:22px;min-width:0}.view{display:flex;flex-direction:column;gap:20px}.view-heading{margin:0 0 4px}.view-heading h2{font-size:1.7rem;letter-spacing:-.04em}.view-heading p{margin-top:.5rem}.section-heading{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:15px}.now{padding:0;background:radial-gradient(ellipse at 100% 0%,#4b333b55,transparent 65%),#1d222e;overflow:hidden;border-color:#454352}.deck-heading{margin:0;padding:17px 23px;border-bottom:1px solid #3b3c49;flex-wrap:wrap}.now-content{display:flex;align-items:center;gap:27px;padding:27px 24px}.record{width:210px;aspect-ratio:1;flex-shrink:0;border-radius:12px;position:relative;overflow:hidden;background:#ff966c;color:#243741;box-shadow:0 12px 25px #0003}.record:before,.record:after{content:'';position:absolute;border-radius:50%;width:250px;height:250px;border:37px solid #243d49;top:60px;left:32px}.record:after{width:170px;height:170px;border:29px solid #ffe9bd;top:100px;left:72px}.art-title{position:absolute;left:17px;top:15px;z-index:1;font-size:1.35rem;line-height:1;font-weight:850;letter-spacing:-.05em}.art-footer{position:absolute;bottom:13px;left:16px;font-size:.5rem;letter-spacing:.14em;color:#172e3c;z-index:1;background:#ffb694;padding:2px 5px;border-radius:3px}.track-info{flex:1;min-width:0}.track-info #play-label{color:var(--coral);font-size:.63rem}.track-info h2{font-size:2.1rem;letter-spacing:-.05em;line-height:1.13;overflow-wrap:anywhere}.track-info #track-artist{font-size:.9rem;margin:8px 0 13px}.track-info .badge{display:inline-block;border-radius:5px;font-size:.58rem}.timing{display:flex;justify-content:space-between;color:var(--muted);font-size:.73rem;font-variant-numeric:tabular-nums}progress{width:100%;height:6px;accent-color:var(--coral);margin-top:22px;border:0;display:block;margin-bottom:8px}progress::-webkit-progress-bar{background:#444857;border-radius:10px}progress::-webkit-progress-value{background:var(--coral);border-radius:10px}.transport{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.transport button{font-size:.8rem;padding:.55rem .8rem}.rotation{font-size:.7rem;color:var(--accent);margin-top:12px}.monitor{display:flex;flex-wrap:wrap;gap:12px;border-top:1px solid #383d49;padding:16px 23px;align-items:center;background:#181e29}.monitor>div{flex:1;min-width:160px}.monitor strong{font-size:.8rem}.monitor p{font-size:.72rem;max-width:390px}.monitor>button{font-size:.75rem;border-radius:25px}audio{width:100%;height:38px}
+.subtle{font-size:.8rem;margin:6px 0 16px}.count{font-size:.8rem;color:var(--accent)}.items{padding:0;margin:0;list-style:none;max-height:520px;overflow:auto}.items li{border-top:1px solid var(--border);padding:13px 0;display:flex;gap:12px;align-items:center}.items .item-main{flex:1;min-width:0}.items strong{display:block;font-size:.85rem;font-weight:600;overflow-wrap:anywhere}.items small{display:block;font-size:.73rem;color:var(--muted);overflow-wrap:anywhere}.items .row-actions{display:flex;gap:6px;flex-wrap:wrap}.items button{font-size:.75rem;min-height:44px;padding:.4rem .7rem}.items .empty{font-size:.83rem;color:var(--muted);padding:20px 0}.queue-position{font:11px monospace;color:var(--muted)}.queue-art{width:38px;height:38px;border-radius:8px;display:grid;place-items:center;color:#1d303b;background:linear-gradient(135deg,#b9d6b2,#7b9daa);font-weight:800;letter-spacing:-.07em;flex-shrink:0}.compact li{font-size:.8rem;justify-content:space-between;align-items:baseline}.onboarding{display:flex;gap:16px;background:#222d26;border-color:#4f6249}.onboarding p{font-size:.85rem;margin-top:7px}.onboarding a{display:inline-block;margin-top:10px}.step{font:12px monospace;border-radius:50%;width:32px;height:32px;background:var(--accent);color:#223029;display:grid;place-items:center;flex-shrink:0}.quick-links{display:grid;grid-template-columns:1fr 1fr;gap:14px}.quick-links a{display:flex;gap:13px;align-items:center;background:#1a202d;border:1px solid var(--border);border-radius:13px;padding:17px;color:var(--text);text-decoration:none}.quick-links a>span{font-size:1.5rem;color:var(--accent)}.quick-links a>span:last-child{font-size:1rem;margin-left:auto}.quick-links strong{font-size:.85rem;font-weight:600;display:block}.quick-links small{font-size:.7rem;color:var(--muted);display:block;margin-top:4px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}details{border-top:1px solid var(--border);margin-top:16px;padding-top:16px}summary{cursor:pointer;font-size:.85rem;color:var(--accent);font-weight:600;padding:8px 0;min-height:44px}details form{margin-top:16px}.schedule-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}.schedule-form label{flex:1;min-width:170px;margin-bottom:0}#timezone{font-weight:400;font-size:.7rem}#program fieldset{min-width:0;border:1px solid var(--border);border-radius:8px;margin:0 0 16px;padding:10px}#program legend{color:var(--muted);font-size:.85rem;padding:0 5px}#program .row-actions{display:flex;flex-wrap:wrap;gap:4px 12px}#program .check{min-height:44px;margin:0}#program .check input{margin:0}#upload-status{display:block;margin-top:10px;font-size:.85rem}.guide h3{margin:24px 0 8px;color:var(--coral);font-size:1rem}.guide h3:first-child{margin-top:0}.guide p{margin-bottom:12px}
+.operator{position:sticky;top:24px;height:calc(100dvh - 48px);max-height:1000px;display:flex;flex-direction:column;padding:0;overflow:hidden}.operator-heading{display:flex;align-items:center;gap:12px;padding:20px;border-bottom:1px solid var(--border)}.avatar{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border-radius:13px;background:var(--accent);color:#273829;font-size:1.8rem}.operator-heading h2{font-size:.95rem}.operator-heading span{display:block;font-size:.7rem;color:var(--muted);margin-top:3px}.operator-context{padding:12px 20px;background:#252e29}.operator-context strong{font-size:.8rem;color:#dae5c7}.operator-context p{font-size:.73rem;margin-top:4px}.chat-log{flex:1;min-height:100px;overflow:auto;padding:20px;overscroll-behavior:contain}.message{padding:0;margin-bottom:22px;overflow-wrap:anywhere}.message>span{font-size:.61rem;letter-spacing:.12em;color:var(--accent);font-weight:700}.message p{font-size:.85rem;color:#d6dbe4;white-space:pre-wrap;margin-top:7px;line-height:1.75}.message.user{margin-left:20px;border-radius:12px 12px 2px 12px;background:#303847;padding:13px}.message.user>span{color:#d2d8e0}.message pre{white-space:pre-wrap;font-size:.75rem;color:#d7e6c4;border:1px solid #546549;background:#252e29;border-radius:10px;padding:12px}.message button{margin-top:8px;font-size:.8rem;background:var(--accent);color:#223128;border-color:var(--accent)}.suggestions{padding:4px 17px;display:flex;gap:6px;flex-wrap:wrap}.suggestions button{font-size:.7rem;padding:.35rem .7rem;min-height:40px;border-radius:20px;background:transparent}#chat-form{padding:8px 17px 15px}#chat-form textarea{font-size:.85rem;min-height:76px}.chat-send{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px}.chat-send span{font-size:.65rem;color:var(--muted)}.chat-send button{font-size:.8rem;white-space:nowrap;background:var(--accent);border-color:var(--accent);color:#243026}.agent-help{margin:0;padding:0 17px 8px;font-size:.75rem;flex-shrink:0}.agent-help summary{font-size:.75rem}.agent-settings{max-height:45dvh;overflow:auto;padding:0 5px 10px 0;overscroll-behavior:contain}.agent-help p{margin-top:8px}.agent-help button{font-size:.8rem}.agent-help label{font-size:.8rem}.error{color:var(--error);font-size:.85rem}.station-alerts:has(.error:not([hidden])){margin-top:16px;border:1px solid #915b54;border-radius:10px;padding:14px;background:#3a2529}#notice{position:sticky;top:0;z-index:6;padding:16px;background:#482b28;color:#ffd4cd;border-radius:8px;margin-top:10px;overflow-wrap:anywhere}footer{font-size:.7rem;color:var(--muted);padding:22px 2px 0}footer p{margin-top:8px}dialog{max-width:460px;width:calc(100% - 32px);border:1px solid #536047;border-radius:20px;padding:32px;background:var(--surface);color:var(--text)}dialog::backdrop{background:#0b1019f2;backdrop-filter:blur(5px)}dialog h1{margin:20px 0 12px;font-size:1.8rem}dialog p{font-size:.85rem;margin-bottom:18px}dialog button{width:100%}dialog .brand{color:var(--coral)}.sr-only,.skip-link{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}.skip-link:focus{position:fixed;top:12px;left:12px;width:auto;height:auto;padding:16px;clip-path:none;background:var(--surface);z-index:10}:focus-visible{outline:3px solid var(--accent);outline-offset:3px}[hidden]{display:none!important}
+@media(min-width:1700px){.app-shell{margin-right:auto}.workspace{grid-template-columns:minmax(0,1fr) 390px}}
+@media(max-width:1250px){.app-shell{padding:0 22px}.workspace{gap:18px;grid-template-columns:minmax(0,1fr) 320px}.record{width:155px}.now-content{gap:18px;padding:22px 18px}.track-info h2{font-size:1.7rem}.edition{display:none}.quick-links{grid-template-columns:1fr}}
+@media(max-width:1050px) and (min-width:851px){.record{width:100px}.art-title{font-size:.8rem;left:10px;top:10px}.art-footer{display:none}.now-content{align-items:flex-start}.record:before{top:38px;left:12px}.record:after{top:78px;left:52px}.transport{gap:6px}.transport button{font-size:.75rem}.welcome{flex-wrap:wrap}h1{font-size:1.8rem}}
+@media(max-width:850px){.rail{inset:auto 0 0;width:100%;height:78px;flex-direction:row;padding:5px 6px calc(5px + env(safe-area-inset-bottom));gap:2px;border-right:0;border-top:1px solid var(--border);background:#141822f8;justify-content:space-around}.rail a{width:auto;flex:1;min-width:0;font-size:.58rem;min-height:58px;padding:6px 1px}.rail a span{font-size:1.4rem}.rail .rail-logo{display:none}.rail .rail-bottom{margin:0}.rail .mobile-operator{display:flex}.app-shell{margin-left:0;padding:0 20px 88px}header{height:72px}.workspace{grid-template-columns:1fr;padding-top:20px}.operator{display:none;position:static;height:calc(100dvh - 195px);min-height:470px;max-height:none}.record{width:190px}.quick-links{grid-template-columns:1fr 1fr}body[data-active-view="operator"] .studio{display:none}body[data-active-view="operator"] .operator{display:flex}.header-right{gap:12px}.station-alerts{position:relative}.rail a[aria-current]{background:#303b2f}.welcome{gap:12px}}
+@media(max-width:560px){.app-shell{padding:0 14px 88px}header{gap:12px}.brand{font-size:1.7rem}.header-right{font-size:.63rem;gap:8px}.header-right>span{max-width:110px}.header-right button{font-size:.68rem;padding:.5rem .65rem}h1{font-size:1.75rem}.welcome{flex-wrap:wrap;margin-bottom:20px}.welcome>div{flex:1;min-width:200px}.welcome .add-audio{min-height:44px}.welcome #tagline{font-size:.85rem}.card{padding:17px}.now{padding:0}.now-content{gap:17px;padding:20px 17px;align-items:flex-start;flex-wrap:wrap}.record{width:110px}.art-title{font-size:.9rem;left:10px;top:10px}.art-footer{display:none}.record:before{top:36px;left:15px}.record:after{top:76px;left:55px}.track-info{min-width:145px}.track-info h2{font-size:1.6rem}.track-info #track-artist{font-size:.8rem}.track-info #play-label{font-size:.58rem}.deck-heading{padding:14px 17px;gap:10px}.badge{font-size:.58rem}.transport{margin-top:15px}.transport button{font-size:.75rem}.monitor{padding:14px 17px}.form-row,.quick-links{grid-template-columns:1fr}.items li{flex-wrap:wrap}.items .item-main{min-width:45%}.items .row-actions{width:100%}.operator{padding:0}.view-heading h2{font-size:1.5rem}.operator-heading{padding:17px}.operator-context{padding:10px 17px}.chat-log{padding:17px}.chat-send span{font-size:.62rem}.onboarding{padding:17px}.guide p{font-size:.9rem}.queue-art{width:32px;height:32px}.items button{padding:.4rem .6rem}.schedule-form label{min-width:100%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* ===== myradio studio preview: additions to the real Midnight styles =====
+   Layout idea: the real studio untouched, plus new views built from the same
+   surfaces, radii, lime/coral accents and record-art motif. All new classes use
+   the x- prefix so nothing collides with the real stylesheet. */
+:root{--ink2:#1a202d;--sage:#b9d6b2;--sky:#7b9daa;--cream:#ffe9bd;--navy:#243d49;--ok:#b9e08a;--warn:#ffd08a;--line2:#4c5364}
+
+/* Side gutters (artifact contract): at least 16px, clear of a phone's side bar. */
+.app-shell{padding-left:max(34px,env(safe-area-inset-left,0px));padding-right:max(34px,env(safe-area-inset-right,0px))}
+@media(max-width:1250px){.app-shell{padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(22px,env(safe-area-inset-right,0px))}}
+@media(max-width:850px){.app-shell{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}.rail{padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}}
+@media(max-width:560px){.app-shell{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+
+/* The first-run view replaces the station welcome strip. */
+body[data-active-view="start"] .welcome{display:none}
+
+/* ---- preview bar ---- */
+.x-previewbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:7;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;padding:10px 16px;background:#2b2127;border:1px solid #93634c;border-top:0;border-radius:0 0 13px 13px;font-size:.74rem}
+.x-previewbar p{color:#f1d9cf;max-width:70ch}
+.x-previewbar strong{color:#ffc2a6;letter-spacing:.04em}
+.x-pv-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.x-pv-tools .x-label{font-size:.66rem;letter-spacing:.14em;color:#d9b8a8}
+.x-toggle{display:inline-flex;border:1px solid #93634c;border-radius:10px;overflow:hidden}
+.x-toggle button{min-height:44px;border:0;border-radius:0;background:transparent;font-size:.75rem;padding:.4rem .9rem;color:#f1d9cf}
+.x-toggle button[aria-pressed=true]{background:#ff946e;color:#211b1c}
+.x-toggle button+button{border-left:1px solid #93634c}
+
+.x-planned{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.14em;color:#e3d9ae;border:1px dashed #9a9570;border-radius:5px;padding:.12rem .4rem;vertical-align:middle;white-space:nowrap}
+
+/* ---- chips, switches, segmented controls, ranges ---- */
+.x-chips{display:flex;gap:6px;flex-wrap:wrap}
+.x-chip{display:inline-flex;align-items:center;gap:.35rem;min-height:28px;padding:.15rem .65rem;border:1px solid #4a5060;border-radius:20px;font-size:.72rem;font-weight:600;color:#d3d8e2;background:transparent;margin:0}
+.x-chip.skip{border-color:#915b54;color:#ffc2b8}
+.x-tog{min-height:44px;cursor:pointer;position:relative;font-size:.8rem;padding:.3rem .9rem}
+.x-tog input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.x-tog:has(input:checked){background:#2c3a2a;border-color:var(--accent);color:var(--accent)}
+.x-tog:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:3px}
+
+.x-switch{position:relative;display:flex;align-items:center;gap:.75rem;margin:0 0 .4rem;min-height:44px;cursor:pointer;color:var(--text);font-size:.85rem;font-weight:600}
+.x-switch input{position:absolute;opacity:0;width:44px;height:44px;margin:0;left:0;top:0}
+.x-track{flex:0 0 auto;width:42px;height:24px;border-radius:14px;background:#3a4252;border:1px solid #5a6378;position:relative;transition:background .15s}
+.x-track:after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#e9ecf2;transition:transform .15s}
+.x-switch input:checked+.x-track{background:var(--accent);border-color:var(--accent)}
+.x-switch input:checked+.x-track:after{transform:translateX(18px);background:#223029}
+.x-switch input:focus-visible+.x-track{outline:3px solid var(--accent);outline-offset:3px}
+.x-switch small{display:block;color:var(--muted);font-weight:400;font-size:.72rem;line-height:1.4}
+
+.x-seg{border:0;padding:0;margin:0 0 1rem;min-width:0}
+.x-seg legend{color:#c8ced9;font-size:.85rem;font-weight:600;padding:0;margin-bottom:.45rem}
+.x-seg .x-opts{display:flex;border:1px solid #525c70;border-radius:10px;overflow:hidden;background:#141a26}
+.x-seg label{flex:1;margin:0;position:relative;display:block;min-width:0}
+.x-seg input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer;min-height:0}
+.x-seg span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 .5rem;font-size:.8rem;font-weight:600;color:#c8ced9;text-align:center}
+.x-seg label+label span{border-left:1px solid #3a4252}
+.x-seg input:checked+span{background:#2c3a2a;color:var(--accent)}
+.x-seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:-3px}
+
+.x-rw{margin-bottom:1.1rem}
+.x-rw>.x-rl{display:block;color:#c8ced9;font-size:.85rem;font-weight:600}
+.x-range{padding:0;border:0;background:transparent;accent-color:var(--coral);min-height:44px;margin:.2rem 0 0}
+.x-rends{display:flex;justify-content:space-between;color:var(--muted);font-size:.7rem;margin-top:-6px}
+.x-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.x-actions .grow{flex:1}
+.x-hint{font-size:.78rem;color:var(--muted)}
+.x-ok{color:var(--ok)}
+.x-bad{color:var(--error)}
+
+/* ---- stepper ---- */
+.x-stepper{list-style:none;display:flex;gap:8px;margin:0;padding:0;flex-wrap:wrap}
+.x-stepper li{flex:1;min-width:130px}
+.x-stepbtn{width:100%;justify-content:flex-start;gap:.7rem;background:var(--ink2);border-color:var(--border);font-size:.82rem}
+.x-stepbtn .step{background:transparent;border:1px solid #6b7488;color:#c9ced9}
+.x-stepbtn[aria-current=step]{border-color:var(--accent)}
+.x-stepbtn[aria-current=step] .step{background:var(--accent);color:#223029;border-color:var(--accent)}
+.x-stepbtn[data-state=done] .step{background:#2c3a2a;border-color:var(--accent);color:var(--accent)}
+
+/* ---- ready-made station cards (record-art motif) ---- */
+.x-recipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:6px 0 22px}
+.x-recipe,.x-hostpick{position:relative;display:flex;gap:13px;align-items:center;text-align:left;padding:12px;background:var(--ink2);border:1px solid var(--border);border-radius:13px;min-height:84px;margin:0;cursor:pointer;color:var(--text)}
+.x-recipe:hover,.x-hostpick:hover{background:#222a39}
+.x-recipe input,.x-hostpick input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer;min-height:0}
+.x-recipe:has(input:checked),.x-hostpick:has(input:checked){border-color:var(--accent);background:#222d26}
+.x-recipe:has(input:focus-visible),.x-hostpick:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:3px}
+.x-recipe strong,.x-hostpick strong{display:block;font-size:.88rem;font-weight:650;color:var(--text)}
+.x-recipe small,.x-hostpick small{display:block;font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.4;font-weight:400}
+.x-art{flex:0 0 58px;width:58px;height:58px;border-radius:9px;position:relative;overflow:hidden;background:var(--a1)}
+.x-art:before,.x-art:after{content:'';position:absolute;border-radius:50%}
+.x-art:before{width:64px;height:64px;border:11px solid var(--a2);top:20px;left:6px}
+.x-art:after{width:36px;height:36px;border:8px solid var(--a3);top:32px;left:20px}
+.x-picked{display:none;position:absolute;top:8px;right:10px;font-size:.7rem;font-weight:800;letter-spacing:.1em;color:var(--accent)}
+.x-recipe:has(input:checked) .x-picked,.x-hostpick:has(input:checked) .x-picked{display:block}
+
+.x-hosts{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.x-host{display:flex;flex-direction:column;gap:11px;padding:16px;background:var(--ink2);border:1px solid var(--border);border-radius:14px}
+.x-host-top{display:flex;gap:12px;align-items:center}
+.x-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:1.2rem;color:#1f2a22;background:var(--tone,var(--accent));flex:0 0 auto}
+.x-host strong{font-size:.95rem;color:var(--text);display:block}
+.x-host .role{font-size:.7rem;color:var(--muted)}
+.x-host p{font-size:.8rem}
+.x-host .x-actions{margin-top:auto}
+.x-host button{font-size:.75rem}
+
+/* ---- Studio additions ---- */
+.x-next{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(100deg,#2b2330,#1d222e 62%);border-color:#6a4f5d;padding:16px 20px}
+.x-next .eyebrow{color:var(--coral);margin:0 0 4px}
+.x-next h2{font-size:1.25rem;letter-spacing:-.025em;color:var(--text)}
+.x-next p{font-size:.82rem;margin-top:4px}
+.x-next .grow{flex:1;min-width:220px}
+.x-next .button,.x-next button{flex-shrink:0}
+.x-auto .head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between}
+.x-auto h2{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.x-auto progress{margin-top:12px}
+.x-time{display:flex;gap:8px;overflow:auto;padding:12px 0 4px;margin:0;list-style:none}
+.x-time li{flex:0 0 auto;min-width:112px;border:1px solid var(--border);border-radius:11px;padding:9px 11px;background:var(--ink2);border-top:3px solid var(--k)}
+.x-time b{display:block;font-size:.72rem;letter-spacing:.14em;color:var(--k)}
+.x-time span{display:block;font-size:.78rem;color:var(--text);margin-top:2px}
+.x-time small{font-size:.68rem;color:var(--muted)}
+
+/* ---- readiness checklist ---- */
+.x-checks{list-style:none;margin:0;padding:0}
+.x-checks li{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--border);flex-wrap:wrap}
+.x-checks .ico{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:800;flex:0 0 auto}
+.x-checks .ok .ico{background:#2c3a2a;color:var(--ok);border:1px solid var(--ok)}
+.x-checks .warn .ico{background:#3a3326;color:var(--warn);border:1px solid var(--warn)}
+.x-checks .txt{flex:1;min-width:180px}
+.x-checks strong{display:block;font-size:.85rem}
+.x-checks small{display:block;color:var(--muted);font-size:.74rem;line-height:1.45}
+.x-checks button{font-size:.75rem}
+.x-summary{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0 0 18px;font-size:.85rem}
+.x-summary dt{color:var(--muted)}
+.x-summary dd{margin:0;color:var(--text)}
+
+/* ---- Shows ---- */
+.x-days{display:flex;gap:6px;flex-wrap:wrap}
+.x-strip{position:relative;height:96px;border:1px solid var(--border);border-radius:12px;background:#141a26;overflow:hidden;margin-top:6px}
+.x-strip:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),#2a3140 calc(12.5% - 1px),#2a3140 12.5%)}
+.x-block{position:absolute;top:8px;bottom:8px;min-height:44px;padding:.4rem .6rem;border-radius:9px;border:2px solid transparent;background:var(--c);color:#f4f2ed;text-align:left;justify-content:flex-start;align-items:flex-start;flex-direction:column;gap:2px;overflow:hidden;font-size:.74rem}
+.x-block:hover{filter:brightness(1.12);background:var(--c)}
+.x-block{min-width:0}.x-block small{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;font-weight:500;font-size:.72rem;opacity:.95;white-space:nowrap}
+.x-block[aria-current=true]{border-color:var(--accent)}
+.x-hours{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.x-showlist{display:none;margin-top:6px}
+.x-showlist li .dot{width:12px;height:30px;border-radius:4px;background:var(--c);flex:0 0 auto}
+@media(max-width:700px){.x-strip,.x-hours{display:none}.x-showlist{display:block}}
+.x-clock{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+.x-clock svg{width:min(240px,100%);flex:0 0 auto}
+.x-legend{list-style:none;margin:0;padding:0;display:grid;gap:8px;flex:1;min-width:220px}
+.x-legend li{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--text)}
+.x-legend i{width:12px;height:12px;border-radius:3px;background:var(--c);flex:0 0 auto}
+.x-legend small{color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* ---- Team / Discover rows ---- */
+.x-rows{list-style:none;margin:0;padding:0}
+.x-rows>li{border-top:1px solid var(--border);padding:16px 0;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.x-rows .main{flex:1;min-width:220px}
+.x-rows strong{font-size:.92rem}
+.x-rows .meta{font-size:.76rem;color:var(--muted);margin-top:3px}
+.x-status{font-size:.7rem;font-weight:700;letter-spacing:.1em;border:1px solid #4a5060;border-radius:20px;padding:.2rem .6rem;color:#c9ced9;white-space:nowrap}
+.x-status.live{color:var(--ok);border-color:var(--ok)}
+.x-status.hold{color:var(--warn);border-color:var(--warn)}
+.x-brief{margin:10px 0 0;padding:12px 14px;border:1px solid #546549;background:#202a24;border-radius:11px;font-size:.8rem}
+.x-brief h4{margin:0 0 6px;font-size:.66rem;letter-spacing:.14em;color:var(--accent)}
+.x-brief ul{margin:0;padding-left:1.1rem;color:#d6dbe4}
+.x-brief li{margin:4px 0}
+.x-brief small{display:block;color:var(--muted);font-size:.7rem}
+.x-brief.skip{border-color:#4a5060;background:#1c2230}
+.x-error{color:var(--error);font-size:.8rem;margin:6px 0}
+
+/* ---- rail: grouped for phones ---- */
+.rail button.rail-more{display:none;flex-direction:column;align-items:center;border:0;background:transparent;color:var(--muted);font-size:.58rem;min-height:58px;padding:6px 1px;gap:3px;border-radius:10px;font-weight:400;flex:1;min-width:0}
+.rail button.rail-more span{font-size:1.4rem;line-height:1.2}
+@media(max-width:850px){.rail .secondary{display:none}.rail button.rail-more{display:flex}}
+#more-sheet a{display:flex;gap:14px;align-items:center;padding:13px 4px;color:var(--text);text-decoration:none;border-top:1px solid var(--border);min-height:48px}
+#more-sheet a span{font-size:1.4rem;color:var(--accent);width:28px;text-align:center}
+#more-sheet h1,#confirm-dialog h1,#setup-sheet h1{font-size:1.35rem;margin:0 0 10px}
+#confirm-dialog button,#setup-sheet button.x-close{margin-top:10px}
+#setup-sheet p{margin-bottom:12px}
+
+/* Design review fixes */
+/* The Next-step bar replaces the old first-run card, so first-run guidance is never doubled. */
+#onboarding{display:none!important}
+/* Selected state is never colour alone. */
+.x-tog:has(input:checked)::before{content:'\2713';margin-right:.15rem}
+.x-seg input:checked+span::before{content:'\2713\00a0'}
+.x-days .x-tog{min-width:44px;justify-content:center}
+@media(max-width:560px){.x-next{padding:12px 14px;gap:10px}.x-next h2{font-size:1.05rem}.x-next p{font-size:.78rem;margin-top:2px}.x-next .eyebrow{margin-bottom:2px}}
+#main:focus{outline:none}
+</style>
+<a class="skip-link" href="#main">Skip to station</a>
+<nav class="rail" aria-label="Studio navigation"><a class="rail-logo" href="#studio" aria-label="myradio studio">mr.</a>
+<a href="#studio" data-view="studio"><span aria-hidden="true">◉</span>Studio</a>
+<a href="#library" data-view="library"><span aria-hidden="true">▤</span>Library</a>
+<a href="#shows" data-view="shows"><span aria-hidden="true">▦</span>Shows</a>
+<a href="#team" data-view="team" class="secondary"><span aria-hidden="true">◍</span>Team</a>
+<a href="#discover" data-view="discover" class="secondary"><span aria-hidden="true">✦</span>Discover</a>
+<a href="#broadcast" data-view="broadcast" class="secondary"><span aria-hidden="true">⌁</span>Broadcast</a>
+<a href="#operator" data-view="operator" class="mobile-operator"><span aria-hidden="true">✳</span>Operator</a>
+<button type="button" class="rail-more" aria-haspopup="dialog"><span aria-hidden="true">⋯</span>More</button>
+<a href="#my-station" data-view="settings" class="rail-bottom secondary"><span aria-hidden="true">⚙</span>Settings</a>
+<a href="#help" data-view="help" class="secondary"><span aria-hidden="true">?</span>Guide</a></nav>
+<div class="app-shell"><div class="x-previewbar" role="region" aria-label="About this preview"><p><strong>DESIGN PREVIEW.</strong> This is the real studio interface running on sample data. No audio plays here. Switch to First run to walk through setup. <span class="x-planned">◇ PLANNED</span> marks designs for the next version.</p><div class="x-pv-tools"><span class="x-label">DEMO STATE</span><div class="x-toggle" role="group" aria-label="Demo state"><button type="button" data-mode="first" aria-pressed="false">First run</button><button type="button" data-mode="onair" aria-pressed="true">On air</button></div></div></div><header><a class="brand" href="#studio">myradio<span class="brand-period">.</span></a><span class="edition">A LITTLE STATION. ALL YOURS.</span><div class="header-right"><span id="connection" role="status">Connecting…</span><button id="lock" class="quiet">Lock studio</button></div></header>
+<div id="notice" role="alert" hidden></div><div class="station-alerts"><p id="playout-error" class="error" role="alert" hidden></p></div>
+<main id="main" class="workspace" tabindex="-1"><div class="studio">
+<section class="welcome"><div><p class="eyebrow">YOUR CORNER OF THE AIRWAVES</p><h1 id="station-name">Welcome to your studio</h1><p id="tagline">Bring your music. Make it yours.</p></div><a class="button add-audio" href="#import">＋ Add audio</a></section>
+<section id="view-studio" class="view" aria-label="Studio">
+<section id="x-next" class="card x-next" aria-live="polite"><div class="grow"><p class="eyebrow">NEXT STEP <span class="x-planned">◇ PLANNED</span></p><h2 id="x-next-title">…</h2><p id="x-next-body"></p></div><a id="x-next-link" class="button primary" href="#start" hidden>Start setup →</a><button id="x-next-btn" class="primary" type="button" hidden>Go</button></section>
+<section class="card now"><div class="section-heading deck-heading"><span id="air-state" class="pill">STOPPED</span><span id="audience-state" class="badge">PRIVATE · NOT BROADCASTING</span></div>
+<div class="now-content"><div class="record" aria-hidden="true"><span class="art-title">YOUR<br>OWN<br>FREQUENCY.</span><span class="art-footer">MYRADIO / STUDIO ART</span></div><div class="track-info"><p class="eyebrow" id="play-label">NOT PLAYING</p><h2 id="track-title">Your first track starts here</h2><p id="track-artist">Import audio, then start your station.</p><span id="kind" class="badge">LOCAL PLAYOUT</span><progress id="progress" value="0" max="1" aria-label="Track progress"></progress><div class="timing"><span id="elapsed">0:00</span><span id="duration">0:00</span></div><div class="transport"><button id="start" class="primary">▶ Start station</button><button id="stop">■ Stop</button><button id="skip">Skip →</button></div><p id="rotation-state" class="rotation">Music rotation</p></div></div>
+<div class="monitor"><div><strong>Studio monitor</strong><p>Listen here. Local playout does not start a public broadcast.</p></div><button id="listen">Listen here</button><button id="disconnect" class="quiet" hidden>Disconnect</button><audio id="audio" controls preload="none" hidden aria-label="Live local station monitor"></audio></div></section>
+
+<section id="x-auto" class="card x-auto"><div class="head"><h2>Autopilot <span class="x-planned">◇ PLANNED</span></h2><label class="x-switch"><input id="x-autopilot" type="checkbox" checked><span class="x-track" aria-hidden="true"></span><span>Keep my station fed<small id="x-auto-sub">Makes songs and host breaks ahead of time.</small></span></label></div><p id="x-auto-status" class="subtle" style="margin-bottom:0"></p><button id="x-auto-setup" type="button" hidden style="margin-top:10px">Set up the music maker…</button><progress id="x-auto-meter" value="1" max="1" aria-label="How much of the next three hours is ready"></progress><ul id="x-auto-time" class="x-time" aria-label="What is coming up, in order"></ul><p id="x-auto-hint" class="x-hint">Songs and voices are made on this computer, a little ahead of time, so a slow moment never means silence. You can change the plan any time in <a href="#shows">Shows</a>.</p></section>
+<section id="onboarding" class="card onboarding"><span class="step">01</span><div><h2>A station starts with a sound.</h2><p>Import music you own or have permission to play. Queue a few favorites, press Start station, then Listen. Music rotates automatically; spoken links and ads only play when you queue or schedule them.</p><p class="subtle">Audio generation is not connected. Optional Icecast output is configured in Broadcast.</p><a href="#import">Import your first track →</a></div></section><section class="card"><div class="section-heading"><h2>Coming up</h2><span id="queue-count" class="count">0</span></div><p class="subtle">Your queue plays first, then music rotation takes over.</p><ol id="queue" class="items"></ol></section><div class="quick-links"><a href="#library"><span aria-hidden="true">▤</span><div><strong>Your sound collection</strong><small>Music, station IDs &amp; spoken moments</small></div><span aria-hidden="true">↗</span></a><a href="#schedule"><span aria-hidden="true">▦</span><div><strong>Make it a regular thing</strong><small>Build your station’s weekly rhythm</small></div><span aria-hidden="true">↗</span></a></div></section><section id="view-library" class="view" aria-label="Audio library" hidden><div class="view-heading"><p class="eyebrow">YOUR SOUND COLLECTION</p><h2>Bring the good stuff.</h2><p>Keep the music, IDs and moments that make this station yours.</p></div><section class="card"><div class="section-heading"><h2>Audio library</h2><span id="library-count" class="count">0 tracks</span></div><p class="subtle">Music, spoken links, station IDs and ads. Only music joins automatic rotation.</p><ul id="library" class="items"></ul><details id="import" open><summary>＋ Import audio</summary><form id="upload"><div class="form-row"><label>Audio file<input id="file" type="file" accept=".wav,.mp3,.flac,.ogg,.oga,.m4a,.aac,.aif,.aiff,audio/wav,audio/mpeg,audio/flac,audio/ogg,audio/mp4,audio/aac,audio/aiff" required></label><label>Content type<select id="upload-kind"><option value="music">Music</option><option value="speech">Spoken link / station ID</option><option value="ad">Advertisement</option></select></label></div><div class="form-row"><label>Title<input id="upload-title" maxlength="200" required></label><label>Artist or presenter<input id="upload-artist" maxlength="200"></label></div><p class="subtle">WAV, MP3, FLAC, Ogg, AAC/M4A or AIFF · up to 100 MiB uploaded and decoded (about 9 minutes 54 seconds). Converted locally to 44.1 kHz stereo PCM; no audio is sent to an AI service. You keep ownership of your audio.</p><p id="import-capability" class="subtle"></p><button id="upload-button" type="submit">Import to library</button><span id="upload-status" role="status"></span></form></details></section></section><section id="view-schedule" class="view" aria-label="Schedule" hidden><div class="view-heading"><p class="eyebrow">MAKE IT A REGULAR THING</p><h2>Your station’s rhythm.</h2></div><section class="card"><div class="section-heading"><h2>Schedule a moment</h2><span class="badge">ONE-SHOT EVENTS</span></div><p class="subtle">Due events join the front of the queue and play after the current track. Events more than 60 seconds late or due while stopped are marked missed. This is not a hard-time ad scheduler.</p><form id="schedule" class="schedule-form"><label>Audio<select id="schedule-track" required><option value="">Import a track first</option></select></label><label>When <span id="timezone"></span><input id="schedule-at" type="datetime-local" required></label><button type="submit">Schedule</button></form><ul id="schedules" class="items"></ul></section><section class="card"><div class="section-heading"><h2>Recurring programs</h2><span class="badge">WEEKLY CLOCK</span></div><p class="subtle">Repeat music, a station ID, or an ad at a local time on chosen days. Due programs play after the current track. Stopped or late programs are missed, not replayed in a burst.</p><form id="program"><label>Audio<select id="program-track" required><option value="">Import a track first</option></select></label><div class="form-row"><label>Local time<input id="program-time" type="time" required></label><label>Timezone<input id="program-zone" maxlength="100" required placeholder="Europe/London" autocomplete="off"></label></div><fieldset><legend>Repeat on</legend><div class="row-actions"><label class="check"><input type="checkbox" name="weekday" value="1" checked>Mon</label><label class="check"><input type="checkbox" name="weekday" value="2" checked>Tue</label><label class="check"><input type="checkbox" name="weekday" value="3" checked>Wed</label><label class="check"><input type="checkbox" name="weekday" value="4" checked>Thu</label><label class="check"><input type="checkbox" name="weekday" value="5" checked>Fri</label><label class="check"><input type="checkbox" name="weekday" value="6" checked>Sat</label><label class="check"><input type="checkbox" name="weekday" value="7" checked>Sun</label></div></fieldset><p class="subtle">IANA timezones. When clocks change, nonexistent times are skipped; repeated times play once at their first occurrence. Programs due together queue in a stable order, not simultaneously.</p><button type="submit">Add recurring program</button></form><ul id="programs" class="items"></ul></section></section><section id="view-broadcast" class="view" aria-label="Broadcast" hidden><div class="view-heading"><p class="eyebrow">GO BEYOND YOUR DESK</p><h2>Share your frequency.</h2></div><section class="card" aria-labelledby="broadcast-heading"><div class="section-heading"><h2 id="broadcast-heading">Broadcast to the world</h2><span id="broadcast-state" class="badge">DISCONNECTED</span></div><p>Connect to your Icecast host. Starting local playout does not go live; use the separate Go live button. Only broadcast audio you have the rights to share.</p><p id="broadcast-health" role="status"></p><p id="broadcast-error" class="error" role="alert" hidden></p><p id="broadcast-saved" class="subtle"></p><form id="broadcast-form"><label>Icecast mount URL<input id="broadcast-url" type="url" placeholder="https://radio.example.org:8443/live.mp3" maxlength="2048" required autocomplete="off"></label><label>Source username<input id="broadcast-user" value="source" maxlength="200" required autocomplete="off"></label><label>Source password<input id="broadcast-password" type="password" maxlength="1000" required autocomplete="new-password"></label><p class="subtle">Remote destinations require HTTPS. Credentials stay in a private local file, not in chat or agent snapshots. Saving replaces all three fields; saved credentials are never displayed.</p><button id="broadcast-save" type="submit">Save broadcast settings</button></form><div class="transport"><button id="broadcast-start" type="button">Go live…</button><button id="broadcast-stop" type="button">Disconnect broadcast</button></div><p class="subtle">128 kbit/s MP3 via FFmpeg (install separately). Transient failures retry with fresh audio; authentication failures require intervention. Stop station also disconnects. Restart never goes live automatically. Bytes sent are not a listener or delivery confirmation; verify your host’s public player.</p></section></section><section id="view-settings" class="view" aria-label="Settings" hidden><div class="view-heading"><p class="eyebrow">MAKE YOURSELF AT HOME</p><h2>A station with your name on it.</h2></div><section class="card"><div class="section-heading"><h2>Station identity</h2><span class="badge">YOUR WAY</span></div><form id="identity"><label>Station name<input id="name-input" name="name" maxlength="200" required autocomplete="organization"></label><label>Tagline<input id="tagline-input" name="tagline" maxlength="200" required></label><label class="check"><input id="auto-fill" type="checkbox" checked>Keep playing music when the queue ends</label><button type="submit">Save station</button></form></section><section class="card"><div class="section-heading"><h2>Station log</h2><span class="badge">RECENT ACTIVITY</span></div><ul id="history" class="items compact"></ul></section></section>
+<section id="view-start" class="view" aria-label="Set up your station" hidden>
+<div class="view-heading"><p class="eyebrow">WELCOME <span class="x-planned">◇ PLANNED</span></p><h2>Let’s build your station.</h2><p>Tell us the vibe. We’ll set up the sound, the voice and the schedule. You can change anything later.</p></div>
+<ol class="x-stepper" aria-label="Setup steps">
+<li><button type="button" class="x-stepbtn" data-step="1"><span class="step">1</span>Describe it</button></li>
+<li><button type="button" class="x-stepbtn" data-step="2"><span class="step">2</span>Pick the sound</button></li>
+<li><button type="button" class="x-stepbtn" data-step="3"><span class="step">3</span>Choose a voice</button></li>
+<li><button type="button" class="x-stepbtn" data-step="4"><span class="step">4</span>Go on air</button></li>
+</ol>
+
+<section class="card x-step" data-step="1">
+<label for="wiz-describe">Describe your station in a sentence</label>
+<textarea id="wiz-describe" rows="3" maxlength="300" placeholder="A cozy late-night station for stargazers, lo-fi fans and people who build things."></textarea>
+<p class="subtle">Or start from a ready-made station. You can still change everything.</p>
+<div id="wiz-recipes" class="x-recipes" role="radiogroup" aria-label="Ready-made stations"></div>
+<div class="form-row"><label>Station name<input id="wiz-name" maxlength="60" placeholder="Porchlight FM" autocomplete="off"></label><label>Tagline<input id="wiz-tagline" maxlength="120" placeholder="Late-night sounds for stargazers and makers." autocomplete="off"></label></div>
+<p id="wiz-error-1" class="x-error" role="alert" hidden></p>
+<div class="x-actions"><button id="wiz-next-1" class="primary" type="button">Next: pick the sound →</button><span class="x-hint">About 3 minutes. Nothing goes online.</span></div>
+</section>
+
+<section class="card x-step" data-step="2" hidden>
+<div class="section-heading"><h2>What should it sound like?</h2><span id="wiz-matched" class="badge"></span></div>
+<p class="subtle">Pick a few styles. Your station mixes them, so it never feels like one playlist on repeat.</p>
+<div id="wiz-styles" class="x-chips" role="group" aria-label="Music styles" style="margin-bottom:22px"></div>
+<div class="form-row">
+<div class="x-rw"><label class="x-rl" for="wiz-energy" style="margin:0">Energy</label><input id="wiz-energy" class="x-range" type="range" min="0" max="100" value="35"><div class="x-rends"><span>Calm</span><span>Lively</span></div></div>
+<div class="x-rw"><label class="x-rl" for="wiz-adv" style="margin:0">How adventurous?</label><input id="wiz-adv" class="x-range" type="range" min="0" max="100" value="40"><div class="x-rends"><span>Familiar</span><span>Surprising</span></div></div>
+</div>
+<div class="x-rw"><label class="x-rl" for="wiz-vocals" style="margin:0">Vocals</label><input id="wiz-vocals" class="x-range" type="range" min="0" max="100" value="20"><div class="x-rends"><span>Instrumental</span><span>With lyrics</span></div></div>
+<p class="x-hint">Music is made on your computer, ahead of time. You can also bring your own audio any time from the Library. <span class="x-planned">◇ PLANNED</span></p>
+<div class="x-actions"><button id="wiz-back-2" type="button">← Back</button><button id="wiz-next-2" class="primary" type="button">Next: choose a voice →</button></div>
+</section>
+
+<section class="card x-step" data-step="3" hidden>
+<div class="section-heading"><h2>Who’s on the mic?</h2><span class="x-planned">◇ PLANNED</span></div>
+<p class="subtle">Hosts introduce songs, say your station name and read short updates. They are characters, not real people.</p>
+<div id="wiz-hosts" class="x-recipes" role="radiogroup" aria-label="Hosts"></div>
+<fieldset class="x-seg"><legend>How often should they talk?</legend><div class="x-opts"><label><input type="radio" name="wiz-talk" value="rare"><span>Rarely</span></label><label><input type="radio" name="wiz-talk" value="some" checked><span>Sometimes</span></label><label><input type="radio" name="wiz-talk" value="often"><span>Often</span></label></div></fieldset>
+<label class="x-switch"><input id="wiz-id" type="checkbox" checked><span class="x-track" aria-hidden="true"></span><span>Say the station name every 15 minutes<small>A short “you’re listening to…” so new listeners know where they are.</small></span></label>
+<div class="x-actions"><button id="wiz-back-3" type="button">← Back</button><button id="wiz-next-3" class="primary" type="button">Next: review and go on air →</button></div>
+</section>
+
+<section class="card x-step" data-step="4" hidden>
+<div class="section-heading"><h2>Ready when you are.</h2><span class="badge">PRIVATE UNTIL YOU GO LIVE</span></div>
+<dl id="wiz-summary" class="x-summary"></dl>
+<h3 style="font-size:.95rem;margin:6px 0 4px">Is your computer ready?</h3>
+<ul id="wiz-checks" class="x-checks"></ul>
+<p class="subtle" style="margin-top:14px">Starting plays your station privately on this computer. Nobody else can hear it. Going live on the internet is a separate step in <a href="#broadcast">Broadcast</a>.</p>
+<div class="x-actions"><button id="wiz-back-4" type="button">← Back</button><button id="wiz-save" type="button">Save for later</button><span class="grow"></span><button id="wiz-start" class="primary" type="button">▶ Start my station</button></div>
+</section>
+</section>
+
+<section id="view-shows" class="view" aria-label="Shows" hidden>
+<div class="view-heading"><p class="eyebrow">WHEN WHAT PLAYS <span class="x-planned">◇ PLANNED</span></p><h2>Your station’s week.</h2><p>Shows decide the style, the host and the rhythm of each part of the day. Start with the defaults and change only what you like.</p></div>
+<section class="card"><div class="section-heading"><h2>A day on the air</h2><div id="show-days" class="x-days" role="group" aria-label="Which days"></div></div>
+<div id="show-strip" class="x-strip" role="group" aria-label="Shows across 24 hours"></div>
+<div class="x-hours" aria-hidden="true"><span>12 am</span><span>3</span><span>6</span><span>9</span><span>12 pm</span><span>3</span><span>6</span><span>9</span><span>12 am</span></div>
+<ul id="show-list" class="items x-showlist" aria-label="Shows"></ul>
+<div class="x-actions" style="margin-top:14px"><button id="show-add" type="button">＋ Add a show</button><span id="show-msg" class="x-hint" role="status"></span></div></section>
+
+<section id="show-editor" class="card"><div class="section-heading"><h2 id="show-editor-title">Edit show</h2><span id="show-time" class="badge"></span></div>
+<div class="form-row"><label>Show name<input id="se-name" maxlength="40" autocomplete="off"></label><label>Music style<select id="se-style"></select></label></div>
+<div class="form-row"><label>Starts<select id="se-from"></select></label><label>Ends<select id="se-to"></select></label></div>
+<div class="form-row"><label>Host<select id="se-host"></select></label>
+<fieldset class="x-seg"><legend>Talk breaks</legend><div class="x-opts"><label><input type="radio" name="se-talk" value="rare"><span>Rarely</span></label><label><input type="radio" name="se-talk" value="some"><span>Sometimes</span></label><label><input type="radio" name="se-talk" value="often"><span>Often</span></label></div></fieldset></div>
+<div class="x-rw"><label class="x-rl" for="se-energy" style="margin:0">Energy</label><input id="se-energy" class="x-range" type="range" min="0" max="100"><div class="x-rends"><span>Calm</span><span>Lively</span></div></div>
+<label class="x-switch"><input id="se-spots" type="checkbox"><span class="x-track" aria-hidden="true"></span><span>Allow spots in this show<small>Sponsor messages and your own promos, in short breaks.</small></span></label>
+<label class="x-switch"><input id="se-news" type="checkbox"><span class="x-track" aria-hidden="true"></span><span>Include a short update<small>From one of your <a href="#discover">researchers</a>. If nothing is new, music keeps playing.</small></span></label>
+<p id="se-error" class="x-error" role="alert" hidden></p>
+<div class="x-actions"><button id="se-save" class="primary" type="button">Save show</button><button id="se-remove" class="danger" type="button">Remove show</button></div></section>
+
+<section class="card"><div class="section-heading"><h2>Inside one hour of <span id="clock-name">this show</span></h2><span class="badge">AN EXAMPLE HOUR</span></div>
+<div class="x-clock"><svg id="clock-svg" viewBox="0 0 200 200" role="img" aria-label="An example hour"></svg><ul id="clock-legend" class="x-legend"></ul></div>
+<p class="x-hint" style="margin-top:12px">Your station builds each hour from this recipe, then shuffles within it so no two hours sound alike.</p></section>
+
+<section class="card"><div class="section-heading"><h2>One-time and repeating moments</h2></div><p class="subtle">Play one recording at an exact time, or repeat it every week. These work today.</p><a class="button" href="#schedule">Open the schedule →</a></section>
+</section>
+
+<section id="view-team" class="view" aria-label="On-air team" hidden>
+<div class="view-heading"><p class="eyebrow">WHO’S ON THE MIC <span class="x-planned">◇ PLANNED</span></p><h2>Your on-air team.</h2><p>Hosts talk between songs and read short updates. Spots carry sponsor messages. Scripts are built from facts the station has, like your station name and song titles.</p></div>
+<section class="card"><div class="section-heading"><h2>Hosts and anchors</h2><span id="team-count" class="count"></span></div><div id="team-hosts" class="x-hosts"></div>
+<div class="x-actions" style="margin-top:16px"><button id="host-new" type="button">＋ Create a host</button><span class="x-hint">Describe a personality in a sentence. Needs a connected AI operator.</span></div></section>
+
+<section class="card"><div class="section-heading"><h2>Spots</h2><span class="badge">SPONSOR MESSAGES</span></div>
+<ul id="team-spots" class="x-rows"></ul>
+<h3 style="font-size:.95rem;margin:20px 0 8px">Add a spot</h3>
+<form id="spot-form"><div class="form-row"><label>Who is it for?<input id="spot-who" maxlength="60" placeholder="Corner Bike Co." autocomplete="off" required></label>
+<fieldset class="x-seg"><legend>How often?</legend><div class="x-opts"><label><input type="radio" name="spot-freq" value="light"><span>Light</span></label><label><input type="radio" name="spot-freq" value="regular" checked><span>Regular</span></label><label><input type="radio" name="spot-freq" value="often"><span>Often</span></label></div></fieldset></div>
+<label>What should it say?<textarea id="spot-text" rows="3" maxlength="400" placeholder="Fixing bikes since 1998. Mention the station for a free tune-up." required></textarea></label>
+<label class="x-switch"><input id="spot-disclose" type="checkbox" checked disabled><span class="x-track" aria-hidden="true"></span><span>Say that it’s sponsored<small>Always on. Listeners should know a message is paid for.</small></span></label>
+<label class="x-switch"><input id="spot-rights" type="checkbox"><span class="x-track" aria-hidden="true"></span><span>I’m allowed to use this voice for paid spots<small>Check the voice license first. You can upload a recorded spot instead.</small></span></label>
+<p id="spot-error" class="x-error" role="alert" hidden></p>
+<div class="x-actions"><button id="spot-add" class="primary" type="submit">Add the spot</button></div></form></section>
+</section>
+
+<section id="view-discover" class="view" aria-label="Researchers" hidden>
+<div class="view-heading"><p class="eyebrow">THINGS YOU CARE ABOUT <span class="x-planned">◇ PLANNED</span></p><h2>Your researchers.</h2><p>Each one watches the sources you choose and brings back short, sourced updates. By default you review each update before it airs. If nothing is new, your music just keeps playing.</p></div>
+<section class="card"><div class="section-heading"><h2>Researchers</h2><span id="res-count" class="count"></span></div><ul id="res-list" class="x-rows"></ul></section>
+<section class="card"><div class="section-heading"><h2>Add a researcher</h2></div>
+<label for="res-new">What would you like to hear about?</label>
+<textarea id="res-new" rows="2" maxlength="300" placeholder="A short, upbeat update on synth builders and tiny record labels. Skip celebrity news."></textarea>
+<p id="res-msg" class="x-hint" role="status"></p>
+<div class="x-actions"><button id="res-draft" class="primary" type="button">Draft it</button><span class="x-hint">Needs a connected AI operator; this preview uses a simple stand-in. You review the draft before anything airs.</span></div></section>
+</section>
+<section id="view-help" class="view" aria-labelledby="help-title" hidden><div class="view-heading"><p class="eyebrow">FROM FIRST SOUND TO FREQUENCY</p><h2 id="help-title">A station in a few steps.</h2><p>No AI account or broadcast host needed to start privately.</p></div><div class="card guide"><h3>01 / Bring your sound</h3><p><a href="#import">Import audio</a> you own or have permission to play. Music joins rotation; speech and ads play only when queued or scheduled.</p><h3>02 / Make it flow</h3><p>Queue favorites from <a href="#library">Library</a>, then return to <a href="#studio">Studio</a>. Start station runs local playout. Listen here opens your browser monitor. Stop ends playout; it is not pause.</p><h3>03 / Find your rhythm</h3><p><a href="#schedule">Schedule</a> one-off or recurring moments. Events join after the current track, not at an exact interruption point. Missed events are not replayed in a flood.</p><h3>04 / Work with your operator</h3><p>Try “status” or “help” in chat. Without an AI connection this is a command assistant. Connect your chosen provider for open-ended requests, and approve each proposed change. This is not an autonomous background DJ.</p><h3>05 / Share deliberately</h3><p>Configure your Icecast host in <a href="#broadcast">Broadcast</a>. Review the destination and your rights before Go live. Hosting is separate; no host is included. Bytes sent do not prove public listener reception.</p><h3>Your studio stays yours</h3><p>Audio stays local. An optional AI provider receives chat and station metadata, with consent. Lock removes browser control credentials, but does not stop the station. Keep your launch code private.</p><p>Back up and restore with the documented <code>myradio-backup</code> command. Portable backups exclude credentials. Music generation and generated voices are not connected yet.</p></div></section><footer>Private, local-first radio. <span id="monitor-count">0 local monitors</span> · <span id="dropped-count">0 slow connections dropped</span><p>Local output is real. Generated music, generated voices and research are not available yet. Icecast output is optional and requires a host.</p></footer></div><aside id="view-operator" class="card operator" aria-labelledby="operator-title"><div class="operator-heading"><div class="avatar" aria-hidden="true">✳</div><div><h2 id="operator-title">Station operator</h2><span id="chat-mode">Local command assistant</span></div></div><div class="operator-context"><strong>A helping hand at the desk.</strong><p>Control the same station from here or your own agent. Connected AI proposes changes for your approval; it never silently takes over.</p></div><div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-relevant="additions"><article class="message assistant"><span>OPERATOR</span><p>Welcome to your station. Set up your station in Studio, or import audio to get started. You can ask for “status” any time. Without a connected model I understand a small set of commands, not open-ended requests.</p></article></div><div class="suggestions"><button data-message="status">Station status</button><button data-message="start">Start station</button><button data-message="help">What can you do?</button></div><form id="chat-form"><label class="sr-only" for="message">Message your station operator</label><textarea id="message" rows="2" maxlength="4000" required placeholder="Message your station operator…"></textarea><div class="chat-send"><span id="chat-status" role="status">Your station, under your control.</span><button class="primary" id="send" type="submit">Send ↑</button></div></form><details class="agent-help"><summary>Connect an AI operator</summary><div class="agent-settings"><p>A connected tool-calling model can help plan and operate this station. Your messages and station metadata go to the provider you choose; it may charge usage fees. No audio is sent. Review each proposed change before approving. This is a chat-driven operator, not an autonomous background DJ.</p><p id="agent-summary" role="status"></p><form id="agent-form"><label>OpenAI-compatible base URL<input id="agent-url" type="url" required placeholder="https://api.example.org/v1" maxlength="2048" autocomplete="off"></label><label>Model ID<input id="agent-model" required maxlength="200" placeholder="Model name from your provider"></label><label>API key<input id="agent-key" type="password" maxlength="4096" autocomplete="new-password" placeholder="Blank for a keyless local server"></label><label class="check"><input id="agent-consent" type="checkbox" required>I agree to send chat and station metadata to this provider. Changes still need my approval.</label><button id="agent-save" type="submit">Save operator connection</button></form><button id="agent-disconnect" type="button">Disconnect and forget saved connection</button><p>No request is sent to the provider until you message the operator. Saving does not verify model access; send a status question to test. Remote connections require HTTPS. Existing environment settings take precedence. Use the MCP adapter to connect an existing agent; see README.</p></div></details></aside></main></div>
+<dialog id="unlock"><form id="unlock-form"><span class="brand">myradio</span><h1>Your studio, privately.</h1><p>Enter the launch code shown in the launcher. It authorizes control of this local station. Never share it in public.</p><label>Launch code<input id="token-input" type="password" required autocomplete="off" spellcheck="false"></label><p id="unlock-error" class="error" role="alert"></p><button class="primary" type="submit">Open my studio →</button></form></dialog>
+
+<dialog id="confirm-dialog" aria-labelledby="confirm-title"><h1 id="confirm-title">Please confirm</h1><p></p><button class="primary" type="button" data-ok>Confirm</button><button class="quiet" type="button" data-cancel>Cancel</button></dialog>
+<dialog id="setup-sheet" aria-labelledby="setup-title"><h1 id="setup-title">Set up</h1><div id="setup-body"></div><button class="x-close" type="button" id="setup-close">Close</button></dialog>
+<dialog id="more-sheet" aria-labelledby="more-title"><h1 id="more-title">More</h1>
+<a href="#team"><span aria-hidden="true">◍</span>Team</a><a href="#discover"><span aria-hidden="true">✦</span>Discover</a><a href="#broadcast"><span aria-hidden="true">⌁</span>Broadcast</a><a href="#my-station"><span aria-hidden="true">⚙</span>Settings</a><a href="#help"><span aria-hidden="true">?</span>Guide</a>
+<button class="quiet" type="button" id="more-close" style="margin-top:12px">Close</button></dialog>
+<noscript>This local studio requires JavaScript. Authorized agents can also operate it using the documented API.</noscript>
+<script>
+/* Demo backend for the design preview. The real app.js talks to /api/*; this answers
+   those calls in memory with sample data, using the same response shapes as the real
+   service. No network, no audio, nothing is saved. */
+(function () {
+  'use strict';
+  const G = window;
+
+  // app.js reads sessionStorage without a guard, and a viewer may block it.
+  try { sessionStorage.setItem('myradio-token', 'preview'); }
+  catch (e) {
+    const mem = {};
+    Object.defineProperty(G, 'sessionStorage', {configurable: true, value: {
+      getItem: k => (k in mem ? mem[k] : null),
+      setItem: (k, v) => { mem[k] = String(v); },
+      removeItem: k => { delete mem[k]; }}});
+    sessionStorage.setItem('myradio-token', 'preview');
+  }
+  const note = m => { document.documentElement.dataset.errors = (document.documentElement.dataset.errors || '') + ' | ' + m; };
+  G.addEventListener('error', e => note(e.message));
+  G.addEventListener('unhandledrejection', e => note(String(e.reason && e.reason.message || e.reason)));
+
+  const tz = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; } })();
+  const nowS = () => Date.now() / 1000;
+  const iso = ms => new Date(ms).toISOString();
+  const mk = (id, title, artist, duration, kind) => ({id, title, artist, duration, kind: kind || 'music', available: true, playback_error: null});
+  const SAMPLE = [
+    mk('t1', 'Porch Light Parade', 'Lantern & Moss', 252),
+    mk('t2', 'Low Orbit Lullaby', 'Soft Meridian', 228),
+    mk('t3', 'Paper Lantern Weather', 'Otter Choir', 201),
+    mk('t4', 'Quartz & Rain', 'Soft Meridian', 302),
+    mk('t5', 'The Long Way Home', 'Lantern & Moss', 215),
+    mk('t6', 'Moth Hours', 'Night Orchard', 280),
+    mk('t7', 'Static Bloom', 'Otter Choir', 178),
+    mk('t8', 'Tide Tables', 'Night Orchard', 230),
+    mk('s1', 'Station ID · Porchlight FM', 'Nova', 6, 'speech'),
+    mk('s2', 'Late-night link', 'Nova', 22, 'speech'),
+    mk('a1', 'Spot · Corner Bike Co.', 'Sponsor read', 30, 'ad'),
+  ];
+
+  let D, seq = 100;
+  const qrow = t => ({id: ++seq, track_id: t.id, title: t.title, artist: t.artist, duration: t.duration, kind: t.kind});
+  const lib = id => D.library.find(t => t.id === id);
+  function event(title, ev) { D.history.unshift({title, at: iso(Date.now()), event: ev}); D.history.length = Math.min(D.history.length, 200); }
+
+  function fresh(mode) {
+    const onair = mode !== 'first';
+    D = {
+      mode: onair ? 'onair' : 'first',
+      station: onair ? {name: 'Porchlight FM', tagline: 'Late-night sounds for stargazers and makers.', auto_fill: true}
+                     : {name: 'My radio', tagline: 'Your station. Your frequency.', auto_fill: true},
+      running: onair, current: null, elapsed: 0, last: null,
+      library: onair ? SAMPLE.map(t => ({...t})) : [],
+      queue: [], schedules: [], programs: [], history: [],
+      broadcast: {configured: onair, state: 'disconnected', active: false, bytes_sent: 0, connections: 0, retries: 0, retry_at: null, error: ''},
+      warm: null,
+      // What is installed on this computer. The on-air sample shows the fully set-up experience;
+      // a first run starts with neither maker, so the dead end of "nothing to play" is visible.
+      makers: {music: onair, voice: onair}, setup: {saved: onair},
+    };
+    if (onair) {
+      D.current = lib('t1'); D.elapsed = 83; D.last = 't8';
+      for (const id of ['t2', 's2', 't3', 'a1', 't4']) D.queue.push(qrow(lib(id)));
+      D.schedules.push({id: 'sc1', track_id: 's1', title: 'Station ID · Porchlight FM', at: iso(Date.now() + 20 * 3600e3), status: 'pending'});
+      D.programs.push(
+        {id: 'p1', track_id: 's1', timezone: tz, local_time: '00:00', weekdays: '1,2,3,4,5,6,7', next_due: nowS() + 3 * 3600, last_due: null, last_status: null, title: 'Station ID · Porchlight FM'},
+        {id: 'p2', track_id: 's2', timezone: tz, local_time: '22:00', weekdays: '1,2,3,4,5', next_due: nowS() + 6 * 3600, last_due: null, last_status: null, title: 'Late-night link'});
+      [['Tide Tables', 'finished', 4], ['Station ID · Porchlight FM', 'finished', 5], ['Static Bloom', 'finished', 9], ['Moth Hours', 'finished', 14], ['Porch Light Parade', 'playing', 1]]
+        .forEach(([title, ev, min]) => D.history.push({title, at: iso(Date.now() - min * 60e3), event: ev}));
+      D.history.reverse();
+    }
+    return D;
+  }
+
+  function nextTrack() {
+    if (D.queue.length) { const q = D.queue.shift(); return lib(q.track_id) || nextTrack(); }
+    if (!D.station.auto_fill) return null;
+    const music = D.library.filter(t => t.kind === 'music' && t.available);
+    if (!music.length) return null;
+    return music[(music.findIndex(t => t.id === D.last) + 1) % music.length];
+  }
+  function startNext() {
+    const t = nextTrack();
+    if (!t) return;
+    D.current = {...t}; D.elapsed = 0; event(t.title, 'playing');
+  }
+  function finish(ev) { if (D.current) { D.last = D.current.id; event(D.current.title, ev); } D.current = null; D.elapsed = 0; }
+
+  let lastTick = performance.now();
+  setInterval(() => {
+    const t = performance.now(), dt = Math.min(1.5, (t - lastTick) / 1000); lastTick = t;
+    if (document.hidden) return;
+    if (D.running && D.current) { D.elapsed += dt; if (D.elapsed >= D.current.duration) { finish('finished'); startNext(); } }
+    else if (D.running) startNext();
+    if (D.broadcast.state === 'streaming') D.broadcast.bytes_sent += Math.round(16000 * dt);
+  }, 500);
+
+  function status() {
+    const bad = D.library.filter(t => !t.available).length;
+    return {
+      health: {state: !D.running ? 'stopped' : !D.current ? 'waiting' : bad ? 'degraded' : 'playing', unavailable_tracks: bad, ready_tracks: D.library.length - bad,
+               message: D.running && !D.current ? 'Waiting for playable audio. Queue a ready track, import audio or repair and retry unavailable tracks. The stream carries silence while waiting.' : ''},
+      station: D.station, running: D.running, current: D.current ? {...D.current} : null,
+      elapsed: Math.round(D.elapsed * 100) / 100, error: null,
+      queue: D.queue.map(q => ({...q})), library: D.library.map(t => ({...t})),
+      schedules: D.schedules.map(s => ({...s})), programs: D.programs.map(p => ({...p})), history: D.history.slice(0, 30),
+      capabilities: {music_generation: false, speech_generation: false, external_broadcast: true, agent_model: false},
+      stream: {listeners: 0, dropped: 0}, chat_mode: 'commands',
+      broadcast: {...D.broadcast, format: 'MP3 · 128 kbit/s · 44.1 kHz stereo', encoder_available: true, last_sent: null},
+      imports: {conversion_available: true, max_upload_bytes: 104857600, max_decoded_bytes: 104857600},
+    };
+  }
+
+  function nextLocal(localTime, weekdays) {
+    const [hh, mm] = localTime.split(':').map(Number), days = weekdays.split(',').map(Number);
+    for (let i = 0; i < 9; i++) {
+      const d = new Date(); d.setDate(d.getDate() + i); d.setHours(hh, mm, 0, 0);
+      const iw = d.getDay() === 0 ? 7 : d.getDay();
+      if (days.includes(iw) && d.getTime() > Date.now()) return d.getTime() / 1000;
+    }
+    return nowS() + 86400;
+  }
+
+  function doAction(op, a) {
+    const need = k => { if (typeof a[k] !== 'string' || !a[k]) throw new Error('Missing ' + k + '.'); return a[k]; };
+    const track = id => { const t = lib(id); if (!t) throw new Error('That track is no longer in the library.'); return t; };
+    switch (op) {
+      case 'station.update':
+        for (const k of ['name', 'tagline']) if (k in a) { if (!String(a[k]).trim()) throw new Error(k + ' must be 1–200 characters.'); D.station[k] = String(a[k]).trim(); }
+        if ('auto_fill' in a) D.station.auto_fill = !!a.auto_fill;
+        break;
+      case 'transport.start':
+        if (!D.library.length) throw new Error('Import at least one audio track before starting your station.');
+        D.running = true; if (!D.current) startNext(); break;
+      case 'transport.stop':
+        if (D.broadcast.active) { D.broadcast.state = 'disconnected'; D.broadcast.active = false; D.broadcast.connections = 0; }
+        D.running = false;
+        if (D.current) { D.queue.unshift(qrow(D.current)); finish('stopped'); }
+        break;
+      case 'transport.skip': finish('skipped'); if (D.running) startNext(); break;
+      case 'queue.add': track(need('track_id')); if (D.queue.length >= 1000) throw new Error('Queue is full (1,000 items).'); D.queue.push(qrow(lib(a.track_id))); break;
+      case 'queue.remove': { const i = D.queue.findIndex(q => String(q.id) === String(a.queue_id)); if (i < 0) throw new Error('Queue entry not found.'); D.queue.splice(i, 1); break; }
+      case 'library.delete': {
+        const t = track(need('track_id'));
+        if ((D.current && D.current.id === t.id) || D.queue.some(q => q.track_id === t.id) || D.programs.some(p => p.track_id === t.id) || D.schedules.some(s => s.track_id === t.id && s.status === 'pending'))
+          throw new Error('Remove this track from playout, queue, pending schedules and recurring programs first.');
+        D.library = D.library.filter(x => x.id !== t.id); break; }
+      case 'library.retry': track(need('track_id')).available = true; break;
+      case 'schedule.add': {
+        const t = track(need('track_id')), when = new Date(need('at'));
+        if (!Number.isFinite(when.getTime())) throw new Error('Use an ISO timestamp with a timezone offset.');
+        if (!(when.getTime() > Date.now() && when.getTime() <= Date.now() + 366 * 86400e3)) throw new Error('Schedule within the next 366 days.');
+        D.schedules.unshift({id: 'sc' + (++seq), track_id: t.id, title: t.title, at: when.toISOString(), status: 'pending'}); break; }
+      case 'schedule.cancel': { const s = D.schedules.find(x => x.id === a.schedule_id && x.status === 'pending'); if (!s) throw new Error('Pending schedule not found.'); s.status = 'cancelled'; break; }
+      case 'program.add': {
+        const t = track(need('track_id'));
+        if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(a.local_time || '')) throw new Error('Use a 24-hour local time, HH:MM.');
+        if (!/^[1-7](?:,[1-7])*$/.test(a.weekdays || '')) throw new Error('Weekdays must be comma-separated ISO days: Monday=1 … Sunday=7.');
+        D.programs.push({id: 'p' + (++seq), track_id: t.id, timezone: a.timezone || tz, local_time: a.local_time, weekdays: [...new Set(a.weekdays.split(',').map(Number))].sort().join(','),
+                         next_due: nextLocal(a.local_time, a.weekdays), last_due: null, last_status: null, title: t.title}); break; }
+      case 'program.remove': { const i = D.programs.findIndex(p => p.id === a.program_id); if (i < 0) throw new Error('Recurring program not found.'); D.programs.splice(i, 1); break; }
+      case 'broadcast.start':
+        if (!D.running) throw new Error('Start local station playout before going live.');
+        if (!D.broadcast.configured) throw new Error('Save your broadcast destination first.');
+        D.broadcast.state = 'connecting'; D.broadcast.active = true;
+        setTimeout(() => { if (D.broadcast.active) { D.broadcast.state = 'streaming'; D.broadcast.connections = 1; } }, 1200); break;
+      case 'broadcast.stop':
+        D.broadcast.state = 'stopping';
+        setTimeout(() => { D.broadcast.state = 'disconnected'; D.broadcast.active = false; D.broadcast.connections = 0; }, 600); break;
+      default: throw new Error('Unknown station operation.');
+    }
+    return {ok: true, operation: op};
+  }
+
+  // Same wording as the real command assistant.
+  function chat(message) {
+    const c = message.trim().toLowerCase().replace(/[.!?]+$/, '');
+    const direct = {'start': 'transport.start', 'start station': 'transport.start', 'stop': 'transport.stop', 'stop station': 'transport.stop', 'skip': 'transport.skip', 'skip track': 'transport.skip'};
+    if (direct[c]) {
+      doAction(direct[c], {});
+      return {reply: {'transport.start': 'Local station playout started. Click Listen to monitor it. This command does not enable an external broadcast.',
+                      'transport.stop': 'Station stopped and external broadcast disconnected. The interrupted track is back at the front of your queue.',
+                      'transport.skip': 'Skipped the current track.'}[direct[c]], mode: 'commands', actions: []};
+    }
+    if (c.startsWith('name ')) { const n = message.trim().slice(5).trim(); doAction('station.update', {name: n}); return {reply: 'Station renamed to ' + n + '.', mode: 'commands', actions: []}; }
+    let reply;
+    if (['status', "what's playing", 'what is playing'].includes(c)) {
+      reply = (D.running ? 'Running. ' : 'Stopped. ') + (D.current ? 'Now playing: ' + D.current.title + '. ' : 'No track is playing. ') + D.queue.length + ' queued; ' + D.library.length + ' in your library.';
+    } else {
+      reply = "I'm the local command assistant, not a connected AI agent yet. I understand: start, stop, skip, status, and name <station name>. To have an AI operator man the station, open Connect an AI operator in this chat panel and save an OpenAI-compatible tool-calling model, or connect your existing agent using the documented MCP adapter. Model-proposed changes require your approval.";
+    }
+    return {reply, mode: 'commands', actions: []};
+  }
+
+  const json = (obj, status) => new Response(JSON.stringify(obj), {status: status || 200, headers: {'Content-Type': 'application/json'}});
+  async function route(url, init) {
+    const p = url.pathname, method = (init.method || 'GET').toUpperCase();
+    const body = () => { try { return JSON.parse(init.body || '{}'); } catch (e) { return {}; } };
+    if (p === '/api/status') return json(status());
+    if (p === '/api/session' || p === '/api/logout') return json({ok: true});
+    if (p === '/api/agent') {
+      if (method === 'GET') return json({configured: false, url: '', model: '', key_saved: false, environment_managed: false, error: null});
+      return json({error: 'Preview only: connecting an AI provider is turned off here. In your own studio this saves your provider privately.'}, 400);
+    }
+    if (p === '/api/broadcast') {
+      if (method === 'GET') return json(D.broadcast.configured ? {url: 'https://radio.example.org:8443/porchlight.mp3', username: 'source'} : {});
+      D.broadcast.configured = true; return json({ok: true});
+    }
+    if (p === '/api/action') { const b = body(); return json(doAction(b.operation, b.arguments || {})); }
+    if (p === '/api/chat') return json(chat(String(body().message || '')));
+    if (p === '/api/approve') return json({ok: true});
+    if (p === '/api/upload') {
+      const q = url.searchParams, kind = ['music', 'speech', 'ad'].includes(q.get('kind')) ? q.get('kind') : 'music';
+      const t = mk('u' + (++seq), (q.get('title') || 'Untitled').slice(0, 200), (q.get('artist') || '').slice(0, 200), 180, kind);
+      D.library.push(t); event(t.title, 'imported'); return json({id: t.id, title: t.title, artist: t.artist, duration: t.duration, kind: t.kind, available: true, playback_error: null}, 201);
+    }
+    return json({error: 'Not found.'}, 404);
+  }
+  const realFetch = G.fetch.bind(G);
+  G.fetch = async (input, init) => {
+    init = init || {};
+    const url = new URL(typeof input === 'string' ? input : input.url, location.href);
+    if (!url.pathname.startsWith('/api/')) return realFetch(input, init);
+    await new Promise(r => setTimeout(r, 30));
+    try { return await route(url, init); } catch (e) { return json({error: (e && e.message) || 'Preview error'}, 400); }
+  };
+
+  // In-page confirmation (the viewer disables window.confirm, and a native box is not friendly anyway).
+  G.uiConfirm = (message, okLabel) => new Promise(resolve => {
+    const d = document.getElementById('confirm-dialog'), ok = d.querySelector('[data-ok]'), cancel = d.querySelector('[data-cancel]');
+    d.querySelector('p').textContent = message; ok.textContent = okLabel || 'Confirm';
+    const done = v => { d.close(); ok.onclick = cancel.onclick = d.oncancel = null; resolve(v); };
+    ok.onclick = () => done(true); cancel.onclick = () => done(false); d.oncancel = e => { e.preventDefault(); done(false); };
+    d.showModal(); cancel.focus();
+  });
+
+  const startMode = /^start/.test(location.hash.slice(1)) ? 'first' : 'onair';
+  fresh(startMode);
+
+  G.__demo = {
+    state: () => D,
+    reset(mode) { fresh(mode); if (typeof refresh === 'function') refresh(); },
+    saveSetup(o) { D.station.name = o.name; D.station.tagline = o.tagline; D.setup = {saved: true, host: o.host}; refresh(); },
+    // Sample songs exist only so a reviewer can walk the whole path; they are always labelled.
+    addSampleSongs() {
+      SAMPLE.filter(t => t.kind === 'music').slice(0, 3).forEach((t, i) => D.library.push({...t, id: 'sample' + (++seq), title: t.title + ' (sample)', artist: 'Sample artist'}));
+      refresh();
+    },
+    setMaker(kind, ready) { D.makers[kind] = !!ready; refresh(); },
+    finishSetup(o) {
+      D.station.name = o.name; D.station.tagline = o.tagline; D.setup = {saved: true, host: o.host};
+      if (!D.library.length && D.makers.music) { G.__demo.addSampleSongs(); D.warm = {since: Date.now()}; }
+      if (!D.library.length) return false;
+      D.running = true; if (!D.current) startNext(); refresh(); return true;
+    },
+  };
+
+  // Preview-only guards, registered before app.js so they run first.
+  const listen = document.getElementById('listen'), lock = document.getElementById('lock');
+  listen.addEventListener('click', e => {
+    e.stopImmediatePropagation(); listen.hidden = true; document.getElementById('disconnect').hidden = false;
+    notice('Preview: your studio monitor would play the station here. No audio plays in this preview.');
+  }, true);
+  lock.addEventListener('click', e => { e.stopImmediatePropagation(); notice('Preview: locking is turned off here.'); }, true);
+})();
+
+</script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+let token = sessionStorage.getItem('myradio-token') || '';
+let broadcastDestination = '';
+let state = null, polling = false, identityDirty = false, lastStructure = '', unlocked = false;
+const fragment = new URLSearchParams(location.hash.slice(1));
+if (fragment.has('token')) {
+  token = fragment.get('token'); sessionStorage.setItem('myradio-token', token);
+  history.replaceState(null, '', location.pathname + location.search);
+}
+// Views keep forms mounted so navigation never discards a draft.
+const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'start', 'shows', 'team', 'discover'];
+function showView(moveFocus = false) {
+  const route = (h => h === 'my-station' ? 'settings' : /^start-/.test(h) ? 'start' : h)(location.hash.slice(1)), selected = route === 'import' ? 'library' : viewNames.includes(route) ? route : 'studio';
+  const mainView = selected === 'operator' ? 'studio' : selected;
+  for (const name of viewNames.filter(name => name !== 'operator')) $('view-' + name).hidden = name !== mainView;
+  document.body.dataset.activeView = selected;
+  for (const link of document.querySelectorAll('.rail a[data-view]')) {
+    if (link.dataset.view === selected) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
+  if (route === 'import') $('import').open = true;
+  if (moveFocus) {
+    const target = selected === 'operator' ? $('message') : route === 'import' ? $('file') : $('main');
+    target.focus({preventScroll: true});
+    if (selected !== 'operator') window.scrollTo({top: 0});
+  }
+}
+window.addEventListener('hashchange', () => showView(true));
+showView();
+function notice(message) { $('notice').textContent = message; $('notice').hidden = !message; }
+function requireUnlock() {
+  unlocked = false; $('connection').textContent = 'Studio locked';
+  if (!$('unlock').open) $('unlock').showModal();
+}
+async function api(path, data, raw = false) {
+  const headers = {};
+  if (token) headers['X-Myradio-Token'] = token;
+  const options = {headers, credentials: 'same-origin'};
+  if (data !== undefined) {
+    options.method = 'POST';
+    if (!raw) headers['Content-Type'] = 'application/json';
+    options.body = raw ? data : JSON.stringify(data);
+  }
+  const controller = new AbortController(); options.signal = controller.signal;
+  const timer = setTimeout(() => controller.abort(), raw ? 120000 : path === '/api/chat' ? 60000 : 20000);
+  try {
+    const response = await fetch(path, options);
+    const result = await response.json();
+    if (!response.ok) {
+      if (response.status === 401) requireUnlock();
+      throw new Error(result.error || `Station returned ${response.status}`);
+    }
+    return result;
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('Request timed out. Check station status before retrying; it may have completed.');
+    throw error;
+  } finally { clearTimeout(timer); }
+}
+async function establish() {
+  try {
+    await api('/api/session', {});
+    unlocked = true; $('unlock').close(); $('unlock-error').textContent = ''; notice('');
+    broadcastDestination=(await api('/api/broadcast')).url||'';
+    await loadAgentSettings();
+    await refresh();
+  } catch (error) { requireUnlock(); $('unlock-error').textContent = error.message; }
+}
+$('unlock').addEventListener('cancel', event => event.preventDefault());
+$('unlock-form').addEventListener('submit', async event => {
+  event.preventDefault(); token = $('token-input').value.trim();
+  sessionStorage.setItem('myradio-token', token); $('token-input').value = '';
+  await establish();
+});
+function disconnect() {
+  $('audio').pause(); $('audio').removeAttribute('src'); $('audio').load();
+  $('audio').hidden = true; $('listen').hidden = false; $('disconnect').hidden = true;
+}
+$('lock').addEventListener('click', async () => {
+  disconnect(); $('agent-key').value=''; $('broadcast-password').value='';
+  try { await api('/api/logout', {}); } catch (error) { notice(error.message); }
+  token = ''; sessionStorage.removeItem('myradio-token'); requireUnlock();
+});
+function duration(value) {
+  const seconds = Math.max(0, Math.floor(value || 0));
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+}
+function node(tag, text, className) {
+  const element = document.createElement(tag);
+  if (text !== undefined) element.textContent = text;
+  if (className) element.className = className;
+  return element;
+}
+function actionButton(label, operation, args, dangerous = false) {
+  const button = node('button', label, dangerous ? 'danger' : '');
+  button.type = 'button';
+  button.addEventListener('click', async () => {
+    if (dangerous && !await uiConfirm('Delete this audio from the local library? This cannot be undone.')) return;
+    button.disabled = true;
+    try { await action(operation, args); }
+    finally { button.disabled = false; }
+  });
+  return button;
+}
+async function action(operation, args = {}) {
+  try { await api('/api/action', {operation, arguments: args}); notice(''); await refresh(); }
+  catch (error) { notice(error.message); }
+}
+for (const [id, op] of [['start','transport.start'],['stop','transport.stop'],['skip','transport.skip']]) {
+  $(id).addEventListener('click', () => action(op));
+}
+async function loadAgentSettings() {
+  const a=await api('/api/agent');
+  $('agent-summary').textContent=a.error || (a.configured?`Saved operator: ${a.model} · ${a.url}. Access is checked when you send a message.`:'No AI provider connected. Local commands remain available.');
+  $('agent-url').value=a.url; $('agent-model').value=a.model; $('agent-key').value=''; $('agent-consent').checked=false;
+  for (const id of ['agent-url','agent-model','agent-key','agent-save','agent-disconnect','agent-consent']) $(id).disabled=a.environment_managed;
+  if(a.environment_managed) $('agent-summary').textContent+=' Managed by launch environment; edit it there.';
+  $('agent-disconnect').hidden=!a.configured && !a.error;
+}
+$('agent-form').addEventListener('submit',async event=>{
+  event.preventDefault(); $('agent-save').disabled=true;
+  try {
+    await api('/api/agent',{url:$('agent-url').value.trim(),model:$('agent-model').value.trim(),key:$('agent-key').value});
+    $('agent-key').value=''; await loadAgentSettings(); $('chat-log').replaceChildren();
+    notice('Operator connection saved, not yet tested. Send a status question; proposals still need approval.'); await refresh();
+  } catch(error) {notice(error.message);}
+  finally { $('agent-save').disabled=false; }
+});
+$('agent-disconnect').addEventListener('click',async()=>{
+  if(!await uiConfirm('Forget the saved AI connection and clear this session’s chat/proposals? Local command mode will remain available.'))return;
+  try {await api('/api/agent',{disconnect:true});await loadAgentSettings();$('chat-log').replaceChildren();await refresh();notice('Operator disconnected; private saved settings removed.');}
+  catch(error){notice(error.message);}
+});
+$('broadcast-form').addEventListener('submit', async event => {
+  event.preventDefault(); $('broadcast-save').disabled=true;
+  try {
+    await api('/api/broadcast', {url:$('broadcast-url').value.trim(), username:$('broadcast-user').value, password:$('broadcast-password').value});
+    broadcastDestination=$('broadcast-url').value.trim();
+    $('broadcast-password').value=''; $('broadcast-url').value=''; notice('Broadcast settings saved. Review your host, then explicitly Go live when ready.'); await refresh();
+  } catch (error) { notice(error.message); }
+  finally { $('broadcast-save').disabled=false; }
+});
+$('broadcast-start').addEventListener('click', async () => {
+  try {
+  broadcastDestination=(await api('/api/broadcast')).url||'';
+  if (await uiConfirm(`Go live to ${broadcastDestination || 'your saved Icecast destination'}? Your audio may become publicly available. Confirm the destination and your broadcasting rights before continuing.`)) action('broadcast.start');
+  } catch (error) { notice(error.message); }
+});
+$('broadcast-stop').addEventListener('click', () => action('broadcast.stop'));
+$('listen').addEventListener('click', async () => {
+  try {
+    await api('/api/session', {});
+    $('audio').src = '/stream.wav'; $('audio').hidden = false;
+    $('listen').hidden = true; $('disconnect').hidden = false;
+    await $('audio').play();
+  } catch (error) { notice(`Monitor: ${error.message}`); }
+});
+$('audio').addEventListener('error', () => { if ($('audio').hasAttribute('src')) notice('The local monitor disconnected or this browser cannot play live WAV. Disconnect and reconnect; station playout continues independently.'); });
+$('disconnect').addEventListener('click', disconnect);
+$('identity').addEventListener('input', () => { identityDirty = true; });
+$('identity').addEventListener('submit', async event => {
+  event.preventDefault();
+  try {
+    await api('/api/action', {operation:'station.update', arguments:{name:$('name-input').value, tagline:$('tagline-input').value, auto_fill:$('auto-fill').checked}});
+    identityDirty = false; notice(''); await refresh();
+  } catch (error) { notice(error.message); }
+});
+$('file').addEventListener('change', () => {
+  if (!$('upload-title').value && $('file').files[0]) $('upload-title').value = $('file').files[0].name.replace(/\.(wav|mp3|flac|ogg|oga|m4a|aac|aiff|aif)$/i, '').slice(0,200);
+});
+$('upload').addEventListener('submit', async event => {
+  event.preventDefault(); const file = $('file').files[0];
+  if (!file) return;
+  if (file.size > 100 * 1024 * 1024) return notice('Audio must be no larger than 100 MiB.');
+  $('upload-button').disabled = true; $('upload-status').textContent = 'Uploading and converting locally… Keep this window open; playout continues.';
+  const params = new URLSearchParams({title:$('upload-title').value, artist:$('upload-artist').value, kind:$('upload-kind').value});
+  try {
+    await api(`/api/upload?${params}`, file, true);
+    $('upload').reset(); $('upload-status').textContent = 'Added to your library.'; notice(''); await refresh();
+  } catch (error) { $('upload-status').textContent = 'Import failed.'; notice(error.message); }
+  finally { $('upload-button').disabled = false; }
+});
+$('timezone').textContent = `(${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
+$('schedule').addEventListener('submit', async event => {
+  event.preventDefault();
+  const date = new Date($('schedule-at').value);
+  if (!Number.isFinite(date.getTime()) || date.getTime() <= Date.now()) return notice('Choose a future time in your browser’s local timezone.');
+  await action('schedule.add', {track_id:$('schedule-track').value, at:date.toISOString()});
+});
+$('program-zone').value = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+$('program').addEventListener('submit', async event => {
+  event.preventDefault();
+  const weekdays = [...$('program').querySelectorAll('input[name="weekday"]:checked')].map(e => e.value).join(',');
+  if (!weekdays) return notice('Choose at least one day for this program.');
+  await action('program.add', {track_id:$('program-track').value, timezone:$('program-zone').value.trim(), local_time:$('program-time').value, weekdays});
+});
+function empty(list, message) { list.append(node('li', message, 'empty')); }
+function renderStructure(s) {
+  const queue = $('queue'); queue.replaceChildren();
+  for (const [index, item] of s.queue.entries()) {
+    const row = node('li'), main = node('div', undefined, 'item-main');
+    main.append(node('strong', item.title), node('small', `${item.artist || item.kind} · ${duration(item.duration)}`));
+    row.append(node('span', String(index + 1).padStart(2, '0'), 'queue-position'), node('span', 'mr.', 'queue-art'), main, actionButton('Remove','queue.remove',{queue_id:String(item.id)})); queue.append(row);
+  }
+  if (!s.queue.length) empty(queue, s.station.auto_fill ? 'Queue is clear. Music rotation is ready.' : 'Queue is clear. Add audio from your library.');
+  const library = $('library'); library.replaceChildren();
+  for (const track of s.library) {
+    const row = node('li'), main = node('div', undefined, 'item-main'), buttons = node('div', undefined, 'row-actions');
+    main.append(node('strong',track.title),node('small',`${track.artist || 'Unknown artist'} · ${track.kind} · ${duration(track.duration)}`));
+    if (!track.available) {
+        main.append(node('small', `Unavailable · ${track.playback_error}`, 'error'));
+        buttons.append(actionButton('Retry repaired audio','library.retry',{track_id:track.id}));
+      }
+      if (track.available) buttons.append(actionButton('＋ Queue','queue.add',{track_id:track.id}));
+      buttons.append(actionButton('Delete','library.delete',{track_id:track.id},true));
+    row.append(main,buttons); library.append(row);
+  }
+  if (!s.library.length) empty(library,'Your library is waiting for its first sound.');
+  for (const id of ['schedule-track','program-track']) {
+  const select = $(id), selected = select.value; select.replaceChildren();
+  select.append(new Option(s.library.length ? 'Choose audio…' : 'Import a track first',''));
+  for (const track of s.library) select.append(new Option(`${track.title} · ${track.kind}`,track.id));
+  if (s.library.some(t => t.id === selected)) select.value = selected;
+  }
+  const programs = $('programs'); programs.replaceChildren();
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  for (const item of s.programs) {
+    const row = node('li'), main = node('div', undefined, 'item-main');
+    const days = item.weekdays.split(',').map(d => dayNames[Number(d)-1]).join(', ');
+    main.append(node('strong', item.title), node('small', `${days} · ${item.local_time} ${item.timezone}`), node('small', `Next: ${new Date(item.next_due * 1000).toLocaleString()} (your timezone)`));
+    if (item.last_status) main.append(node('small', `Last due: ${new Date(item.last_due * 1000).toLocaleString()} · ${item.last_status} (not an airing confirmation)`));
+    row.append(main, actionButton('Remove','program.remove',{program_id:item.id})); programs.append(row);
+  }
+  if (!s.programs.length) empty(programs,'No recurring programs. Your music rotation continues as usual.');
+  const schedules = $('schedules'); schedules.replaceChildren();
+  for (const item of s.schedules) {
+    const row=node('li'),main=node('div',undefined,'item-main');
+    main.append(node('strong',item.title),node('small',`${new Date(item.at).toLocaleString()} · ${item.status}`)); row.append(main);
+    if (item.status === 'pending') row.append(actionButton('Cancel','schedule.cancel',{schedule_id:item.id})); schedules.append(row);
+  }
+  if (!s.schedules.length) empty(schedules,'No scheduled moments yet.');
+  const log=$('history'); log.replaceChildren();
+  for (const item of s.history) { const row=node('li');row.append(node('span',`${item.title} · ${item.event}`),node('small',new Date(item.at).toLocaleTimeString()));log.append(row); }
+  if (!s.history.length) empty(log,'Station activity will appear here.');
+}
+function render(s) {
+  $('import-capability').textContent=s.imports.conversion_available?'FFmpeg detected: common formats convert automatically.':'FFmpeg not detected: only 44.1 kHz, 16-bit mono/stereo PCM WAV can be imported. Install FFmpeg for other formats.';
+  const b=s.broadcast;
+  $('broadcast-state').textContent=b.state.toUpperCase();
+  const outputBusy = b.active || b.state === 'stopping';
+  $('audience-state').textContent = outputBusy ? `EXTERNAL OUTPUT · ${b.state.toUpperCase()}` : 'PRIVATE · NOT BROADCASTING';
+  $('audience-state').classList.toggle('external', outputBusy);
+  $('rotation-state').textContent = s.station.auto_fill ? '↻ Music rotation on · queue plays first' : 'Music rotation off · queue only';
+  $('broadcast-health').textContent=`${b.format} · ${b.bytes_sent.toLocaleString()} bytes sent · ${b.connections} connections · ${b.retries} retries` + (b.retry_at ? ` · retry after ${new Date(b.retry_at*1000).toLocaleTimeString()}` : '');
+  $('broadcast-error').textContent=b.error||''; $('broadcast-error').hidden=!b.error;
+  $('broadcast-saved').textContent=(b.configured?`Saved destination: ${broadcastDestination || 'configured by another session (reload to review)'}`:'No destination saved.') + (b.encoder_available?' FFmpeg detected.':' FFmpeg missing: install it and restart myradio.');
+  const busy=b.active||b.state==='stopping';
+  $('broadcast-start').disabled=busy||!b.configured||!b.encoder_available||!s.running;
+  $('broadcast-stop').disabled=!busy;
+  for (const id of ['broadcast-save','broadcast-url','broadcast-user','broadcast-password']) $(id).disabled=busy;
+  state = s; $('connection').textContent = '● Local studio connected';
+  $('station-name').textContent=s.station.name; $('tagline').textContent=s.station.tagline;
+  $('air-state').textContent=s.running?'LOCAL PLAYOUT':'STOPPED'; $('air-state').classList.toggle('running',s.running);
+  $('play-label').textContent=s.current?'NOW PLAYING':s.running?'WAITING FOR AUDIO':'NOT PLAYING';
+  $('track-title').textContent=s.current?s.current.title:'Your next sound is waiting';
+  $('track-artist').textContent=s.current?(s.current.artist||s.current.kind):'Import audio, queue a track, and make it yours.';
+  $('kind').textContent=s.current?s.current.kind.toUpperCase():'LOCAL PLAYOUT';
+  $('elapsed').textContent=duration(s.elapsed); $('duration').textContent=duration(s.current?.duration);
+  $('progress').max=s.current?.duration||1; $('progress').value=s.elapsed;
+  $('start').disabled=s.running||!s.library.length; $('stop').disabled=!s.running; $('skip').disabled=!s.current;
+  $('onboarding').hidden=!!s.library.length; $('queue-count').textContent=String(s.queue.length);
+  $('library-count').textContent=`${s.library.length} tracks`;
+  $('chat-mode').textContent=s.chat_mode==='model'?'Connected AI · approval required':'Local command assistant · no AI connected';
+  $('monitor-count').textContent=`${s.stream.listeners} local monitors`;
+  $('dropped-count').textContent=`${s.stream.dropped} slow connections dropped`;
+  const healthMessage=s.error || s.health.message;
+  $('playout-error').hidden=!healthMessage; $('playout-error').textContent=healthMessage;
+  if (!identityDirty && !$('identity').contains(document.activeElement)) {
+    $('name-input').value=s.station.name; $('tagline-input').value=s.station.tagline; $('auto-fill').checked=s.station.auto_fill;
+  }
+  const structure=JSON.stringify([s.library,s.queue,s.schedules,s.programs,s.history,s.station.auto_fill]);
+  if (structure!==lastStructure) {renderStructure(s);lastStructure=structure;}
+}
+async function refresh() {
+  if (polling||!unlocked) return;
+  polling=true;
+  try { render(await api('/api/status')); }
+  catch (error) { $('connection').textContent='Connection unavailable'; notice(error.message); }
+  finally { polling=false; }
+}
+let chatPinned = true;
+$('chat-log').addEventListener('scroll', () => {
+  const log = $('chat-log');
+  chatPinned = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+});
+new ResizeObserver(() => {
+  if (chatPinned) $('chat-log').scrollTop = $('chat-log').scrollHeight;
+}).observe($('chat-log'));
+function chatMessage(role, content) {
+  chatPinned = true;
+  const article=node('article',undefined,`message ${role}`); article.append(node('span',role==='user'?'YOU':'OPERATOR'),node('p',content));
+  $('chat-log').append(article);
+  while ($('chat-log').children.length>60) $('chat-log').firstElementChild.remove();
+  $('chat-log').scrollTop=$('chat-log').scrollHeight;return article;
+}
+async function sendChat(message) {
+  if ($('send').disabled) return;
+  chatMessage('user',message); $('send').disabled=true; $('chat-status').textContent='Operator is thinking…';
+  // Invalidate all old proposal buttons when asking a new question.
+  for (const button of $('chat-log').querySelectorAll('button')) button.disabled=true;
+  try {
+    const result=await api('/api/chat',{message}); const article=chatMessage('assistant',result.reply);
+    for (const proposal of result.actions||[]) {
+      const block=node('div'); block.append(node('pre',`${proposal.operation}\n${JSON.stringify(proposal.arguments,null,2)}`));
+      const button=node('button','Approve this change'); button.type='button';
+      const expiry=setTimeout(()=>{button.disabled=true;button.textContent='Proposal expired';},120000);
+      button.addEventListener('click',async()=>{
+        clearTimeout(expiry);button.disabled=true;
+        try {await api('/api/approve',{id:proposal.id});button.textContent='Change applied';await refresh();}
+        catch(error){button.textContent='Not applied';chatMessage('assistant',error.message);}
+      });block.append(button);article.append(block);
+    }
+    await refresh(); $('chat-log').scrollTop=$('chat-log').scrollHeight;
+  } catch(error){chatMessage('assistant',error.message);}
+  finally{$('send').disabled=false;$('chat-status').textContent='Your station, under your control.';}
+}
+$('chat-form').addEventListener('submit',event=>{event.preventDefault();const message=$('message').value.trim();if(message){$('message').value='';sendChat(message);}});
+for (const button of document.querySelectorAll('[data-message]')) button.addEventListener('click',()=>sendChat(button.dataset.message));
+setInterval(()=>{if(unlocked&&!document.hidden)refresh();},2000);
+if(token)establish();else requireUnlock();
+
+</script>
+<script>
+/* Behaviour for the new preview views. Everything here is sample content and in-memory
+   state; nothing is saved and nothing is sent anywhere. */
+(function () {
+  'use strict';
+  const demo = window.__demo;
+  const q = (s, r) => (r || document).querySelector(s);
+  const qa = (s, r) => [...(r || document).querySelectorAll(s)];
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+  const mmss = sec => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
+
+  /* ---------- sample content ---------- */
+  const HOSTS = [
+    {id: 'nova', name: 'Nova', role: 'Late-night host', blurb: 'Warm, unhurried, a little curious about everything.', chips: ['Warm', 'Calm', 'Curious'], tone: '#d8edac'},
+    {id: 'dex', name: 'Dex', role: 'Morning host', blurb: 'Quick, upbeat, loves a good song intro.', chips: ['Upbeat', 'Quick', 'Playful'], tone: '#ff946e'},
+    {id: 'marlowe', name: 'Marlowe', role: 'Anchor for updates', blurb: 'Clear and steady. Reads sourced updates exactly as found.', chips: ['Clear', 'Steady', 'Factual'], tone: '#7b9daa'},
+    {id: 'professor', name: 'Professor Static', role: 'Dry-wit curator', blurb: 'Deadpan song notes, using only facts the station has.', chips: ['Dry', 'Witty', 'Nerdy'], tone: '#ffe9bd'},
+  ];
+  const hostById = id => HOSTS.find(h => h.id === id);
+  const RECIPES = [
+    {id: 'lofi', name: 'Late-night lo-fi', blurb: 'Dim lights, slow beats, rain on the window.', station: 'Porchlight FM', tag: 'Late-night sounds for stargazers and makers.', styles: ['Downtempo trip-hop', 'Warm brush jazz', 'Ambient garden'], host: 'nova', energy: 25, adv: 35, vocals: 10, art: ['#ff946e', '#243d49', '#ffe9bd'], words: /lo-?fi|late|night|chill|cozy|cosy|star|rain|sleep/},
+    {id: 'sunny', name: 'Sunny morning drive', blurb: 'Bright, bouncy, windows down.', station: 'Sunroof Radio', tag: 'Good mornings, on repeat.', styles: ['Bossa courtyard', 'Pocket funk', 'Neo-soul'], host: 'dex', energy: 75, adv: 30, vocals: 55, art: ['#ffe9bd', '#ff946e', '#243d49'], words: /morning|sun|drive|upbeat|happy|bright|commute/},
+    {id: 'maker', name: 'Maker’s workshop', blurb: 'Steady focus music for building things.', station: 'Workbench FM', tag: 'Music for people who make things.', styles: ['Chamber minimalism', 'Post-rock', 'Downtempo trip-hop'], host: 'marlowe', energy: 40, adv: 45, vocals: 5, art: ['#7b9daa', '#10131d', '#d8edac'], words: /maker|build|workshop|tinker|solder|craft|code/},
+    {id: 'weird', name: 'Weird and wonderful', blurb: 'Surprising, layered, word-salad songs.', station: 'Odd Garden Radio', tag: 'Nothing here is quite what you expect.', styles: ['Progressive rock', 'Balkan chamber', 'Math rock', 'Dub reggae'], host: 'professor', energy: 55, adv: 90, vocals: 40, art: ['#d8edac', '#243d49', '#ff946e'], words: /weird|strange|odd|surreal|experimental|prog|wonder|word.?salad/},
+    {id: 'cafe', name: 'Jazz café', blurb: 'Brushes, upright bass, quiet conversation.', station: 'Corner Café FM', tag: 'Small-room jazz, all day.', styles: ['Warm brush jazz', 'Chamber jazz', 'Bossa courtyard'], host: 'nova', energy: 30, adv: 30, vocals: 25, art: ['#b9d6b2', '#7b5a3c', '#ffe9bd'], words: /jazz|caf[eé]|coffee|brunch|bistro/},
+    {id: 'focus', name: 'Deep focus', blurb: 'Long, slow, no interruptions.', station: 'Still Water Radio', tag: 'Quiet hours for deep work.', styles: ['Ambient garden', 'Dub techno', 'Impressionist piano'], host: null, energy: 15, adv: 30, vocals: 0, art: ['#243d49', '#7b9daa', '#ffe9bd'], words: /focus|study|quiet|calm|deep|work|read/},
+  ];
+  const STYLES = ['Warm brush jazz', 'Chamber jazz', 'Bossa courtyard', 'Neo-soul', 'Pocket funk', 'Downtempo trip-hop', 'Ambient garden', 'Dub techno', 'Dub reggae', 'Chamber minimalism', 'Impressionist piano', 'Post-rock', 'Math rock', 'Progressive rock', 'Balkan chamber', 'Deep house'];
+  const KIND = {song: {label: 'Songs', c: '#7b9daa'}, host: {label: 'Host breaks', c: '#d8edac'}, spot: {label: 'Spots', c: '#ff946e'}, news: {label: 'Update', c: '#ffd08a'}, id: {label: 'Station ID', c: '#c9ced9'}};
+
+  /* ---------- Studio additions ---------- */
+  function listening() { return !document.getElementById('disconnect').hidden; }
+  function nextStep(s) {
+    if (!s.library.length) {
+      if (demo.state().setup.saved) return {t: 'Add something to play', b: 'Your station is set up. Add your own audio, or set up the music maker so it can make songs for you.', link: ['#import', '＋ Add audio →']};
+      return {t: 'Build your station in about three minutes', b: 'Describe the vibe and we’ll set up the music, the voice and the schedule.', link: ['#start', 'Start setup →']};
+    }
+    if (!s.running) return {t: 'Start your station', b: 'Playout begins privately on this computer. Nobody else can hear it.', btn: ['start', '▶ Start station']};
+    if (!listening()) return {t: 'Hear it for yourself', b: 'Open the studio monitor and listen as your station plays.', btn: ['listen', 'Listen here']};
+    if (!s.broadcast.configured) return {t: 'Ready to share it?', b: 'Going live needs a streaming host, which isn’t included. Add its details once, and after that going live takes one click.', link: ['#broadcast', 'Set up broadcast →']};
+    if (!s.broadcast.active) return {t: 'Share it with the world', b: 'When you like how it sounds, go live to your streaming host. You’ll be asked to confirm first.', btn: ['broadcast-start', 'Go live…']};
+    return {t: 'You’re on air', b: 'Your stream is connected to your host. Check your host’s public player to confirm that listeners can hear it.', link: ['#broadcast', 'View broadcast →']};
+  }
+  function renderNext(s) {
+    const n = nextStep(s), link = q('#x-next-link'), btn = q('#x-next-btn');
+    q('#x-next-title').textContent = n.t; q('#x-next-body').textContent = n.b;
+    link.hidden = !n.link; btn.hidden = !n.btn;
+    if (n.link) { link.href = n.link[0]; link.textContent = n.link[1]; }
+    if (n.btn) { btn.dataset.target = n.btn[0]; btn.textContent = n.btn[1]; btn.disabled = false; }
+  }
+  q('#x-next-btn').addEventListener('click', e => { const t = document.getElementById(e.currentTarget.dataset.target); if (t && !t.disabled) t.click(); });
+
+  const TIMELINE = [
+    {k: 'song', t: 'Low Orbit Lullaby', s: '3:48 · ready'}, {k: 'host', t: 'Nova', s: 'Link · 0:22 · ready'}, {k: 'song', t: 'Paper Lantern Weather', s: '3:21 · ready'},
+    {k: 'spot', t: 'Corner Bike Co.', s: 'Spot · 0:30'}, {k: 'song', t: 'Quartz & Rain', s: '5:02 · ready'}, {k: 'news', t: 'Astronomy update', s: 'Review first · 1:30'}, {k: 'id', t: 'Station ID', s: '0:06'}];
+  const TL_LABEL = {song: 'SONG', host: 'HOST', spot: 'SPOT', news: 'UPDATE', id: 'ID'};
+  let autoUser = null;
+  function renderAuto(s) {
+    const card = q('#x-auto'), sw = q('#x-autopilot'), D = demo.state(), ready = D.makers.music;
+    card.hidden = !s.library.length;
+    q('#x-auto-setup').hidden = ready; sw.disabled = !ready; q('#x-auto-meter').hidden = !ready; q('#x-auto-hint').hidden = !ready;
+    if (!ready) {
+      sw.checked = false; q('#x-auto-sub').textContent = 'Needs the music maker.';
+      q('#x-auto-status').textContent = 'Autopilot needs the music maker. Until then your station plays your own audio on rotation.';
+      q('#x-auto-time').innerHTML = ''; return;
+    }
+    q('#x-auto-sub').textContent = 'Makes songs and host breaks ahead of time.';
+    sw.checked = autoUser === null ? true : autoUser;
+    const on = sw.checked;
+    let p = 1, msg = 'The next 3 hours are ready. Autopilot keeps making more as you listen.';
+    if (D.warm) {
+      p = Math.min(1, (Date.now() - D.warm.since) / 20000);
+      if (p >= 1) D.warm = null; else msg = 'Warming up. Making your first songs and a station ID. (Simulated in this preview.)';
+    }
+    if (!on) { msg = 'Autopilot is off. Your station plays what’s queued, then your library.'; p = 0; }
+    q('#x-auto-status').textContent = msg; q('#x-auto-meter').value = p; q('#x-auto-meter').max = 1;
+    q('#x-auto-time').innerHTML = on ? TIMELINE.map(x => `<li style="--k:${KIND[x.k] ? KIND[x.k].c : '#8fb3c4'}"><b>${TL_LABEL[x.k]}</b><span>${esc(x.t)}</span><small>${esc(x.s)}</small></li>`).join('') : '';
+  }
+  q('#x-autopilot').addEventListener('change', e => { autoUser = e.target.checked; renderAuto(window.__lastStatus || {library: [1]}); });
+  q('#x-auto-setup').addEventListener('click', () => openSetup('music'));
+
+  /* ---------- first-run wizard ---------- */
+  const wiz = {recipe: null, max: 1, step: 1};
+  q('#wiz-recipes').innerHTML = RECIPES.map(r => `<label class="x-recipe"><input type="radio" name="wiz-recipe" value="${r.id}"><span class="x-art" style="--a1:${r.art[0]};--a2:${r.art[1]};--a3:${r.art[2]}" aria-hidden="true"></span><span><strong>${esc(r.name)}</strong><small>${esc(r.blurb)}</small></span><span class="x-picked" aria-hidden="true">✓ PICKED</span></label>`).join('');
+  q('#wiz-styles').innerHTML = STYLES.map(n => `<label class="x-chip x-tog"><input type="checkbox" value="${esc(n)}">${esc(n)}</label>`).join('');
+  q('#wiz-hosts').innerHTML = HOSTS.concat([null]).map(h => `<label class="x-hostpick"><input type="radio" name="wiz-host" value="${h ? h.id : 'none'}"><span class="x-avatar" style="--tone:${h ? h.tone : '#4a5060'}" aria-hidden="true">${h ? esc(h.name[0]) : '–'}</span><span><strong>${h ? esc(h.name) : 'No host'}</strong><small>${h ? esc(h.role + '. ' + h.blurb) : 'Music only. You can add a host later.'}</small></span><span class="x-picked" aria-hidden="true">✓ PICKED</span></label>`).join('');
+
+  function applyRecipe(r) {
+    wiz.recipe = r;
+    q(`input[name=wiz-recipe][value=${r.id}]`).checked = true;
+    if (!q('#wiz-name').dataset.touched) q('#wiz-name').value = r.station;
+    if (!q('#wiz-tagline').dataset.touched) q('#wiz-tagline').value = r.tag;
+    qa('#wiz-styles input').forEach(i => { i.checked = r.styles.includes(i.value); });
+    q('#wiz-energy').value = r.energy; q('#wiz-adv').value = r.adv; q('#wiz-vocals').value = r.vocals;
+    q(`input[name=wiz-host][value=${r.host || 'none'}]`).checked = true;
+    q('#wiz-matched').textContent = 'STARTED FROM · ' + r.name.toUpperCase();
+  }
+  const guess = text => RECIPES.find(r => r.words.test(text.toLowerCase())) || RECIPES[0];
+  qa('input[name=wiz-recipe]').forEach(i => i.addEventListener('change', () => applyRecipe(RECIPES.find(r => r.id === i.value))));
+  ['#wiz-name', '#wiz-tagline'].forEach(id => q(id).addEventListener('input', e => { e.target.dataset.touched = '1'; }));
+
+  const HASH = ['', '#start', '#start-sound', '#start-voice', '#start-air'];
+  const stepFromHash = () => ({'start-sound': 2, 'start-voice': 3, 'start-air': 4}[location.hash.slice(1)] || 1);
+  const go = n => { wiz.max = Math.max(wiz.max, n); location.hash = HASH[n]; };
+  function showStep() {
+    const n = stepFromHash(); wiz.step = n; wiz.max = Math.max(wiz.max, n);
+    if (n >= 2 && !wiz.recipe) applyRecipe(RECIPES[0]);
+    qa('.x-step').forEach(s => { s.hidden = Number(s.dataset.step) !== n; });
+    qa('.x-stepbtn').forEach(b => {
+      const i = Number(b.dataset.step);
+      b.dataset.state = i < n ? 'done' : i === n ? 'now' : 'todo'; b.disabled = i > wiz.max;
+      b.querySelector('.step').textContent = i < n ? '✓' : String(i);
+      if (i === n) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+    if (n === 4) { renderSummary(); renderChecks(); updateStart(); }
+  }
+  qa('.x-stepbtn').forEach(b => b.addEventListener('click', () => go(Number(b.dataset.step))));
+  q('#wiz-next-1').addEventListener('click', () => {
+    const text = q('#wiz-describe').value.trim(), err = q('#wiz-error-1');
+    if (!wiz.recipe && text.length < 8) { err.textContent = 'Tell us a little about the vibe, or pick one of the ready-made stations above.'; err.hidden = false; q('#wiz-describe').focus(); return; }
+    err.hidden = true;
+    if (!wiz.recipe) { applyRecipe(guess(text)); q('#wiz-matched').textContent = 'MATCHED FROM YOUR WORDS · ' + wiz.recipe.name.toUpperCase(); }
+    go(2);
+  });
+  q('#wiz-back-2').addEventListener('click', () => go(1)); q('#wiz-next-2').addEventListener('click', () => go(3));
+  q('#wiz-back-3').addEventListener('click', () => go(2)); q('#wiz-next-3').addEventListener('click', () => go(4));
+  q('#wiz-back-4').addEventListener('click', () => go(3));
+
+  const SETUP = {
+    music: ['Set up the music maker', ['Songs are made by YuE2, which runs on this computer. It needs about 4.5 GB of model files (sample figure) and a supported graphics card.', 'Nothing downloads until you press Download. Until then, your station plays any audio you import.', 'In this preview nothing is installed.']],
+    voice: ['Set up voices', ['Host voices are made by Drama 3, which runs on this computer. It needs about 24 GB of model files (sample figure) and a supported graphics card.', 'Its license does not allow hosted voice services or cloning a real person’s voice without consent. Read it before you use voices for paid spots.', 'In this preview nothing is installed.']],
+  };
+  function openSetup(kind) {
+    const [title, paras] = SETUP[kind];
+    q('#setup-title').textContent = title;
+    q('#setup-body').innerHTML = paras.map(p => `<p>${esc(p)}</p>`).join('') + `<button type="button" disabled>Download (preview)</button> <button type="button" data-pretend="${kind}">Preview only: pretend it’s set up</button>`;
+    q('#setup-sheet').showModal();
+  }
+  q('#setup-body').addEventListener('click', e => {
+    const b = e.target.closest('[data-pretend]');
+    if (b) { demo.setMaker(b.dataset.pretend, true); q('#setup-sheet').close(); renderChecks(); updateStart(); }
+  });
+  q('#setup-close').addEventListener('click', () => q('#setup-sheet').close());
+
+  const canPlay = () => { const D = demo.state(); return D.library.length > 0 || D.makers.music; };
+  function checksNow() {
+    const D = demo.state();
+    return [
+      {ok: true, t: 'Audio engine', d: 'Python 3.12 · ready (sample reading)'},
+      {ok: true, t: 'FFmpeg', d: 'Found · MP3, FLAC and AAC import and broadcast are ready (sample reading)'},
+      {ok: true, t: 'Disk space', d: '84 GB free (sample reading)'},
+      {ok: true, t: 'Private by default', d: 'Controls stay on this computer. Nothing is reachable from the internet.'},
+      canPlay()
+        ? {ok: true, t: 'Something to play', d: D.library.length ? `${D.library.length} track${D.library.length === 1 ? '' : 's'} in your library.` : 'The music maker will make songs for you.'}
+        : {ok: false, t: 'Something to play', d: 'Nothing to play yet. Add your own audio now, or set up the music maker so it can make songs for you.', add: true},
+      D.makers.music ? {ok: true, t: 'Music maker', d: 'Ready (sample reading)'} : {ok: false, t: 'Music maker', d: 'Not set up yet. Needs about 4.5 GB of model files (sample figure). You can start with your own audio now.', setup: 'music'},
+      D.makers.voice ? {ok: true, t: 'Voices', d: 'Ready (sample reading)'} : {ok: false, t: 'Voices', d: 'Not set up yet. Needs about 24 GB of model files and a supported graphics card (sample figure). Hosts stay quiet until then.', setup: 'voice'},
+    ];
+  }
+  function renderChecks() {
+    q('#wiz-checks').innerHTML = checksNow().map(c => `<li class="${c.ok ? 'ok' : 'warn'}"><span class="ico" aria-hidden="true">${c.ok ? '✓' : '!'}</span><span class="txt"><strong>${esc(c.t)}<span class="sr-only">${c.ok ? ': ready' : ': needs setup'}</span></strong><small>${esc(c.d)}</small></span>${c.setup ? `<button type="button" data-setup="${c.setup}">Set up…</button>` : ''}${c.add ? '<a class="button" href="#import">＋ Add your audio</a><button type="button" data-samples>Use sample songs (preview only)</button>' : ''}</li>`).join('');
+  }
+  q('#wiz-checks').addEventListener('click', e => {
+    const setup = e.target.closest('[data-setup]'), samples = e.target.closest('[data-samples]');
+    if (setup) openSetup(setup.dataset.setup);
+    if (samples) { demo.addSampleSongs(); renderChecks(); updateStart(); }
+  });
+  function updateStart() {
+    const b = q('#wiz-start'), play = canPlay();
+    b.textContent = play ? '▶ Start my station' : 'Add audio first →'; b.dataset.mode = play ? 'start' : 'add';
+  }
+
+  const energyWord = v => v < 34 ? 'Calm' : v < 67 ? 'Easygoing' : 'Lively';
+  function renderSummary() {
+    const hostId = (q('input[name=wiz-host]:checked') || {}).value, host = hostById(hostId), talk = (q('input[name=wiz-talk]:checked') || {}).value;
+    const styles = qa('#wiz-styles input:checked').map(i => i.value);
+    q('#wiz-summary').innerHTML = [
+      ['Station', `${q('#wiz-name').value.trim() || 'My radio'} · ${q('#wiz-tagline').value.trim() || 'Your station. Your frequency.'}`],
+      ['Sound', `${styles.length ? styles.join(', ') : 'Your own audio'} · ${energyWord(Number(q('#wiz-energy').value))}`],
+      ['Host', host ? `${host.name} · talks ${{rare: 'rarely', some: 'sometimes', often: 'often'}[talk]}` : 'No host. Music only.'],
+      ['Schedule', 'Every day, all day, on autopilot'],
+    ].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
+  }
+  function setupInfo() {
+    const host = hostById((q('input[name=wiz-host]:checked') || {}).value);
+    return {name: q('#wiz-name').value.trim() || 'My radio', tagline: q('#wiz-tagline').value.trim() || 'Your station. Your frequency.', host: host ? host.name : ''};
+  }
+  q('#wiz-start').addEventListener('click', e => {
+    if (e.currentTarget.dataset.mode === 'add') { demo.saveSetup(setupInfo()); location.hash = '#import'; return; }  // nothing to play yet: keep their answers, then add audio
+    demo.finishSetup(setupInfo());
+    location.hash = '#studio';
+  });
+  q('#wiz-save').addEventListener('click', () => {
+    demo.saveSetup(setupInfo());
+    notice('Setup saved (preview). Your station stays stopped until you start it.');
+    location.hash = '#studio';
+  });
+
+  /* ---------- Shows ---------- */
+  const SHOWS = [
+    {id: 'overnight', name: 'Overnight Drift', from: 0, to: 6, style: 'Ambient garden', host: null, talk: 'rare', energy: 15, spots: false, news: false, c: '#3b4a63'},
+    {id: 'morning', name: 'Morning Rise', from: 6, to: 10, style: 'Bossa courtyard', host: 'dex', talk: 'often', energy: 70, spots: true, news: true, c: '#8a4d3a'},
+    {id: 'daytime', name: 'Daytime Focus', from: 10, to: 17, style: 'Chamber minimalism', host: 'nova', talk: 'rare', energy: 35, spots: true, news: false, c: '#3f6050'},
+    {id: 'golden', name: 'Golden Hour', from: 17, to: 20, style: 'Warm brush jazz', host: 'marlowe', talk: 'some', energy: 50, spots: true, news: true, c: '#7a5c26'},
+    {id: 'late', name: 'Late Night', from: 20, to: 24, style: 'Downtempo trip-hop', host: 'nova', talk: 'some', energy: 30, spots: false, news: false, c: '#454a7a'},
+  ];
+  let sel = 'morning', showSeq = 0;
+  const hourLabel = h => h === 24 || h === 0 ? '12 am' : h === 12 ? '12 pm' : h < 12 ? `${h} am` : `${h - 12} pm`;
+  const hostName = id => (hostById(id) || {name: 'No host'}).name;
+  q('#show-days').innerHTML = ['Every day', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => `<label class="x-chip x-tog"><input type="radio" name="show-day" value="${i}"${i === 0 ? ' checked' : ''}>${d}</label>`).join('');
+  q('#se-style').innerHTML = STYLES.map(s => `<option>${esc(s)}</option>`).join('');
+  q('#se-host').innerHTML = '<option value="">No host</option>' + HOSTS.map(h => `<option value="${h.id}">${esc(h.name)}</option>`).join('');
+  q('#se-from').innerHTML = Array.from({length: 24}, (_, h) => `<option value="${h}">${hourLabel(h)}</option>`).join('');
+  q('#se-to').innerHTML = Array.from({length: 24}, (_, h) => `<option value="${h + 1}">${hourLabel(h + 1)}</option>`).join('');
+
+  function renderShows() {
+    const cur = SHOWS.find(s => s.id === sel) || SHOWS[0]; if (cur) sel = cur.id;
+    q('#show-strip').innerHTML = SHOWS.map(s => `<button type="button" class="x-block" data-id="${s.id}" aria-current="${s.id === sel}" style="left:${s.from / 24 * 100}%;width:${(s.to - s.from) / 24 * 100}%;--c:${s.c}">${esc(s.name)}<small>${hourLabel(s.from)}–${hourLabel(s.to)} · ${esc(hostName(s.host))}</small></button>`).join('');
+    q('#show-list').innerHTML = SHOWS.map(s => `<li><span class="dot" style="--c:${s.c}" aria-hidden="true"></span><div class="item-main"><strong>${esc(s.name)}</strong><small>${hourLabel(s.from)}–${hourLabel(s.to)} · ${esc(s.style)} · ${esc(hostName(s.host))}</small></div><button type="button" data-id="${s.id}">Edit</button></li>`).join('') || '<li class="empty">No shows yet.</li>';
+    qa('#show-strip [data-id], #show-list [data-id]').forEach(b => b.addEventListener('click', () => { sel = b.dataset.id; renderShows(); q('#show-editor').scrollIntoView({block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); }));
+    q('#show-editor').hidden = !cur;
+    if (!cur) { q('#clock-svg').innerHTML = ''; q('#clock-legend').innerHTML = ''; return; }
+    q('#show-editor-title').textContent = 'Edit ' + cur.name; q('#show-time').textContent = `${hourLabel(cur.from)} – ${hourLabel(cur.to)}`.toUpperCase();
+    q('#se-name').value = cur.name; q('#se-style').value = cur.style; q('#se-from').value = cur.from; q('#se-to').value = cur.to;
+    q('#se-host').value = cur.host || ''; q(`input[name=se-talk][value=${cur.talk}]`).checked = true; q('#se-energy').value = cur.energy;
+    q('#se-spots').checked = cur.spots; q('#se-news').checked = cur.news; q('#se-error').hidden = true;
+    renderClock(cur);
+  }
+  function hourPlan(s) {
+    const talk = {rare: [1, 20], some: [2, 30], often: [3, 40]}[s.talk], n = s.host ? talk[0] : 0;
+    const extra = [];
+    for (let i = 0; i < n; i++) extra.push({k: 'host', s: talk[1]});
+    if (s.spots) extra.push({k: 'spot', s: 60});
+    if (s.news) extra.push({k: 'news', s: 90});
+    const used = 10 + extra.reduce((a, x) => a + x.s, 0), songs = Math.max(1, Math.floor((3600 - used) / 225)), each = (3600 - used) / songs;
+    const seq = [{k: 'id', s: 10}], gap = Math.max(1, Math.floor(songs / (extra.length + 1)));
+    let made = 0;
+    for (let i = 0; i <= extra.length; i++) {
+      const count = i === extra.length ? songs - made : Math.min(gap, songs - made);
+      for (let j = 0; j < count; j++, made++) seq.push({k: 'song', s: each});
+      if (i < extra.length) seq.push(extra[i]);
+    }
+    return seq;
+  }
+  function renderClock(s) {
+    const seq = hourPlan(s), R = 70, C = 2 * Math.PI * R;
+    let off = 0, out = '';
+    for (const seg of seq) {
+      const len = seg.s / 3600 * C;
+      out += `<circle cx="100" cy="100" r="${R}" fill="none" stroke="${KIND[seg.k].c}" stroke-width="26" stroke-dasharray="${Math.max(0, len - 1.2).toFixed(2)} ${(C - len + 1.2).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 100 100)"/>`;
+      off += len;
+    }
+    q('#clock-svg').innerHTML = `<title>An example hour of ${esc(s.name)}</title>${out}<text x="100" y="99" text-anchor="middle" fill="#f4f2ed" font-size="22" font-weight="700">60 min</text><text x="100" y="118" text-anchor="middle" fill="#afb6c5" font-size="10">${seq.length} moments</text>`;
+    q('#clock-name').textContent = s.name;
+    const tally = {};
+    for (const x of seq) { (tally[x.k] = tally[x.k] || {n: 0, s: 0}); tally[x.k].n++; tally[x.k].s += x.s; }
+    q('#clock-legend').innerHTML = ['id', 'song', 'host', 'spot', 'news'].filter(k => tally[k]).map(k => `<li style="--c:${KIND[k].c}"><i aria-hidden="true"></i>${KIND[k].label} ×${tally[k].n}<small>${mmss(tally[k].s)}</small></li>`).join('');
+  }
+  q('#se-save').addEventListener('click', () => {
+    const s = SHOWS.find(x => x.id === sel), err = q('#se-error');
+    const from = Number(q('#se-from').value), to = Number(q('#se-to').value), name = q('#se-name').value.trim();
+    const fail = m => { err.textContent = m; err.hidden = false; };
+    if (!name) return fail('Give the show a name.');
+    if (to <= from) return fail('A show needs to end after it starts.');
+    const clash = SHOWS.find(x => x !== s && x.from < to && from < x.to);
+    if (clash) return fail(`This overlaps ${clash.name} (${hourLabel(clash.from)}–${hourLabel(clash.to)}). Shorten one of them.`);
+    Object.assign(s, {name, from, to, style: q('#se-style').value, host: q('#se-host').value || null, talk: q('input[name=se-talk]:checked').value, energy: Number(q('#se-energy').value), spots: q('#se-spots').checked, news: q('#se-news').checked});
+    q('#show-msg').textContent = `Saved ${name} (preview).`; renderShows();
+  });
+  q('#se-remove').addEventListener('click', async () => {
+    const s = SHOWS.find(x => x.id === sel);
+    if (s && await uiConfirm(`Remove “${s.name}”? Its hours will have no show until you add one.`, 'Remove show')) { SHOWS.splice(SHOWS.indexOf(s), 1); sel = SHOWS[0] && SHOWS[0].id; renderShows(); }
+  });
+  q('#show-add').addEventListener('click', () => {
+    const covered = Array(24).fill(false); SHOWS.forEach(s => { for (let h = s.from; h < s.to; h++) covered[h] = true; });
+    const h = covered.indexOf(false), msg = q('#show-msg');
+    if (h < 0) { msg.textContent = 'Every hour already has a show. Shorten one first.'; return; }
+    let to = h + 1; while (to < 24 && !covered[to] && to - h < 2) to++;
+    const id = 'new' + (++showSeq);
+    SHOWS.push({id, name: 'New show', from: h, to, style: 'Warm brush jazz', host: null, talk: 'some', energy: 40, spots: false, news: false, c: '#4b5a78'});
+    sel = id; msg.textContent = ''; renderShows(); q('#se-name').focus(); q('#se-name').select();
+  });
+
+  /* ---------- Team ---------- */
+  function renderTeam() {
+    q('#team-count').textContent = `${HOSTS.length} hosts`;
+    q('#team-hosts').innerHTML = HOSTS.map(h => {
+      const shifts = SHOWS.filter(s => s.host === h.id).map(s => s.name);
+      return `<article class="x-host"><div class="x-host-top"><span class="x-avatar" style="--tone:${h.tone}" aria-hidden="true">${esc(h.name[0])}</span><div><strong>${esc(h.name)}</strong><span class="role">${esc(h.role)}</span></div></div><p>${esc(h.blurb)}</p><div class="x-chips">${h.chips.map(c => `<span class="x-chip">${esc(c)}</span>`).join('')}</div><p class="x-hint">${shifts.length ? 'On shift: ' + esc(shifts.join(', ')) : 'Not on a show yet.'}</p><div class="x-actions"><button type="button" disabled>▶ Hear a sample</button><span class="x-hint">Needs voices set up.</span></div></article>`;
+    }).join('');
+  }
+  q('#host-new').addEventListener('click', () => notice('Preview: with a connected AI operator, you would describe a personality in a sentence and review the draft. No AI operator is connected here.'));
+
+  const SPOTS = [
+    {who: 'Corner Bike Co.', text: 'Fixing bikes since 1998. Mention the station for a free tune-up.', freq: 'Regular', when: 'Weekdays, 7 am – 7 pm', plays: 14, st: 'live'},
+    {who: 'Harbor Coffee Roasters', text: 'Small-batch beans, roasted Tuesdays.', freq: 'Light', when: 'Starts Nov 12', plays: 0, st: 'sched'},
+    {who: 'Tell a friend', text: 'A promo for your own station.', freq: 'Light', when: 'Any show', plays: 6, st: 'hold'},
+  ];
+  const ST = {live: ['RUNNING', 'live'], sched: ['SCHEDULED', ''], hold: ['PAUSED', 'hold']};
+  function renderSpots() {
+    q('#team-spots').innerHTML = SPOTS.map((p, i) => `<li><div class="main"><strong>${esc(p.who)}</strong> <span class="x-status ${ST[p.st][1]}">${ST[p.st][0]}</span><div class="meta">${esc(p.freq)} · ${esc(p.when)} · ${p.plays} plays this week (sample)</div><p style="font-size:.8rem;margin-top:6px">“${esc(p.text)}” <span class="x-hint">Always read with “sponsored by”.</span></p></div><div class="x-actions" style="margin:0"><button type="button" data-i="${i}" data-act="toggle">${p.st === 'hold' ? 'Resume' : 'Pause'}</button><button type="button" class="danger" data-i="${i}" data-act="remove">Remove</button></div></li>`).join('') || '<li class="empty">No spots yet. Add one below.</li>';
+    qa('#team-spots [data-act]').forEach(b => b.addEventListener('click', async () => {
+      const p = SPOTS[Number(b.dataset.i)];
+      if (b.dataset.act === 'toggle') { p.st = p.st === 'hold' ? 'live' : 'hold'; renderSpots(); }
+      else if (await uiConfirm(`Remove the spot for ${p.who}?`, 'Remove spot')) { SPOTS.splice(SPOTS.indexOf(p), 1); renderSpots(); }
+    }));
+  }
+  q('#spot-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const who = q('#spot-who').value.trim(), text = q('#spot-text').value.trim(), err = q('#spot-error');
+    if (!who || !text) { err.textContent = 'Add who it’s for and what it should say.'; err.hidden = false; return; }
+    if (!q('#spot-rights').checked) { err.textContent = 'Confirm you’re allowed to use this voice for paid spots, or upload a recorded spot from the Library instead.'; err.hidden = false; return; }
+    err.hidden = true;
+    SPOTS.unshift({who, text, freq: {light: 'Light', regular: 'Regular', often: 'Often'}[q('input[name=spot-freq]:checked').value], when: 'Any show', plays: 0, st: 'sched'});
+    q('#spot-form').reset(); q('#spot-disclose').checked = true; renderSpots();
+  });
+
+  /* ---------- Discover ---------- */
+  const RES = [
+    {name: 'Backyard astronomy', likes: ['planets', 'meteor showers', 'telescope tips'], skips: [], cadence: 'Every day at 8:00 am', anchor: 'Marlowe', review: true, st: 'live',
+     brief: {at: 'Today 7:42 am', items: [['A bright meteor was reported over the Pacific Northwest on Tuesday night.', 'Example Astronomy Club newsletter', 'Nov 5, 6:10 am'], ['Saturn’s rings are close to edge-on this season, which makes them look thin.', 'Example Sky Notes', 'Nov 4, 9:00 pm'], ['A beginner’s guide to cleaning a telescope mirror.', 'Example Backyard Optics', 'Nov 3, 4:30 pm']]}},
+    {name: 'Independent electronic music', likes: ['new releases', 'synth builds', 'small labels'], skips: ['celebrity news', 'national politics'], cadence: 'Weekdays at 12:00 pm', anchor: 'Marlowe', review: true, st: 'live', brief: null},
+    {name: 'People building useful things', likes: ['open hardware', 'community repair'], skips: [], cadence: 'Fridays at 5:00 pm', anchor: 'Dex', review: false, st: 'hold', brief: {at: 'Last Friday 4:55 pm', items: [['A library started a free repair café on Saturdays.', 'Example Maker Weekly', 'Oct 31, 10:20 am']]}},
+  ];
+  const open = new Set();
+  function renderRes() {
+    q('#res-count').textContent = `${RES.length} researchers`;
+    q('#res-list').innerHTML = RES.map((r, i) => {
+      let box = '';
+      if (open.has(i)) {
+        box = r.brief
+          ? `<div class="x-brief"><h4>LATEST BRIEF · ${esc(r.brief.at.toUpperCase())} · <span class="x-planned">SAMPLE</span></h4><ul>${r.brief.items.map(it => `<li>${esc(it[0])}<small>${esc(it[1])} · ${esc(it[2])}</small></li>`).join('')}</ul><small style="margin-top:8px">Why these: they match your interests, were published in the last 24 hours, and come from sources you chose. ${r.review ? 'Waiting for your review before it airs.' : 'Airs automatically.'}</small></div>`
+          : '<div class="x-brief skip"><h4>LATEST RUN · TODAY 12:00 PM</h4>Nothing fresh enough to air. Music kept playing, and nothing was made up to fill the slot.</div>';
+      }
+      return `<li><div class="main"><strong>${esc(r.name)}</strong> <span class="x-status ${r.st}">${r.st === 'live' ? 'ON' : r.st === 'hold' ? 'PAUSED' : 'DRAFT'}</span><div class="meta">${esc(r.cadence)} · read by ${esc(r.anchor)}</div><div class="x-chips" style="margin-top:8px">${r.likes.map(l => `<span class="x-chip">${esc(l)}</span>`).join('')}${r.skips.map(l => `<span class="x-chip skip">skips ${esc(l)}</span>`).join('')}</div>${box}</div><div class="x-actions" style="margin:0;flex-direction:column;align-items:stretch"><label class="x-switch" style="margin:0"><input type="checkbox" data-review="${i}"${r.review ? ' checked' : ''}><span class="x-track" aria-hidden="true"></span><span>Review before airing</span></label><button type="button" data-run="${i}">${open.has(i) ? 'Hide result' : 'Run now'}</button></div></li>`;
+    }).join('');
+    qa('[data-run]').forEach(b => b.addEventListener('click', () => { const i = Number(b.dataset.run); open.has(i) ? open.delete(i) : open.add(i); renderRes(); }));
+    qa('[data-review]').forEach(b => b.addEventListener('change', () => { RES[Number(b.dataset.review)].review = b.checked; renderRes(); }));
+  }
+  q('#res-draft').addEventListener('click', () => {
+    const t = q('#res-new').value.trim(), msg = q('#res-msg');
+    if (t.length < 8) { msg.textContent = 'Write a sentence about what you’d like to hear about.'; msg.className = 'x-error'; return; }
+    const skip = /skip ([^.]+)/i.exec(t), likes = t.replace(/skip [^.]+\.?/i, '').replace(/^(a|an|some)\s+(short|quick)[^ ]*\s+(upbeat\s+)?(update|brief)\s+(on|about)\s+/i, '').replace(/[.]+$/, '').split(/,| and /).map(x => x.trim()).filter(Boolean).slice(0, 4);
+    RES.unshift({name: (likes[0] || 'New researcher').replace(/^./, c => c.toUpperCase()).slice(0, 40), likes, skips: skip ? [skip[1].trim()] : [], cadence: 'Every day at 9:00 am', anchor: 'Marlowe', review: true, st: 'draft', brief: null});
+    q('#res-new').value = ''; msg.className = 'x-hint'; msg.textContent = 'Draft added at the top (preview). Check the interests, then turn it on.'; renderRes();
+  });
+
+  /* ---------- preview bar, phone sheet, wiring ---------- */
+  qa('.x-toggle button').forEach(b => b.addEventListener('click', () => {
+    demo.reset(b.dataset.mode); location.hash = b.dataset.mode === 'first' ? '#start' : '#studio';
+    wiz.recipe = null; wiz.max = 1; qa('input[name=wiz-recipe]').forEach(i => { i.checked = false; });
+    ['#wiz-name', '#wiz-tagline'].forEach(id => { q(id).value = ''; delete q(id).dataset.touched; }); q('#wiz-describe').value = '';
+  }));
+  q('.rail-more').addEventListener('click', () => q('#more-sheet').showModal());
+  q('#more-close').addEventListener('click', () => q('#more-sheet').close());
+  qa('#more-sheet a').forEach(a => a.addEventListener('click', () => q('#more-sheet').close()));
+  window.addEventListener('hashchange', showStep);
+
+  function onState(s) {
+    window.__lastStatus = s;
+    renderNext(s); renderAuto(s);
+    if (wiz.step === 4 && !location.hash.indexOf('#start')) { renderChecks(); updateStart(); }
+    qa('.x-toggle button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === demo.state().mode)));
+  }
+  const original = window.render;
+  if (typeof original === 'function') window.render = function (s) { original(s); onState(s); };
+  setInterval(() => { if (window.__lastStatus && demo.state().warm) renderAuto(window.__lastStatus); }, 1000);
+
+  renderShows(); renderTeam(); renderSpots(); renderRes(); renderChecks(); updateStart(); showStep();
+})();
+
+</script>
+
+</body></html>

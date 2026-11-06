@@ -208,8 +208,13 @@ checks, optional music/voice generation and independent acceptance remain open.
 - The Studio view is now the Console the operator picked: a meter bridge (on-air lamp, now-playing display, level meter and
   a scrolling paper trace with the current and next three titles), the cart wall (the queue) with a library crate and a bin,
   and a control desk fixed to the bottom of every view on desktop (Start, Stop, Skip, the GO LIVE guard, the browser monitor
-  with volume, and DROP NEXT pads and Autopilot marked PLANNED and disabled). On phones the desk sits above the tab bar on the
-  Studio view only.
+  with volume, and DROP NEXT pads and Autopilot marked PLANNED and disabled). The desk stays at the bottom of the screen at every
+  size.
+- One page, as the operator asked after seeing it: no navigation rail and no operator column. A masthead carries the station
+  name and tagline with Add audio, Operator and Menu; the Library, Schedule, Broadcast, Settings, Guide and the operator chat open
+  as sheets (native modal dialogs, full screen on phones) over the studio, and × or Escape returns to it. Routes such as
+  `#library` and `#import` still work and open their sheet. The private design preview is built by
+  `tools/preview/build_preview.py` from the real files.
 - Honesty rules kept: the lamp says LIVE only while the broadcast state is `streaming` (stream connected, not listeners); the
   display says "PLAYING · LOCAL PLAYOUT" otherwise. The level meter is measured from the audio this browser's monitor is
   playing and reads MONITOR OFF when the monitor is off; it never animates on its own. The paper trace is decorative motion

@@ -8,24 +8,34 @@ if (fragment.has('token')) {
   token = fragment.get('token'); sessionStorage.setItem('myradio-token', token);
   history.replaceState(null, '', location.pathname + location.search);
 }
-// Views keep forms mounted so navigation never discards a draft.
+// One page: the studio is always there. Every other section opens as a sheet over it; forms stay mounted, so drafts survive.
 const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator'];
+const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator'};
 function showView(moveFocus = false) {
   const route = location.hash.slice(1), selected = route === 'import' ? 'library' : viewNames.includes(route) ? route : 'studio';
-  const mainView = selected === 'operator' ? 'studio' : selected;
-  for (const name of viewNames.filter(name => name !== 'operator')) $('view-' + name).hidden = name !== mainView;
+  for (const name of viewNames.filter(name => name !== 'studio')) $('view-' + name).hidden = name !== selected;
   document.body.dataset.activeView = selected;
-  for (const link of document.querySelectorAll('.rail a[data-view]')) {
+  for (const link of document.querySelectorAll('a[data-view]')) {
     if (link.dataset.view === selected) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   }
-  if (route === 'import') $('import').open = true;
-  if (moveFocus) {
-    const target = selected === 'operator' ? $('message') : route === 'import' ? $('file') : $('main');
-    target.focus({preventScroll: true});
-    if (selected !== 'operator') window.scrollTo({top: 0});
+  if ($('menu').open) $('menu').close();
+  const sheet = $('sheet');
+  if (selected === 'studio') {
+    if (sheet.open) sheet.close();
+  } else {
+    $('sheet-title').textContent = sheetTitles[selected] || selected; sheet.dataset.view = selected;
+    if (!sheet.open) sheet.showModal();
+    sheet.querySelector('.sheet-body').scrollTop = 0;
   }
+  if (route === 'import') $('import').open = true;
+  if (moveFocus && selected !== 'studio') (selected === 'operator' ? $('message') : route === 'import' ? $('file') : $('sheet-title')).focus({preventScroll: true});
 }
+// Closing a sheet (×, Escape, or a link to the studio) always lands back on the studio; the browser returns focus to what opened it.
+$('sheet').addEventListener('close', () => { if (document.body.dataset.activeView !== 'studio') location.hash = 'studio'; });
+$('menu-open').addEventListener('click', () => $('menu').showModal());
+for (const button of document.querySelectorAll('[data-close-menu]')) button.addEventListener('click', () => $('menu').close());
+for (const link of document.querySelectorAll('#menu a')) link.addEventListener('click', () => $('menu').close());
 window.addEventListener('hashchange', () => showView(true));
 showView();
 function notice(message) { $('notice').textContent = message; $('notice').hidden = !message; }
@@ -77,7 +87,7 @@ function disconnect() {
   $('listen').hidden = false; $('disconnect').hidden = true; monitorOn = false; stopMeters(); if (state) renderConsole(state);
 }
 $('lock').addEventListener('click', async () => {
-  disconnect(); $('agent-key').value=''; $('broadcast-password').value='';
+  $('menu').close(); disconnect(); $('agent-key').value=''; $('broadcast-password').value='';
   try { await api('/api/logout', {}); } catch (error) { notice(error.message); }
   token = ''; sessionStorage.removeItem('myradio-token'); requireUnlock();
 });

@@ -15,6 +15,15 @@ import threading
 from playwright.async_api import async_playwright
 
 
+async def go(page, view):
+    """Open a section the way the studio does: the studio is the page and every other section is a sheet over it."""
+    await page.evaluate('(view) => { location.hash = view; }', view)
+    if view == 'studio':
+        await page.wait_for_function("() => !document.getElementById('sheet').open")
+    else:
+        await page.locator(f'#view-{view}').wait_for(state='visible')
+
+
 class Provider(BaseHTTPRequestHandler):
     calls = 0
 
@@ -55,6 +64,7 @@ async def main():
             await page.goto(os.environ['MYRADIO_TEST_URL'] + '/#token=' + os.environ['MYRADIO_TEST_TOKEN'])
             await page.wait_for_function("() => document.getElementById('connection').textContent.includes('connected')")
             before = await page.locator('#station-name').inner_text()
+            await go(page, 'operator')
             await page.locator('.agent-help summary').click()
             await page.locator('#agent-url').fill(f'http://127.0.0.1:{fixture.server_port}/v1')
             await page.locator('#agent-model').fill('approval-ui-fixture')
@@ -71,10 +81,10 @@ async def main():
             assert await page.locator('#chat-log img').count() == 0, 'Model output must remain text'
             assert '<img src=x' in await page.locator('#chat-log').inner_text()
             await page.set_viewport_size({'width': 390, 'height': 844})
-            await page.locator('.rail a[data-view=operator]').click()
+            await go(page, 'operator')
             await approve.wait_for(state='visible')
-            await page.locator('.rail a[data-view=library]').click()
-            await page.locator('.rail a[data-view=operator]').click()
+            await go(page, 'library')
+            await go(page, 'operator')
             await approve.click()
             applied = page.get_by_role('button', name='Change applied', exact=True)
             await applied.wait_for(state='visible')
@@ -99,19 +109,17 @@ async def main():
             await page.wait_for_function("() => document.getElementById('chat-mode').textContent.includes('Local command assistant')")
             assert await page.locator('#chat-log button').count() == 0
             print('PASS: new question disables stale proposal, disconnect clears proposals and returns to command mode.')
-            # Fixed mobile navigation may overlay the scrolling viewport, but the
-            # bottom padding must allow every view's last control above the rail.
+            # Every section sheet fits at phone and tablet widths, and the studio's last line scrolls clear of the fixed desk.
             for width in (320, 390, 768):
                 await page.set_viewport_size({'width': width, 'height': 844})
-                for view in ('studio', 'library', 'schedule', 'broadcast', 'operator', 'settings', 'help'):
-                    await page.locator(f'.rail a[data-view={view}]').click()
-                    await page.locator(f'#view-{view}').wait_for(state='visible')
+                for view in ('library', 'schedule', 'broadcast', 'operator', 'settings', 'help', 'studio'):
+                    await go(page, view)
                     assert await page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (width, view)
                 await page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
                 footer_bottom = await page.locator('footer').evaluate('(el) => el.getBoundingClientRect().bottom')
-                rail_top = await page.locator('.rail').evaluate('(el) => el.getBoundingClientRect().top')
-                assert footer_bottom <= rail_top, (width, footer_bottom, rail_top)
-            print('PASS: all seven mobile views fit at 320/390/768px; content can scroll clear of bottom navigation.')
+                deck_top = await page.locator('#deck').evaluate('(el) => el.getBoundingClientRect().top')
+                assert footer_bottom <= deck_top, (width, footer_bottom, deck_top)
+            print('PASS: every section sheet fits at 320/390/768px; the studio scrolls clear of the fixed desk.')
             assert not errors, errors
             await browser.close()
     finally:
