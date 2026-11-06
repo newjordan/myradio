@@ -12,6 +12,8 @@ Use the navigation rail for **Studio, Library, Schedule, Broadcast, Settings and
 
 **Product home:** the operator owns `myradio.garden`, intended for promotion and hosting, with Knightshift as a later station deployment. No DNS or public hosting has been configured by this change. See [deployment boundaries](docs/DEPLOYMENT.md).
 
+**Research: help wanted.** The station is also a research bench for faster, better music and voice models. Open problems, current measurements and how to help: [docs/RESEARCH.md](docs/RESEARCH.md).
+
 ## Start your studio
 
 Requirements: **Linux or macOS, Python 3.10+**, a browser, and audio you have permission to use. No runtime Python dependencies, GPU, account, model download, or network installation is required to run this checkout.
