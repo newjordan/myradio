@@ -828,7 +828,10 @@ function renderGame(s) {
   $('badge-count').textContent = `${earned.size} of ${BADGES.length}`;
   // Dial
   const [mood, line] = Date.now() - petPoke < 2500 ? [petMoodNow, petLine] : petMood(s, g);
-  for (const el of [$('pet-img'), $('pet-big')]) { const src = artUrl(`dial-${mood}`); if (el.dataset.mood !== mood) { el.dataset.mood = mood; el.src = src; } }
+  // the small masthead Dial sings without the drawn notes (it bops instead); the Trophies sheet shows the full art
+  for (const [el, art] of [[$('pet-img'), mood === 'singing' ? 'happy' : mood], [$('pet-big'), mood]]) {
+    if (el.dataset.mood !== art) { el.dataset.mood = art; el.src = artUrl(`dial-${art}`); }
+  }
   $('pet').dataset.mood = mood; $('pet-say').textContent = line; $('pet-mood').textContent = line;
 }
 let petMoodNow = 'happy', petLine = '';
