@@ -259,3 +259,27 @@ body.motion-off .confetti{display:none}
 .guard.igniting{border-color:#c98458;box-shadow:0 4px #1b1315,inset 0 0 0 1px #ff9a5c33}
 body.motion-off .state-lamp.live:after,body.motion-off .guard.on-air .ember-dot{animation:none}
 @media(prefers-reduced-motion:reduce){.state-lamp.live:after,.guard.on-air .ember-dot{animation:none}}
+/* ===== Approval cards: illustrated, a little bouncy ===== */
+dialog.approve,dialog.approve-live{padding:0;overflow:hidden;max-width:440px;border:1px solid #5a6170;border-radius:18px;background:linear-gradient(180deg,#1f2533,#171c27)}
+dialog.approve[open],dialog.approve-live[open]{animation:approve-in .32s cubic-bezier(.3,1.4,.5,1)}
+@keyframes approve-in{from{transform:translateY(14px) scale(.94);opacity:0}to{transform:none;opacity:1}}
+.approve-art{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.approve-art.missing{display:none}
+.approve-body{padding:4px 26px 24px;display:grid;gap:10px}
+.approve-body h2{font-size:1.45rem;letter-spacing:-.03em;margin:0}
+.approve-body .eyebrow{margin:0;color:var(--coral)}
+.approve-body p{font-size:.92rem;margin:0}
+.approve-actions{display:flex;gap:10px;margin-top:8px}
+.approve-actions button{flex:1;width:auto;min-height:48px;border-radius:12px;font-weight:700}
+.approve-ok{background:var(--coral);border-color:var(--coral);color:#211b1c;box-shadow:0 4px #8f4a33}
+.approve-ok:hover{background:#ffb396}
+.approve-ok:active,.approve-actions .quiet:active{transform:translateY(3px);box-shadow:none}
+.approve-actions .quiet{border:1px solid #4c5364;box-shadow:0 4px #11151c}
+dialog.approve-live .dialog-top,dialog.approve-live .dialog-copy,dialog.approve-live .confirm-live,dialog.approve-live .dialog-foot{margin-left:26px;margin-right:26px}
+dialog.approve-live .dialog-top{margin-top:2px}
+dialog.approve-live .dialog-foot{margin-bottom:22px}
+body.motion-off dialog.approve[open],body.motion-off dialog.approve-live[open]{animation:none}
+@media(prefers-reduced-motion:reduce){dialog.approve[open],dialog.approve-live[open]{animation:none}}
+@media(max-width:600px){.approve-body{padding:4px 18px 20px}dialog.approve-live .dialog-top,dialog.approve-live .dialog-copy,dialog.approve-live .confirm-live,dialog.approve-live .dialog-foot{margin-left:18px;margin-right:18px}}
+dialog.approve-live .confirm-live{width:calc(100% - 52px)}
+@media(max-width:600px){dialog.approve-live .confirm-live{width:calc(100% - 36px)}}

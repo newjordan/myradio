@@ -46,8 +46,6 @@ app = must(app, "const viewNames = ['studio', 'library', 'schedule', 'broadcast'
 app = must(app, "trophies: 'Trophies and Dial'};", "trophies: 'Trophies and Dial', start: 'Set up your station', shows: 'Shows', team: 'On-air team', discover: 'Researchers'};")
 app = must(app, "const route = location.hash.slice(1), selected",
                 "const route = (h => h === 'my-station' ? 'settings' : /^start-/.test(h) ? 'start' : h)(location.hash.slice(1)), selected")
-app = must(app, "if (dangerous && !confirm('Delete this audio", "if (dangerous && !await uiConfirm('Delete this audio")
-app = must(app, "if(!confirm('Forget the saved AI", "if(!await uiConfirm('Forget the saved AI")
 assert 'confirm(' not in app.replace('uiConfirm(', '')
 
 art_dir = web / 'art'

@@ -102,11 +102,28 @@ function node(tag, text, className) {
   if (className) element.className = className;
   return element;
 }
+// --- approval cards: the studio's own confirm, with an illustration, instead of the browser's plain box
+document.querySelectorAll('.approve-art').forEach(img => img.addEventListener('error', () => img.classList.add('missing')));
+function approve({title, text, ok = 'Confirm', cancel = 'Keep it', art = 'approve-delete', eyebrow = 'PLEASE CONFIRM'}) {
+  const dlg = $('approve');
+  $('approve-title').textContent = title; $('approve-text').textContent = text; $('approve-eyebrow').textContent = eyebrow;
+  $('approve-art').src = (window.MYRADIO_ART && window.MYRADIO_ART[art]) || `/art/${art}.png`;
+  const okBtn = dlg.querySelector('[data-ok]'), cancelBtn = dlg.querySelector('[data-cancel]');
+  okBtn.textContent = ok; cancelBtn.textContent = cancel;
+  return new Promise(resolve => {
+    const done = value => { dlg.close(); okBtn.onclick = cancelBtn.onclick = dlg.oncancel = dlg.onclick = null; resolve(value); };
+    okBtn.onclick = () => done(true); cancelBtn.onclick = () => done(false);
+    dlg.oncancel = event => { event.preventDefault(); done(false); };
+    dlg.onclick = event => { if (event.target === dlg) done(false); };
+    dlg.showModal(); cancelBtn.focus();
+  });
+}
 function actionButton(label, operation, args, dangerous = false) {
   const button = node('button', label, dangerous ? 'danger' : '');
   button.type = 'button';
   button.addEventListener('click', async () => {
-    if (dangerous && !confirm('Delete this audio from the local library? This cannot be undone.')) return;
+    if (dangerous && !await approve({title: 'Delete this audio?', text: 'It leaves your local library for good. This cannot be undone.',
+                                     ok: 'Delete it', art: 'approve-delete', eyebrow: 'LIBRARY · DELETE'})) return;
     button.disabled = true;
     try { await action(operation, args); }
     finally { button.disabled = false; }
@@ -138,7 +155,8 @@ $('agent-form').addEventListener('submit',async event=>{
   finally { $('agent-save').disabled=false; }
 });
 $('agent-disconnect').addEventListener('click',async()=>{
-  if(!confirm('Forget the saved AI connection and clear this session’s chat/proposals? Local command mode will remain available.'))return;
+  if(!await approve({title: 'Forget the AI connection?', text: 'The saved connection is removed and this session’s chat and proposals are cleared. Local command mode stays available.',
+                     ok: 'Forget it', art: 'approve-forget', eyebrow: 'OPERATOR · DISCONNECT'}))return;
   try {await api('/api/agent',{disconnect:true});await loadAgentSettings();$('chat-log').replaceChildren();await refresh();notice('Operator disconnected; private saved settings removed.');}
   catch(error){notice(error.message);}
 });

@@ -245,7 +245,9 @@
   };
 
   // In-page confirmation (the viewer disables window.confirm, and a native box is not friendly anyway).
-  G.uiConfirm = (message, okLabel) => new Promise(resolve => {
+  G.uiConfirm = (message, okLabel) => typeof approve === 'function'
+    ? approve({title: (okLabel || 'Confirm') + '?', text: message, ok: okLabel || 'Confirm', art: 'approve-delete'})
+    : new Promise(resolve => {
     const d = document.getElementById('confirm-dialog'), ok = d.querySelector('[data-ok]'), cancel = d.querySelector('[data-cancel]');
     d.querySelector('p').textContent = message; ok.textContent = okLabel || 'Confirm';
     const done = v => { d.close(); ok.onclick = cancel.onclick = d.oncancel = null; resolve(v); };
