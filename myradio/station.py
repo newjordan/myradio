@@ -52,7 +52,8 @@ OPERATIONS = {
     "transport.start": "Start station playout. Does not open an external broadcast.",
     "transport.stop": "Stop station playout and return the current track to the queue.",
     "transport.skip": "Skip the current track.",
-    "queue.add": "Append a library track by track_id.",
+    "queue.add": "Add a library track by track_id: at the end, or at position (0 plays next) when one is given.",
+    "queue.move": "Move a queued entry (queue_id) to position: 0 plays next; a position past the end moves it to the end.",
     "queue.remove": "Remove a queued entry by queue_id.",
     "library.delete": "Delete an unused library track by track_id.",
     "library.retry": "Recheck repaired audio by track_id and clear its quarantine only if native PCM validation succeeds. Never downloads or generates replacement audio.",
@@ -66,13 +67,46 @@ ARGUMENTS = {
     "station.update": {"name": "string", "tagline": "string", "auto_fill": "boolean"},
     "transport.start": {}, "transport.stop": {}, "transport.skip": {},
     "broadcast.start": {}, "broadcast.stop": {},
-    "queue.add": {"track_id": "string"}, "queue.remove": {"queue_id": "string"},
+    "queue.add": {"track_id": "string", "position": "integer"}, "queue.remove": {"queue_id": "string"},
+    "queue.move": {"queue_id": "string", "position": "integer"},
     "library.delete": {"track_id": "string"}, "library.retry": {"track_id": "string"},
     "schedule.add": {"track_id": "string", "at": "string"},
     "schedule.cancel": {"schedule_id": "string"},
     "program.add": {"track_id": "string", "timezone": "string", "local_time": "string", "weekdays": "string"},
     "program.remove": {"program_id": "string"},
 }
+
+
+# Arguments an operation may leave out (``station.update`` takes any subset of its own).
+OPTIONAL = {"queue.add": ("position",)}
+MAX_POSITION = 1_000_000
+
+
+def required_arguments(name):
+    return [] if name == "station.update" else [key for key in ARGUMENTS[name] if key not in OPTIONAL.get(name, ())]
+
+
+# The queue plays in ``pos`` order. Front inserts (a stopped track, due schedules, a recovered track) take the lowest
+# position and the lowest id; appends take the highest of both, so until something is moved by hand play order and id
+# order agree, as they always did before positions existed. Ids never change: they are the handle clients hold.
+QUEUE_FRONT = "INSERT INTO queue(id,track_id,pos) VALUES ((SELECT COALESCE(MIN(id),1)-1 FROM queue),?,(SELECT COALESCE(MIN(pos),1)-1 FROM queue))"
+QUEUE_APPEND = "INSERT INTO queue(track_id,pos) VALUES (?,(SELECT COALESCE(MAX(pos),0)+1 FROM queue))"
+
+
+def ensure_queue_order(db):
+    """Give every queue entry a play position (added for reordering). Older stations had only the row id, which was
+    also the play order, so it is copied over."""
+    if "pos" not in [row[1] for row in db.execute("PRAGMA table_info(queue)")]:
+        db.execute("ALTER TABLE queue ADD COLUMN pos REAL")
+    db.execute("UPDATE queue SET pos=id WHERE pos IS NULL")
+    db.execute("CREATE INDEX IF NOT EXISTS queue_order ON queue(pos,id)")
+    # Anything that writes the table without a position (an older tool, a test fixture, a restore) still gets the order its
+    # id meant: a row below every other id plays first, any other row plays last. Without this a NULL position sorts first.
+    db.execute("""CREATE TRIGGER IF NOT EXISTS queue_position AFTER INSERT ON queue WHEN NEW.pos IS NULL BEGIN
+        UPDATE queue SET pos = CASE WHEN NEW.id < (SELECT MIN(id) FROM queue WHERE id <> NEW.id)
+                                    THEN (SELECT MIN(pos) FROM queue WHERE id <> NEW.id) - 1
+                                    ELSE COALESCE((SELECT MAX(pos) FROM queue WHERE id <> NEW.id), 0) + 1 END
+        WHERE id = NEW.id; END""")
 
 
 SCHEMA = '''
@@ -114,6 +148,7 @@ class Station:
         self.db = sqlite3.connect(self.directory / "station.sqlite3", check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
+        ensure_queue_order(self.db)
         defaults = {"name": "My radio", "tagline": "Your station. Your frequency.", "auto_fill": True}
         for key, value in defaults.items():
             self.db.execute("INSERT OR IGNORE INTO settings VALUES (?,?)", (key, json.dumps(value)))
@@ -143,7 +178,7 @@ class Station:
         if recovered and json.loads(recovered[0]):
             track_id = json.loads(recovered[0])
             if self.db.execute("SELECT 1 FROM tracks WHERE id=?", (track_id,)).fetchone():
-                self.db.execute("INSERT INTO queue(id,track_id) VALUES ((SELECT COALESCE(MIN(id),1)-1 FROM queue),?)", (track_id,))
+                self.db.execute(QUEUE_FRONT, (track_id,))
         self._setting("playing", None)
         self.db.commit()
         if start_worker:
@@ -164,7 +199,7 @@ class Station:
         """Every operation (core and extension) with typed arguments, for chat, MCP and the UI."""
         core = [{"name": name, "description": OPERATIONS[name],
                  "arguments": {key: {"type": typ} for key, typ in ARGUMENTS[name].items()},
-                 "required": [] if name == "station.update" else list(ARGUMENTS[name])} for name in OPERATIONS]
+                 "required": required_arguments(name)} for name in OPERATIONS]
         return core + self.extensions.catalog()
 
     def _fail_safe(self):
@@ -267,7 +302,7 @@ class Station:
                 "station": settings, "running": self.running,
                 "current": self.public(self.current) if self.current else None,
                 "elapsed": round(self.elapsed, 2), "error": self.error,
-                "queue": [dict(r) for r in self.db.execute("SELECT q.id,t.id AS track_id,t.title,t.artist,t.duration,t.kind FROM queue q JOIN tracks t ON t.id=q.track_id ORDER BY q.id")],
+                "queue": [dict(r) for r in self.db.execute("SELECT q.id,t.id AS track_id,t.title,t.artist,t.duration,t.kind FROM queue q JOIN tracks t ON t.id=q.track_id ORDER BY q.pos,q.id")],
                 "library": [self.public(dict(r)) for r in self.db.execute("SELECT t.*, (f.track_id IS NULL) AS available, f.message AS playback_error FROM tracks t LEFT JOIN media_failures f ON f.track_id=t.id ORDER BY t.title,t.id")],
                 "schedules": [dict(r) for r in self.db.execute("SELECT s.id,s.track_id,t.title,s.at,s.status FROM schedules s JOIN tracks t ON t.id=s.track_id ORDER BY s.due DESC LIMIT 100")],
                 "programs": [dict(r) for r in self.db.execute("SELECT p.*,t.title FROM programs p JOIN tracks t ON t.id=p.track_id ORDER BY p.next_due,p.id")],
@@ -373,8 +408,11 @@ class Station:
             raise StationError("Invalid operation arguments.")
         for key, typ in ARGUMENTS[operation].items():
             if key not in args:
-                if operation != "station.update":
+                if operation != "station.update" and key not in OPTIONAL.get(operation, ()):
                     raise StationError(f"Missing {key}.")
+            elif typ == "integer":
+                if type(args[key]) is not int or not 0 <= args[key] <= MAX_POSITION:
+                    raise StationError(f"Invalid {key}.")
             elif not isinstance(args[key], bool if typ == "boolean" else str):
                 # Queue IDs originate in SQLite, and the UI may send the number.
                 if not (key == "queue_id" and type(args[key]) is int):
@@ -405,7 +443,7 @@ class Station:
                 self.broadcast.stop()
                 self.running = False
                 if self.current:
-                    self.db.execute("INSERT INTO queue(id,track_id) VALUES ((SELECT COALESCE(MIN(id),1)-1 FROM queue),?)", (self.current["id"],))
+                    self.db.execute(QUEUE_FRONT, (self.current["id"],))
                 self._finish("stopped")
             elif operation == "transport.skip":
                 self._finish("skipped")
@@ -413,7 +451,14 @@ class Station:
                 self._track(args["track_id"])
                 if self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= 1000:
                     raise StationError("Queue is full (1,000 items).")
-                self.db.execute("INSERT INTO queue(track_id) VALUES (?)", (args["track_id"],))
+                added = self.db.execute(QUEUE_APPEND, (args["track_id"],)).lastrowid
+                if "position" in args:
+                    self._queue_place(added, args["position"])
+            elif operation == "queue.move":
+                entry = self.db.execute("SELECT id FROM queue WHERE id=?", (args["queue_id"],)).fetchone()
+                if not entry:
+                    raise StationError("Queue entry not found.")
+                self._queue_place(entry["id"], args["position"])
             elif operation == "queue.remove":
                 cur = self.db.execute("DELETE FROM queue WHERE id=?", (args["queue_id"],))
                 if not cur.rowcount:
@@ -486,6 +531,15 @@ class Station:
         self.elapsed = 0.0
         self._setting("playing", None)
 
+    def _queue_place(self, entry_id, index):
+        """Put queue entry ``entry_id`` at play position ``index`` (0 plays next; past the end means last). Positions are
+        renumbered 1..n in one pass: the queue holds at most about a thousand entries, and whole numbers never run out of
+        room the way halving the gap between neighbours would."""
+        order = [row[0] for row in self.db.execute("SELECT id FROM queue ORDER BY pos,id")]
+        order.remove(entry_id)
+        order.insert(min(index, len(order)), entry_id)
+        self.db.executemany("UPDATE queue SET pos=? WHERE id=?", [(place, qid) for place, qid in enumerate(order, 1)])
+
     def _quarantine(self, track, message):
         self.db.execute("INSERT OR IGNORE INTO media_failures VALUES (?,?,?)", (track["id"], message, utcnow()))
         self._event(track["title"], "media unavailable")
@@ -493,7 +547,7 @@ class Station:
     def _next(self):
         # True: ready, None: failed candidate consumed, False: no candidates.
 
-        entry = self.db.execute("SELECT id,track_id FROM queue ORDER BY id LIMIT 1").fetchone()
+        entry = self.db.execute("SELECT id,track_id FROM queue ORDER BY pos,id LIMIT 1").fetchone()
         if entry:
             track = self._track(entry["track_id"])
             self.db.execute("DELETE FROM queue WHERE id=?", (entry["id"],))
@@ -552,7 +606,7 @@ class Station:
                 planned.append((event, status))
             for event, status in reversed(planned):
                 if status == "queued":
-                    self.db.execute("INSERT INTO queue(id,track_id) VALUES ((SELECT COALESCE(MIN(id),1)-1 FROM queue),?)", (event["track_id"],))
+                    self.db.execute(QUEUE_FRONT, (event["track_id"],))
                 if isinstance(event, dict) and "program" in event:
                     p = event["program"]
                     # A suspended/offline host never floods the queue with catch-up programs.

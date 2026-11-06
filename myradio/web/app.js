@@ -74,7 +74,7 @@ $('unlock-form').addEventListener('submit', async event => {
 });
 function disconnect() {
   $('audio').pause(); $('audio').removeAttribute('src'); $('audio').load();
-  $('audio').hidden = true; $('listen').hidden = false; $('disconnect').hidden = true;
+  $('listen').hidden = false; $('disconnect').hidden = true; monitorOn = false; stopMeters(); if (state) renderConsole(state);
 }
 $('lock').addEventListener('click', async () => {
   disconnect(); $('agent-key').value=''; $('broadcast-password').value='';
@@ -140,19 +140,15 @@ $('broadcast-form').addEventListener('submit', async event => {
   } catch (error) { notice(error.message); }
   finally { $('broadcast-save').disabled=false; }
 });
-$('broadcast-start').addEventListener('click', async () => {
-  try {
-  broadcastDestination=(await api('/api/broadcast')).url||'';
-  if (confirm(`Go live to ${broadcastDestination || 'your saved Icecast destination'}? Your audio may become publicly available. Confirm the destination and your broadcasting rights before continuing.`)) action('broadcast.start');
-  } catch (error) { notice(error.message); }
-});
+$('broadcast-start').addEventListener('click', () => openGuard());
 $('broadcast-stop').addEventListener('click', () => action('broadcast.stop'));
 $('listen').addEventListener('click', async () => {
   try {
+    const graph = ensureGraph(); if (graph) await graph.ctx.resume();
     await api('/api/session', {});
-    $('audio').src = '/stream.wav'; $('audio').hidden = false;
-    $('listen').hidden = true; $('disconnect').hidden = false;
-    await $('audio').play();
+    $('audio').src = '/stream.wav';
+    $('listen').hidden = true; $('disconnect').hidden = false; $('disconnect').focus();
+    await $('audio').play(); monitorOn = true; startMeters(); if (state) renderConsole(state);
   } catch (error) { notice(`Monitor: ${error.message}`); }
 });
 $('audio').addEventListener('error', () => { if ($('audio').hasAttribute('src')) notice('The local monitor disconnected or this browser cannot play live WAV. Disconnect and reconnect; station playout continues independently.'); });
@@ -196,13 +192,7 @@ $('program').addEventListener('submit', async event => {
 });
 function empty(list, message) { list.append(node('li', message, 'empty')); }
 function renderStructure(s) {
-  const queue = $('queue'); queue.replaceChildren();
-  for (const [index, item] of s.queue.entries()) {
-    const row = node('li'), main = node('div', undefined, 'item-main');
-    main.append(node('strong', item.title), node('small', `${item.artist || item.kind} · ${duration(item.duration)}`));
-    row.append(node('span', String(index + 1).padStart(2, '0'), 'queue-position'), node('span', 'mr.', 'queue-art'), main, actionButton('Remove','queue.remove',{queue_id:String(item.id)})); queue.append(row);
-  }
-  if (!s.queue.length) empty(queue, s.station.auto_fill ? 'Queue is clear. Music rotation is ready.' : 'Queue is clear. Add audio from your library.');
+  queueItems = s.queue.map(item => ({...item})); renderQueue(); renderCrate(s.library);
   const library = $('library'); library.replaceChildren();
   for (const track of s.library) {
     const row = node('li'), main = node('div', undefined, 'item-main'), buttons = node('div', undefined, 'row-actions');
@@ -247,9 +237,6 @@ function render(s) {
   $('import-capability').textContent=s.imports.conversion_available?'FFmpeg detected: common formats convert automatically.':'FFmpeg not detected: only 44.1 kHz, 16-bit mono/stereo PCM WAV can be imported. Install FFmpeg for other formats.';
   const b=s.broadcast;
   $('broadcast-state').textContent=b.state.toUpperCase();
-  const outputBusy = b.active || b.state === 'stopping';
-  $('audience-state').textContent = outputBusy ? `EXTERNAL OUTPUT · ${b.state.toUpperCase()}` : 'PRIVATE · NOT BROADCASTING';
-  $('audience-state').classList.toggle('external', outputBusy);
   $('rotation-state').textContent = s.station.auto_fill ? '↻ Music rotation on · queue plays first' : 'Music rotation off · queue only';
   $('broadcast-health').textContent=`${b.format} · ${b.bytes_sent.toLocaleString()} bytes sent · ${b.connections} connections · ${b.retries} retries` + (b.retry_at ? ` · retry after ${new Date(b.retry_at*1000).toLocaleTimeString()}` : '');
   $('broadcast-error').textContent=b.error||''; $('broadcast-error').hidden=!b.error;
@@ -260,15 +247,13 @@ function render(s) {
   for (const id of ['broadcast-save','broadcast-url','broadcast-user','broadcast-password']) $(id).disabled=busy;
   state = s; $('connection').textContent = '● Local studio connected';
   $('station-name').textContent=s.station.name; $('tagline').textContent=s.station.tagline;
-  $('air-state').textContent=s.running?'LOCAL PLAYOUT':'STOPPED'; $('air-state').classList.toggle('running',s.running);
-  $('play-label').textContent=s.current?'NOW PLAYING':s.running?'WAITING FOR AUDIO':'NOT PLAYING';
   $('track-title').textContent=s.current?s.current.title:'Your next sound is waiting';
-  $('track-artist').textContent=s.current?(s.current.artist||s.current.kind):'Import audio, queue a track, and make it yours.';
-  $('kind').textContent=s.current?s.current.kind.toUpperCase():'LOCAL PLAYOUT';
+  $('track-artist').textContent=s.current?(s.current.artist||kindLabel[s.current.kind]||s.current.kind):'Import audio, queue a track, and make it yours.';
+  $('kind').textContent=s.current?(kindLabel[s.current.kind]||s.current.kind).toUpperCase():'—';
   $('elapsed').textContent=duration(s.elapsed); $('duration').textContent=duration(s.current?.duration);
   $('progress').max=s.current?.duration||1; $('progress').value=s.elapsed;
   $('start').disabled=s.running||!s.library.length; $('stop').disabled=!s.running; $('skip').disabled=!s.current;
-  $('onboarding').hidden=!!s.library.length; $('queue-count').textContent=String(s.queue.length);
+  $('onboarding').hidden=!!s.library.length;
   $('library-count').textContent=`${s.library.length} tracks`;
   $('chat-mode').textContent=s.chat_mode==='model'?'Connected AI · approval required':'Local command assistant · no AI connected';
   $('monitor-count').textContent=`${s.stream.listeners} local monitors`;
@@ -279,7 +264,8 @@ function render(s) {
     $('name-input').value=s.station.name; $('tagline-input').value=s.station.tagline; $('auto-fill').checked=s.station.auto_fill;
   }
   const structure=JSON.stringify([s.library,s.queue,s.schedules,s.programs,s.history,s.station.auto_fill]);
-  if (structure!==lastStructure) {renderStructure(s);lastStructure=structure;}
+  if (structure!==lastStructure && !arranging) {renderStructure(s);lastStructure=structure;}
+  renderConsole(s);
 }
 async function refresh() {
   if (polling||!unlocked) return;
@@ -326,5 +312,319 @@ async function sendChat(message) {
 }
 $('chat-form').addEventListener('submit',event=>{event.preventDefault();const message=$('message').value.trim();if(message){$('message').value='';sendChat(message);}});
 for (const button of document.querySelectorAll('[data-message]')) button.addEventListener('click',()=>sendChat(button.dataset.message));
+
+// ===== Console: meter bridge, cart wall, crate, bin and the control desk =====
+const kindLabel = {music: 'Music', speech: 'Spoken', ad: 'Ad'};
+let queueItems = [], arranging = false, picked = null, drag = null, monitorOn = false, undoAction = null, toastTimer = 0;
+const announcer = node('div', '', 'sr-only'); announcer.setAttribute('aria-live', 'polite'); document.body.append(announcer);
+function announce(text) { announcer.textContent = ''; setTimeout(() => { announcer.textContent = text; }, 30); }
+function toast(text, undo = null) {
+  $('toast-message').textContent = text; undoAction = undo; $('undo').hidden = !undo; $('toast').hidden = false; announce(text);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('toast').hidden = true; undoAction = null; }, undo ? 9000 : 4000);
+}
+$('toast-close').addEventListener('click', () => { $('toast').hidden = true; undoAction = null; });
+$('undo').addEventListener('click', () => { const fn = undoAction; undoAction = null; $('toast').hidden = true; if (fn) fn(); });
+
+// --- the cart wall and the crate
+function cartNode(item, index, crate) {
+  const cart = node(crate ? 'div' : 'li', undefined, 'cart');
+  cart.dataset.kind = item.kind; cart.tabIndex = 0;
+  if (crate) cart.dataset.track = item.id; else cart.dataset.entry = String(item.id);
+  cart.title = item.artist ? `${item.title} · ${item.artist}` : item.title;
+  const kind = kindLabel[item.kind] || item.kind;
+  cart.setAttribute('aria-label', `${crate ? 'Library cart' : `Queue position ${index + 1} of ${queueItems.length}`}: ${item.title}${item.artist ? ', ' + item.artist : ''}, ${kind}, ${duration(item.duration)}`);
+  if (!crate) cart.setAttribute('aria-describedby', 'keyboard-instructions');
+  const grip = node('button', '⠿', 'grip'); grip.type = 'button'; grip.tabIndex = -1; grip.setAttribute('aria-label', `Drag ${item.title}`);
+  cart.append(grip);
+  if (!crate) cart.append(node('span', String(index + 1).padStart(2, '0'), 'slot'));
+  const body = node('div', undefined, 'cart-body'), meta = node('div', undefined, 'cart-meta');
+  meta.append(node('span', kind, 'kind'), node('span', item.artist || ''));
+  body.append(node('div', item.title, 'cart-title'), meta);
+  cart.append(body, node('span', duration(item.duration), 'cart-time'));
+  if (crate) {
+    const add = node('button', '+', 'add'); add.type = 'button'; add.setAttribute('aria-label', `Add ${item.title} at the end of the queue`);
+    add.addEventListener('click', () => addToQueue(item, null)); cart.append(add);
+  } else {
+    const menu = node('button', '⋯', 'cart-menu'), actions = node('div', undefined, 'cart-actions');
+    menu.type = 'button'; menu.setAttribute('aria-label', `Actions for ${item.title}`); menu.setAttribute('aria-expanded', 'false');
+    menu.addEventListener('click', () => menu.setAttribute('aria-expanded', String(cart.classList.toggle('tools-open'))));
+    for (const [label, name, run, disabled] of [['↑', 'Move up', () => moveEntry(item, index - 1), index === 0],
+                                                ['↓', 'Move down', () => moveEntry(item, index + 1), index === queueItems.length - 1],
+                                                ['×', 'Remove', () => removeEntry(item), false]]) {
+      const button = node('button', label); button.type = 'button'; button.disabled = disabled;
+      button.setAttribute('aria-label', `${name}: ${item.title}`); button.addEventListener('click', () => { cancelPick(); run(); });
+      actions.append(button);
+    }
+    cart.append(menu, actions);
+  }
+  grip.addEventListener('pointerdown', event => startDrag(event, cart, item, crate));
+  cart.addEventListener('keydown', event => cartKey(event, cart, item, crate));
+  return cart;
+}
+function renderQueue(focusEntry) {
+  const list = $('queue'); list.replaceChildren();
+  queueItems.forEach((item, index) => {
+    const cart = cartNode(item, index, false);
+    if (picked && picked.item.id === item.id) cart.classList.add('picked');
+    list.append(cart);
+  });
+  if (!queueItems.length) {
+    const empty = node('li', undefined, 'empty');
+    empty.append(node('strong', 'The wall is clear.'), node('span', state && state.station.auto_fill ? 'Music rotation keeps playing. Drag a cart here from the crate, or press + on one.' : 'Drag a cart here from the crate, or press + on one.'));
+    list.append(empty);
+  }
+  $('queue-count').textContent = `${queueItems.length} CART${queueItems.length === 1 ? '' : 'S'}`;
+  if (focusEntry !== undefined) {
+    const cart = list.querySelector(`[data-entry="${CSS.escape(String(focusEntry))}"]`);
+    if (cart) { cart.focus({preventScroll: true}); cart.scrollIntoView({block: 'nearest'}); }
+  }
+  if (state) renderTape(state);
+}
+function renderCrate(library) {
+  const crate = $('crate'); crate.replaceChildren();
+  const ready = library.filter(track => track.available);
+  for (const track of ready) crate.append(cartNode(track, 0, true));
+  if (!ready.length) { const none = node('p', library.length ? 'No playable audio. Repair it in the Library.' : 'Your crate fills up as you import audio.', 'none'); crate.append(none); }
+}
+
+// --- queue changes: shown at once, then confirmed by the station
+async function queueChange(operation, args, message, undo) {
+  try { await api('/api/action', {operation, arguments: args}); notice(''); if (message) toast(message, undo); }
+  catch (error) { notice(error.message); }
+  finally { arranging = false; lastStructure = ''; await refresh(); }
+}
+function moveEntry(item, to, from = queueItems.findIndex(entry => entry.id === item.id)) {
+  if (from < 0 || to < 0 || to >= queueItems.length + (from < 0 ? 1 : 0)) return;
+  const [entry] = queueItems.splice(from, 1); queueItems.splice(to, 0, entry);
+  arranging = true; renderQueue(entry.id);
+  announce(`${entry.title} moved to position ${to + 1} of ${queueItems.length}.`);
+  queueChange('queue.move', {queue_id: String(entry.id), position: to});
+}
+function addToQueue(track, at) {
+  arranging = true;
+  queueChange('queue.add', at === null ? {track_id: track.id} : {track_id: track.id, position: at},
+              `${track.title} added ${at === null ? 'at the end' : `at position ${at + 1}`}.`);
+}
+function removeEntry(item) {
+  const at = queueItems.findIndex(entry => entry.id === item.id);
+  if (at < 0) return;
+  queueItems.splice(at, 1); arranging = true; renderQueue();
+  $('bin').classList.add('eat'); setTimeout(() => $('bin').classList.remove('eat'), 450);
+  queueChange('queue.remove', {queue_id: String(item.id)}, `${item.title} removed from the queue.`,
+              () => { arranging = true; queueChange('queue.add', {track_id: item.track_id, position: at}, `${item.title} is back in slot ${at + 1}.`); });
+}
+
+// --- keyboard: pick up, move, put down
+function cancelPick(restore = true) {
+  if (!picked) return;
+  if (restore) { queueItems = picked.before; }
+  const id = picked.item.id; picked = null; arranging = false; renderQueue(id);
+}
+function cartKey(event, cart, item, crate) {
+  if (event.target !== cart) return;
+  const key = event.key;
+  if (crate) {
+    if (key === 'Enter' || key === ' ') { event.preventDefault(); addToQueue(item, null); }
+    return;
+  }
+  const index = queueItems.findIndex(entry => entry.id === item.id);
+  if (key === ' ' || key === 'Enter') {
+    event.preventDefault();
+    if (!picked) {
+      picked = {item, from: index, before: queueItems.slice()}; arranging = true; renderQueue(item.id);
+      announce(`Picked up ${item.title}, position ${index + 1} of ${queueItems.length}. Use the arrow keys to move it, then Space to put it down, or Escape to cancel.`);
+    } else {
+      const from = picked.from; picked = null;
+      if (index === from) { arranging = false; renderQueue(item.id); announce(`${item.title} put back in position ${index + 1}.`); }
+      else { renderQueue(item.id); announce(`${item.title} put down in position ${index + 1}.`); queueChange('queue.move', {queue_id: String(item.id), position: index}); }
+    }
+  } else if (key === 'ArrowUp' || key === 'ArrowDown') {
+    event.preventDefault();
+    const to = index + (key === 'ArrowUp' ? -1 : 1);
+    if (to < 0 || to >= queueItems.length) return;
+    if (picked) {
+      const [entry] = queueItems.splice(index, 1); queueItems.splice(to, 0, entry); renderQueue(entry.id);
+      announce(`Position ${to + 1} of ${queueItems.length}.`);
+    } else {
+      $('queue').querySelector(`[data-entry="${CSS.escape(String(queueItems[to].id))}"]`)?.focus();
+    }
+  } else if (key === 'Escape' && picked) {
+    event.preventDefault(); cancelPick(); announce('Move cancelled.');
+  } else if ((key === 'Delete' || key === 'Backspace') && !picked) {
+    event.preventDefault();
+    const next = queueItems[index + 1] || queueItems[index - 1];
+    removeEntry(item);
+    if (next) $('queue').querySelector(`[data-entry="${CSS.escape(String(next.id))}"]`)?.focus(); else $('coming-up').focus();
+  }
+}
+
+// --- pointer dragging (mouse, pen and touch, by the grip)
+function startDrag(event, cart, item, crate) {
+  if (event.button !== 0 || picked || drag) return;
+  event.preventDefault();
+  const rect = cart.getBoundingClientRect();
+  drag = {item, crate, cart, pointer: event.pointerId, x: event.clientX, y: event.clientY, dx: event.clientX - rect.left, dy: event.clientY - rect.top, ghost: null, target: null};
+  try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* the drag still works without capture */ }
+  arranging = true;
+}
+function deckTop() { const deck = $('deck'); return deck.offsetParent ? deck.getBoundingClientRect().top : innerHeight; }
+function dropTarget(x, y) {
+  const bin = $('bin').getBoundingClientRect(), scroll = $('queue-scroll').getBoundingClientRect();
+  if (y >= deckTop()) return null;                                          // over the desk: not a slot
+  if (!drag.crate && x >= bin.left && x <= bin.right && y >= bin.top && y <= bin.bottom) return {bin: true};
+  if (x < scroll.left || x > scroll.right || y < scroll.top - 24 || y > scroll.bottom + 24) return null;
+  const others = [...$('queue').querySelectorAll('.cart')].filter(cart => cart !== drag.cart);
+  let index = others.length;
+  for (const [i, cart] of others.entries()) { const r = cart.getBoundingClientRect(); if (y < r.top + r.height / 2) { index = i; break; } }
+  return {index, others};
+}
+function showMarker(target) {
+  const marker = $('drop-marker');
+  $('bin').classList.toggle('over', !!(target && target.bin));
+  if (!target || target.bin) { marker.hidden = true; return; }
+  const {index, others} = target;
+  marker.style.top = `${others.length === 0 ? 2 : index < others.length ? others[index].offsetTop - 6 : others[others.length - 1].offsetTop + others[others.length - 1].offsetHeight + 2}px`;
+  marker.hidden = false;
+}
+document.addEventListener('pointermove', event => {
+  if (!drag || event.pointerId !== drag.pointer) return;
+  if (!drag.ghost) {
+    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 5) return;
+    drag.ghost = drag.cart.cloneNode(true); drag.ghost.classList.add('drag-ghost'); drag.ghost.removeAttribute('id');
+    drag.ghost.setAttribute('aria-hidden', 'true'); document.body.append(drag.ghost); drag.cart.classList.add('source');
+  }
+  drag.ghost.style.left = `${event.clientX - drag.dx}px`; drag.ghost.style.top = `${event.clientY - drag.dy}px`;
+  const scroll = $('queue-scroll'), r = scroll.getBoundingClientRect(), floor = deckTop();
+  if (event.clientY < r.top + 40 && event.clientY > r.top - 30) scroll.scrollTop -= 14;
+  else if (event.clientY > Math.min(r.bottom, floor) - 40 && event.clientY < r.bottom + 30) scroll.scrollTop += 14;
+  if (event.clientY > floor - 48) window.scrollBy(0, 16); else if (event.clientY < 72) window.scrollBy(0, -16);   // the page scrolls too, so every slot can be reached
+  drag.target = dropTarget(event.clientX, event.clientY); showMarker(drag.target);
+});
+function endDrag(commit) {
+  if (!drag) return;
+  const {item, crate, cart, ghost, target} = drag; drag = null;
+  ghost?.remove(); cart.classList.remove('source'); $('drop-marker').hidden = true; $('bin').classList.remove('over');
+  if (!commit || !ghost || !target) { arranging = false; return; }
+  if (target.bin) removeEntry(item);
+  else if (crate) addToQueue(item, target.index);
+  else {
+    const from = queueItems.findIndex(entry => entry.id === item.id);
+    if (from === target.index) { arranging = false; return; }
+    moveEntry(item, target.index, from);
+  }
+}
+document.addEventListener('pointerup', event => { if (drag && event.pointerId === drag.pointer) endDrag(true); });
+document.addEventListener('pointercancel', event => { if (drag && event.pointerId === drag.pointer) endDrag(false); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && drag) endDrag(false); });
+
+// --- meter bridge: lamp, LCD, paper trace, real levels from the browser monitor
+const LAMP = {disconnected: ['PRIVATE', '', 'Not broadcasting'], connecting: ['CONNECTING', 'busy', 'Connecting to your stream host…'],
+              encoding: ['CONNECTING', 'busy', 'Starting the encoder…'], streaming: ['LIVE', 'live', 'LIVE · stream connected'],
+              retrying: ['RETRYING', 'busy', 'Host unavailable · retrying'], failed: ['FAILED', 'failed', 'Output failed · see Broadcast'],
+              stopping: ['STOPPING', 'busy', 'Disconnecting…']};
+let tapeKey = '';
+const WAVE = '<svg viewBox="0 0 250 26" preserveAspectRatio="none" aria-hidden="true"><path d="M0 13h7l3-4 4 9 4-12 3 17 4-19 4 13 4-4h8l4-7 4 17 4-19 4 12 5-4h8l4 4 4-9 4 15 4-21 4 20 4-12 4 5h9l4-8 5 13 4-17 4 19 4-12 4 4h14l4-5 4 13 4-19 4 20 4-12 4 5h14l4-9 4 16 5-20 4 19 4-12 4 6h15l4-5 4 10 4-16 4 20 4-11 4 2h11"/></svg>';
+function renderTape(s) {
+  const items = [s.current || {title: s.running ? 'WAITING FOR AUDIO' : 'STOPPED · READY TO ROLL', kind: 'music', idle: true}, ...queueItems.slice(0, 3)];
+  const key = items.map(item => item.title + item.kind).join('|');
+  if (key === tapeKey) return; tapeKey = key;
+  const tape = $('tape'); tape.replaceChildren();
+  for (let copy = 0; copy < 2; copy++) for (const item of items) {
+    const segment = node('div', undefined, 'trace-segment');
+    segment.append(node('span', item.idle ? item.title : `${(kindLabel[item.kind] || item.kind).toUpperCase()} · ${item.title}`));
+    segment.insertAdjacentHTML('beforeend', WAVE); tape.append(segment);
+  }
+}
+function renderConsole(s) {
+  const b = s.broadcast, [word, tone, detail] = LAMP[b.state] || [b.state.toUpperCase(), 'busy', b.state];
+  const outputBusy = b.active || b.state === 'stopping';
+  $('state-word').textContent = word; $('state-lamp').className = 'state-lamp' + (tone ? ' ' + tone : '');
+  $('stream-detail').textContent = detail;
+  $('play-label').textContent = b.state === 'streaming' && s.current ? 'ON AIR · LIVE STREAM' : s.current ? 'PLAYING · LOCAL PLAYOUT' : s.running ? 'LOCAL PLAYOUT · WAITING FOR AUDIO' : 'LOCAL PLAYOUT · STOPPED';
+  const next = queueItems[0];
+  $('next-readout').textContent = next ? `UP NEXT → ${next.title}${next.artist ? ' · ' + next.artist : ''}` : s.station.auto_fill ? 'UP NEXT → music rotation' : 'UP NEXT → add a cart to the wall';
+  $('local-status').lastChild.textContent = `Playout ${s.running ? 'running' : 'stopped'} · Monitor ${monitorOn ? 'on' : 'off'}`;
+  $('local-status').firstChild.style.color = s.running ? 'var(--accent)' : 'var(--muted)';
+  $('transport-note').textContent = s.running ? (outputBusy ? 'Stop also ends the live stream.' : s.current ? `Playing ${s.current.title}` : 'Waiting for playable audio.') : s.library.length ? 'Your next sound is standing by.' : 'Import audio to start.';
+  $('broadcast-note').textContent = outputBusy ? detail : b.configured ? 'Private until you say otherwise.' : 'No stream host saved yet.';
+  $('guard').disabled = outputBusy; $('deck-disconnect').disabled = !outputBusy || b.state === 'stopping';
+  document.body.classList.toggle('playing', !!s.current);
+  renderTape(s); updateGuard(s);
+}
+
+// --- the GO LIVE guard (desk and Broadcast view)
+function updateGuard(s) {
+  const b = s.broadcast, busy = b.active || b.state === 'stopping';
+  $('go-live').disabled = busy || !s.running || !b.configured || !b.encoder_available;
+  $('live-destination').textContent = b.configured ? `Destination: ${broadcastDestination || 'saved in another session (reload to review)'}` : 'No stream host saved yet.';
+  $('live-warning').textContent = busy ? 'Already connected or busy. Disconnect first.' : !b.configured ? 'Set up your stream host in Broadcast first.' : !b.encoder_available ? 'FFmpeg is missing: install it and restart myradio.' : !s.running ? 'Start the station on the desk first; then the toggle unlocks.' : 'Confirm the destination and your broadcasting rights, then flip the toggle.';
+}
+async function openGuard() {
+  try { broadcastDestination = (await api('/api/broadcast')).url || ''; } catch (error) { notice(error.message); }
+  if (state) updateGuard(state);
+  $('live-dialog').showModal();
+}
+$('guard').addEventListener('click', openGuard);
+$('go-live').addEventListener('click', () => { $('live-dialog').close(); action('broadcast.start'); });
+$('deck-disconnect').addEventListener('click', () => action('broadcast.stop'));
+for (const element of document.querySelectorAll('#live-dialog [data-close]')) element.addEventListener('click', () => $('live-dialog').close());
+$('skip').addEventListener('click', () => { if (motionOff) return; document.body.classList.add('whizz'); setTimeout(() => document.body.classList.remove('whizz'), 650); });
+
+// --- browser monitor levels: measured from the stream this browser is playing, never invented
+let graph = null, meterFrame = 0;
+function ensureGraph() {
+  if (graph !== null) return graph || null;
+  const Context = window.AudioContext || window.webkitAudioContext;
+  try {
+    const ctx = new Context(), source = ctx.createMediaElementSource($('audio')), split = ctx.createChannelSplitter(2), gain = ctx.createGain();
+    const left = ctx.createAnalyser(), right = ctx.createAnalyser(); left.fftSize = right.fftSize = 1024;
+    source.connect(split); split.connect(left, 0); split.connect(right, 1); source.connect(gain); gain.connect(ctx.destination);
+    graph = {ctx, gain, left, right, buffer: new Float32Array(1024)}; setVolume();
+  } catch { graph = false; }
+  return graph || null;
+}
+function level(analyser) {
+  analyser.getFloatTimeDomainData(graph.buffer);
+  let peak = 0; for (const sample of graph.buffer) peak = Math.max(peak, Math.abs(sample));
+  const db = peak > 0 ? 20 * Math.log10(peak) : -Infinity;
+  return Math.max(0, Math.min(100, (db + 48) / 48 * 100));
+}
+function startMeters() {
+  cancelAnimationFrame(meterFrame);
+  $('vu-label').textContent = graph ? 'MONITOR LEVEL' : 'NO LEVEL HERE';
+  if (!graph) return;
+  const tick = () => {
+    if (!monitorOn) return;
+    $('vu-left').style.setProperty('--level', level(graph.left) + '%'); $('vu-right').style.setProperty('--level', level(graph.right) + '%');
+    meterFrame = requestAnimationFrame(tick);
+  };
+  tick();
+}
+function stopMeters() {
+  cancelAnimationFrame(meterFrame); $('vu-label').textContent = 'MONITOR OFF';
+  for (const id of ['vu-left', 'vu-right']) $(id).style.setProperty('--level', '0%');
+}
+function setVolume() {
+  const value = Number($('volume').value);
+  $('volume-out').textContent = `${value}%`; $('knob').style.setProperty('--angle', `${value * 2.7 - 135}deg`);
+  if (graph) { graph.gain.gain.value = value / 100; $('audio').volume = 1; } else $('audio').volume = value / 100;
+}
+$('volume').addEventListener('input', setVolume); setVolume();
+
+// --- decorative motion (paper trace): pausable, and off for reduced motion
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let motionOff = false;
+try { motionOff = localStorage.getItem('myradio-motion') === 'off'; } catch { /* storage may be unavailable */ }
+function applyMotion() {
+  const off = motionOff || reducedMotion.matches;
+  document.body.classList.toggle('motion-off', off);
+  $('motion').setAttribute('aria-pressed', String(off)); $('motion').disabled = reducedMotion.matches;
+  $('motion').textContent = reducedMotion.matches ? 'Motion off · reduced motion' : off ? '▶ Resume motion' : 'Ⅱ Pause motion';
+}
+$('motion').addEventListener('click', () => {
+  motionOff = !motionOff; try { localStorage.setItem('myradio-motion', motionOff ? 'off' : 'on'); } catch { /* not kept */ }
+  applyMotion(); announce(motionOff ? 'Decorative motion paused.' : 'Decorative motion resumed.');
+});
+reducedMotion.addEventListener('change', applyMotion); applyMotion();
 setInterval(()=>{if(unlocked&&!document.hidden)refresh();},2000);
 if(token)establish();else requireUnlock();

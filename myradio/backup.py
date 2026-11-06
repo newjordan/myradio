@@ -175,6 +175,11 @@ def create_backup(directory, destination):
             if db.execute('PRAGMA quick_check').fetchone()[0] != 'ok' or db.execute('PRAGMA foreign_key_check').fetchone():
                 raise BackupError('Station database failed integrity checks.')
             data = {table: [dict(row) for row in db.execute('SELECT ' + ','.join(columns) + ' FROM ' + table + ' LIMIT ' + str(MAX_ROWS + 1))] for table, columns in TABLES.items()}
+            if 'pos' in [row[1] for row in db.execute('PRAGMA table_info(queue)')]:
+                # Keep the play order the operator arranged: entries are written in play order with fresh ids, which a
+                # restore (and any older myradio) reads as that order. Queue ids are only handles for the running studio.
+                data['queue'] = [{'id': place, 'track_id': row['track_id']} for place, row in
+                                 enumerate(db.execute('SELECT track_id FROM queue ORDER BY pos,id LIMIT ' + str(MAX_ROWS + 1)), 1)]
         tracks = validate(data)
         files = {}
         total = 0

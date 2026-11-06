@@ -121,18 +121,17 @@ async def main():
             await page.locator('#send').click()
             await page.wait_for_function("() => document.getElementById('chat-log').textContent.includes('Now playing: Browser check')")
             await page.locator('[data-view=broadcast]').click()
-            async with page.expect_event('dialog') as dialog_info:
-                await page.locator('#broadcast-start').click()
-            dialog=await dialog_info.value
-            assert destination in dialog.message
-            await dialog.dismiss()
+            # Go live opens the guard dialog (shared with the control desk); closing it changes nothing.
+            await page.locator('#broadcast-start').click()
+            await page.locator('#live-dialog').wait_for(state='visible')
+            assert destination in await page.locator('#live-destination').inner_text()
+            await page.locator('#live-dialog [data-close]').first.click()
             assert 'DISCONNECTED' == await page.locator('#broadcast-state').inner_text()
-            async with page.expect_event('dialog') as dialog_info:
-                await page.locator('#broadcast-start').click()
-            await (await dialog_info.value).accept()
+            await page.locator('#broadcast-start').click()
+            await page.locator('#go-live').click()
             await page.wait_for_function("() => document.getElementById('broadcast-state').textContent==='STREAMING'",timeout=15000)
             assert await page.locator('#broadcast-save').is_disabled()
-            assert await page.locator('#audience-state').inner_text() == 'EXTERNAL OUTPUT · STREAMING'
+            await page.wait_for_function("() => document.getElementById('state-word').textContent==='LIVE'")
             assert os.environ['MYRADIO_TEST_BROADCAST_PASSWORD'] not in await page.content()
         await page.locator('[data-view=studio]').click()
         Path('docs/screenshots').mkdir(parents=True, exist_ok=True)
@@ -148,11 +147,10 @@ async def main():
             await page.locator('[data-view=broadcast]').click()
             await page.locator('#broadcast-stop').click()
             await page.wait_for_function("() => document.getElementById('broadcast-state').textContent==='DISCONNECTED'")
-            assert await page.locator('#air-state').inner_text()=='LOCAL PLAYOUT'
-            assert await page.locator('#audience-state').inner_text() == 'PRIVATE · NOT BROADCASTING'
-            async with page.expect_event('dialog') as dialog_info:
-                await page.locator('#broadcast-start').click()
-            await (await dialog_info.value).accept()
+            await page.wait_for_function("() => document.getElementById('state-word').textContent==='PRIVATE'")
+            assert 'LOCAL PLAYOUT' in await page.locator('#play-label').inner_text()
+            await page.locator('#broadcast-start').click()
+            await page.locator('#go-live').click()
             await page.wait_for_function("() => document.getElementById('broadcast-state').textContent==='STREAMING'",timeout=15000)
         # Every mobile view remains reachable at 320 CSS pixels, without clipping.
         await page.set_viewport_size({'width': 320, 'height': 740})
@@ -173,7 +171,7 @@ async def main():
             media.unlink()
             await page.wait_for_function("() => document.getElementById('library').textContent.includes('Unavailable')", timeout=15000)
             await page.wait_for_function("() => document.getElementById('playout-error').textContent.includes('Waiting for playable audio')")
-            assert await page.locator('#air-state').inner_text() == 'LOCAL PLAYOUT'
+            assert await page.locator('#play-label').inner_text() == 'LOCAL PLAYOUT · WAITING FOR AUDIO'
             assert await page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
             await page.locator('[data-view=studio]').click()
             await page.screenshot(path='docs/screenshots/midnight-unavailable-mobile.png', full_page=True)
@@ -192,7 +190,7 @@ async def main():
             print('PASS: real missing-file quarantine, waiting health warning, mobile layout, chat diagnosis, repair, explicit retry, resumed browser audio decode.')
         await page.locator('[data-view=studio]').click()
         await page.locator('#stop').click()
-        await page.wait_for_function("() => document.getElementById('air-state').textContent==='STOPPED'")
+        await page.wait_for_function("() => document.getElementById('play-label').textContent==='LOCAL PLAYOUT · STOPPED'")
         if destination:
             await page.wait_for_function("() => document.getElementById('broadcast-state').textContent==='DISCONNECTED'")
             print('PASS: broadcast save, private password cleared, reload destination and disconnected state, cancelled go-live, confirmed streaming, locked config while live, disconnect independent of playout, reconnect, stop disconnects output.')

@@ -24,6 +24,7 @@ Or open **Start myradio.command** (where your desktop permits executable launche
 
 1. **Import your audio**: WAV, MP3, FLAC, Ogg, AAC/M4A or AIFF. FFmpeg converts common formats locally; native 44.1 kHz, 16-bit PCM WAV works without it. Select music, speech, or advertisement. Minimum 100 ms; maximum 100 MiB input and 100 MiB normalized stereo audio.
 2. **Start station** starts the station clock and music rotation. Queue items override rotation. Speech and advertisements play only when explicitly queued or scheduled.
+   The studio is laid out like a mixing desk: the on-air lamp, now-playing display and level meter across the top, the **cart wall** (your queue) in the middle, and the **control desk** (Start, Stop, Skip, the GO LIVE guard and the browser monitor) fixed at the bottom. Drag a cart by its grip to reorder the queue, drag one in from the library crate to drop it into a slot, or drop a cart on the bin to remove it (with Undo). Keyboard: focus a cart, Space to pick it up, arrow keys to move it, Space to put it down, Escape to cancel, Delete to remove.
 3. **Listen** connects this browser to the local output. Starting playout and listening are separate actions. Closing a browser does not stop the station.
 4. Use the **Operator chat** to check status, start, stop, skip, or rename the station. Connect an actual AI operator as described below for natural-language programming.
 
@@ -120,7 +121,7 @@ Client configuration syntax varies. If installed in a virtual environment, use i
 All control requests need `X-Myradio-Token: <launch code>` or a dashboard session cookie. The service binds only to loopback and rejects unrecognized Host/Origin headers. There is no remote-admin mode or CORS bypass.
 
 - `GET /api/status`: station state, library, queue, schedules, recurring `programs`, history, capabilities.
-- `POST /api/action`: `{"operation":"queue.add","arguments":{"track_id":"..."}}`.
+- `POST /api/action`: `{"operation":"queue.add","arguments":{"track_id":"..."}}` appends; add `"position": 0` to play it next (any position, 0 = next). `{"operation":"queue.move","arguments":{"queue_id":"12","position":0}}` moves a queued entry; a position past the end moves it to the end. Queue ids never change when entries move.
 - `POST /api/upload?title=...&artist=...&kind=music`: raw WAV body.
 - `POST /api/chat`: `{"message":"..."}`; `/api/approve`: `{"id":"..."}`.
 - `POST /api/session`: `{}` with token to create a browser session; `/api/logout`: `{}` to revoke it.

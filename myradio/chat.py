@@ -11,7 +11,7 @@ import time
 
 from .agent_settings import load_agent, save_agent, validate_agent, AgentSettingsError
 from .model_transport import ModelTransport
-from .station import ARGUMENTS, OPERATIONS, StationError, text
+from .station import ARGUMENTS, OPERATIONS, StationError, required_arguments, text
 
 # Absolute wall-clock budget, in seconds, for one whole provider request: DNS through the
 # last body byte. It is read when each request starts, so it can be changed at run time.
@@ -22,7 +22,7 @@ def core_catalog():
     """The built-in operations, in the same shape Station.operations() returns."""
     return [{"name": name, "description": description,
              "arguments": {key: {"type": typ} for key, typ in ARGUMENTS[name].items()},
-             "required": [] if name == "station.update" else list(ARGUMENTS[name])}
+             "required": required_arguments(name)}
             for name, description in OPERATIONS.items()]
 
 

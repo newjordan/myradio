@@ -202,3 +202,34 @@ load/soak or production-readiness certification. The old 0.3.2 wheel does not
 contain this redesign. Native Mac/Windows install verification, bundled runtime/
 FFmpeg, service supervision/upgrade/rollback, long unattended/resource/low-disk
 checks, optional music/voice generation and independent acceptance remain open.
+
+## Console studio and queue arrangement — source increment, 2026-11-06
+
+- The Studio view is now the Console the operator picked: a meter bridge (on-air lamp, now-playing display, level meter and
+  a scrolling paper trace with the current and next three titles), the cart wall (the queue) with a library crate and a bin,
+  and a control desk fixed to the bottom of every view on desktop (Start, Stop, Skip, the GO LIVE guard, the browser monitor
+  with volume, and DROP NEXT pads and Autopilot marked PLANNED and disabled). On phones the desk sits above the tab bar on the
+  Studio view only.
+- Honesty rules kept: the lamp says LIVE only while the broadcast state is `streaming` (stream connected, not listeners); the
+  display says "PLAYING · LOCAL PLAYOUT" otherwise. The level meter is measured from the audio this browser's monitor is
+  playing and reads MONITOR OFF when the monitor is off; it never animates on its own. The paper trace is decorative motion
+  (hidden from screen readers, pausable, off under reduced motion); it is not a waveform of the audio. No listener count.
+- GO LIVE is a guard dialog that shows the saved destination and stays locked, with the reason, until a host is saved,
+  FFmpeg is present and playout is running. The Broadcast view's Go live button opens the same guard.
+- Engine: `queue.move` (queue_id, position) and an optional `position` on `queue.add`. The queue now plays in a `pos` order
+  column; ids never change. Front inserts (Stop, due schedules, a recovered track) and appends keep play order equal to id
+  order until someone moves an entry, and a trigger gives any row written without a position the place its id meant, so
+  older tools and fixtures stay correct. Existing stations are upgraded on open. Backups write the queue in play order.
+  Agents and MCP see `queue.move` with typed arguments; `position` is optional for `queue.add` in every catalog.
+- Verification run on 2026-11-06: `python3 -m unittest tests.test_queue_order` (11 tests, including an upgrade from the old
+  table and a backup round trip); the soak, station, backup and recovery suites (167 tests, the 10 recorded soak findings
+  still expected failures); a Node Playwright acceptance run against two real servers on 127.0.0.1 (47 of 47 checks: first
+  run at desktop and phone width, drag to reorder, crate into a slot, bin and Undo back to the same slot, keyboard move and
+  cancel, Start, real meter level from a -11 dBFS test tone at 77%, the guard locked without a host, Stop from another view,
+  phone actions, no sideways scrolling, no text under 11px, no script errors). `tests/browser_station.py` was updated for the
+  guard dialog and new readouts but not run: Python Playwright is not installed on this machine.
+  Whole suite, `python3 -m unittest discover -s tests -p "test_*.py"`: 2,828 tests in 342 s, OK (1 skipped, the 10 soak
+  findings as expected failures).
+- Not done: the first-run setup flow (download the models, link them, choose the station style and DJ sets, first songs) is
+  still a planned design in the private preview; ElevenLabs, recommended for DJ voices, has no adapter yet; the DROP NEXT pads
+  and Autopilot are not wired; the lanes built on 2026-11-05 are not connected to the studio.
