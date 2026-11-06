@@ -12,6 +12,7 @@ from download to their own station playing its first song in a few obvious steps
 | --- | --- | --- |
 | [Skatepark Radio](runs/2026-11-06-mac-mini-hour.md), pop punk and hard rock | Mac mini, Apple M4 Pro, Metal | One hour on air, 25 fresh songs aired back to back, 60.6 min of music made in 58.8 min, 0 failed renders, agent DJ |
 | [Late Epoch](runs/2026-11-06-apollo-hour.md), lofi study beats about fine-tuning | apollo, RTX 4080, CUDA | One hour on air, 25 fresh songs aired, 68.9 min of music made in 19.0 min (3.64× realtime), first song on air 56 s after the request, 0 failed renders, agent DJ |
+| [Late Epoch with a DJ](runs/2026-11-06-toymaker-dual-loader-hour.md), the dual loader | DGX Spark (toymaker), CUDA | One hour on air, 24 songs and 12 DJ clips made live on one box, music at 2.29× realtime beside the voice, 0 failed renders, agent wrote the DJ copy |
 | Published model numbers | RTX 4080, Intel Arc Pro B70, M4 Pro | See [RESEARCH.md](RESEARCH.md) and the model cards |
 
 Both runs used the real path a newcomer takes: install myradio, download the model from Hugging Face (checksums verified),
