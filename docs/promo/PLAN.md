@@ -78,7 +78,7 @@ The Mac and RTX 4080 recordings are also in the repository as checksummed zips (
 | 0:40 | Examples montage, 2 s each, opening on Frank's Riki chorus: game night sung back; chat sung live; notes into a song; a family party dedication; a bard's ballad. | each example's chorus | `~/myradio-promo/examples/` |
 | 0:46 | Hard cut to Skatepark Radio: loud chorus, LCD titles flipping across the hour. *25 fresh songs. One hour. Zero failed renders.* | **Skatepark chorus** | Mac `studio/06b`, `06c`; Mac airchecks |
 | 0:58 | Three machine cards with each one's measured result. | music continues | `docs/runs/` receipts |
-| 1:06 | End card on the night room: **Everyone gets their own bard.** myradio. *Hook up your favorite agent. It's the DJ.* *Thanks to YuE2 for the model powering it.* Repo, models, *Research: help wanted*. | **Wren's station ID** as the sting | toymaker `audio/10-Late-Epoch-ID-1` |
+| 1:06 | End card on the night room: **Everyone gets their own bard.** myradio. *Hook up your favorite agent. It's the DJ.* *Thanks to YuE2 for the model powering it.* **myradio.garden** · repo · models · *Research: help wanted*. | **Wren's station ID** as the sting | toymaker `audio/10-Late-Epoch-ID-1` |
 
 Machine card numbers: Mac mini, 60.6 min of music made in 58.8 min; RTX 4080, 68.9 min made in 19.0 min (3.64× realtime);
 DGX Spark, music and DJ voice made together through the hour (figures from the toymaker receipt when the run is written up).
@@ -144,6 +144,11 @@ Fish Audio, in Frosty40's B70 Turbo build (check its license wording on the mode
   automatic hook-up) is next. Film the real path for the instruction video when it exists.
 - The local DJ voice is real (Drama 3 on the Spark); the ElevenLabs voice adapter is not built yet.
 - Output is Icecast MP3; YouTube and Twitch need an RTMP output that does not exist yet.
+
+## Home for the release
+
+**myradio.garden** (the user's domain for this release): the end card, descriptions and launch posts point there. It is
+a public landing page only; the private studio is never served from it.
 
 ## Decisions for you
 
