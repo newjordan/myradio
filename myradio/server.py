@@ -399,7 +399,7 @@ def main(argv=None):
         token = load_token(station.directory)
         server = Server(("127.0.0.1", args.port), station, token, args.public_origin)
         url = f"http://127.0.0.1:{server.server_address[1]}/"
-        print(f"myradio local station: {url}\nLaunch code: {token}\nData: {station.directory}\nCtrl+C stops the service. External broadcasting requires saved Icecast settings and explicit Go live; model audio generation is not available.", flush=True)
+        print(f"myradio local station: {url}\nLaunch code: {token}\nData: {station.directory}\nCtrl+C stops the service. External broadcasting requires saved Icecast settings and explicit Go live.", flush=True)
         if not args.no_browser:
             webbrowser.open(url + "#token=" + token)
         server.serve_forever(poll_interval=0.2)
