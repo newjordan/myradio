@@ -11,7 +11,7 @@ from download to their own station playing its first song in a few obvious steps
 | Run | Machine | Result |
 | --- | --- | --- |
 | [Skatepark Radio](runs/2026-11-06-mac-mini-hour.md), pop punk and hard rock | Mac mini, Apple M4 Pro, Metal | One hour on air, 25 fresh songs aired back to back, 60.6 min of music made in 58.8 min, 0 failed renders, agent DJ |
-| Late Epoch, lofi study beats about fine-tuning | apollo, RTX 4080, CUDA | Running now (2026-11-06, 12:19 to 13:19); receipt follows |
+| [Late Epoch](runs/2026-11-06-apollo-hour.md), lofi study beats about fine-tuning | apollo, RTX 4080, CUDA | One hour on air, 25 fresh songs aired, 68.9 min of music made in 19.0 min (3.64× realtime), first song on air 56 s after the request, 0 failed renders, agent DJ |
 | Published model numbers | RTX 4080, Intel Arc Pro B70, M4 Pro | See [RESEARCH.md](RESEARCH.md) and the model cards |
 
 Both runs used the real path a newcomer takes: install myradio, download the model from Hugging Face (checksums verified),
