@@ -2,7 +2,10 @@
 
 ## The message
 
-**Your own radio station, made on your own computer. Your agent is the DJ.**
+**Everyone gets their own bard.**
+
+Your own radio station, made on your own computer, with your agent as the DJ. Made for people to enjoy new media and a life
+of open-ended possibilities. Powered by YuE2.
 
 Three things the films prove, all with real footage and real airchecks:
 
@@ -13,6 +16,23 @@ Three things the films prove, all with real footage and real airchecks:
 
 Positioning: hook up your favorite agent (Connect your agent) and let it DJ and write the copy. Everything is open source;
 the models are on Hugging Face.
+
+## Examples the films show (what people actually do with it)
+
+The radio station is the stage; these are the moments that make people want one. Each gets a real song made for the
+films, with the source material on screen next to it.
+
+| Example | What happens | On screen |
+| --- | --- | --- |
+| **Your game night, sung back (the lead example)** | Frank's Dota game: Riki with a Dagon, the comeback, MVP. The station's DJ made "They Can't Doubt the Hands — Frank's Riki Victory" that night (power metal with hip hop verses), plus an MVP shout-out. It was a hit with the crew. | The match moment, then the chorus: *Riki with a Dagon, Frank against the night* | `~/myradio-promo/examples/frank-riki-dagon/` (needs Frank's OK and a clean edit of the last line) |
+| **Your chat, sung live** | On a Twitch or game livestream, your agent reads the chat and the station sings it back: shout-outs, the boss fight, the inside jokes. | Chat messages scrolling, then the song made from them on air |
+| **Notes into songs** | Work notes, study notes, a stand-up: turned into a song you can actually remember. | The notes, highlighted line by line as the song sings them |
+| **A family party** | Music for a birthday or a reunion, with dedications and memories in the lyrics. | The dedication card, then the song playing at the party |
+| **Your own bard** | A ballad of your day, your project, your night shift. | The bard's song over the night room |
+| **A station for your study night** | Late Epoch: lofi about fine-tuning, with Wren between songs. | The hour run on the Spark |
+
+How it works today, honestly: your agent does the reading (chat, notes, dedications) and asks the station for songs
+through Connect your agent; myradio makes and plays them. myradio does not read Twitch chat by itself.
 
 ## Deliverables
 
@@ -55,9 +75,10 @@ The Mac and RTX 4080 recordings are also in the repository as checksummed zips (
 | 0:20 | The dual loader comes up: *One server. Music and DJ voice, both loaded.* | lofi | toymaker `02-dual-loader` cast |
 | 0:28 | Connect your agent: one Copy, then the agent's tool calls naming the station and asking for songs. | lofi | `04-agent-first-requests` casts; studio `04` |
 | 0:36 | Wren on air: the SPEECH cart lights, her words captioned as she says them. | **Wren's real break** | toymaker `audio/03-Wren--Learning-Rate`; studio film |
+| 0:40 | Examples montage, 2 s each, opening on Frank's Riki chorus: game night sung back; chat sung live; notes into a song; a family party dedication; a bard's ballad. | each example's chorus | `~/myradio-promo/examples/` |
 | 0:46 | Hard cut to Skatepark Radio: loud chorus, LCD titles flipping across the hour. *25 fresh songs. One hour. Zero failed renders.* | **Skatepark chorus** | Mac `studio/06b`, `06c`; Mac airchecks |
 | 0:58 | Three machine cards with each one's measured result. | music continues | `docs/runs/` receipts |
-| 1:06 | End card on the night room: **myradio.** *Hook up your favorite agent. It's the DJ.* Repo, models, *Research: help wanted*. | **Wren's station ID** as the sting | toymaker `audio/10-Late-Epoch-ID-1` |
+| 1:06 | End card on the night room: **Everyone gets their own bard.** myradio. *Hook up your favorite agent. It's the DJ.* *Thanks to YuE2 for the model powering it.* Repo, models, *Research: help wanted*. | **Wren's station ID** as the sting | toymaker `audio/10-Late-Epoch-ID-1` |
 
 Machine card numbers: Mac mini, 60.6 min of music made in 58.8 min; RTX 4080, 68.9 min made in 19.0 min (3.64× realtime);
 DGX Spark, music and DJ voice made together through the hour (figures from the toymaker receipt when the run is written up).
@@ -87,7 +108,9 @@ Epoch with Wren.
 5. It picks the songs. It writes the breaks.
 6. 25 fresh songs. One hour. Zero failed renders.
 7. Mac mini. RTX 4080. DGX Spark.
-8. myradio. Your station, made on your computer. Open source.
+8. Your chat, sung live. Your notes, as a song. Your family, in the lyrics.
+9. Everyone gets their own bard.
+10. myradio. Made for people. Open source. Thanks to YuE2.
 
 ## Instruction video chapters (after the real installer)
 
@@ -111,7 +134,7 @@ Epoch with Wren.
 
 ## Credits on the end card and in descriptions
 
-YuE2 Turbo Radio (YuE2 by Multimodal Art Projection, CC BY-NC 4.0: the songs can be shared freely, not sold). Drama 3 by
+**Thanks to YuE2 for the model powering it** (said on the end card). YuE2 Turbo Radio (YuE2 by Multimodal Art Projection, CC BY-NC 4.0: the songs can be shared freely, not sold). Drama 3 by
 Fish Audio, in Frosty40's B70 Turbo build (check its license wording on the model card before publishing). audio.cpp
 (Apache-2.0). myradio: open source.
 
