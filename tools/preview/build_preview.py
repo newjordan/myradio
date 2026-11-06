@@ -9,6 +9,7 @@ planned designs are marked PLANNED: the first-run onboarding (onboarding.html, o
 real app. The output has no doctype, html, head or body tags: the artifact publisher adds them. Rebuild and republish to the
 same artifact URL after any change to the studio or to these files.
 """
+import base64
 import sys
 from pathlib import Path
 
@@ -53,6 +54,12 @@ preview_css = """/* Preview additions for the one-page studio */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .x-previewbar{margin-bottom:6px}
 .menu-links .x-planned{margin-left:6px;font-size:11px}"""
+# ---- the night-time radio room behind the studio (backdrop.webp, made from the late-night-station art)
+backdrop = base64.b64encode((here / 'backdrop.webp').read_bytes()).decode()
+preview_css += ('\n/* Backdrop: an empty radio room at night, kept dark and soft so the desk reads on top */\n'
+                'body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;image-rendering:pixelated;'
+                'background:linear-gradient(90deg,#0b1019f0 0%,#0b1019c4 40%,#0b101966 100%),'
+                'url(data:image/webp;base64,' + backdrop + ') 70% 50%/cover no-repeat}')
 parts = [head, '<style>', css.rstrip('\n'), read('preview.css'), preview_css, '</style>', body,
          '<script>', read('backend.js'), '</script>', '<script>', app.rstrip('\n'), '</script>',
          '<script>', read('layer.js'), '</script>', '<script>', read('onboarding.js'), '</script>']
