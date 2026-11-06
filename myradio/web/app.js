@@ -9,8 +9,8 @@ if (fragment.has('token')) {
   history.replaceState(null, '', location.pathname + location.search);
 }
 // One page: the studio is always there. Every other section opens as a sheet over it; forms stay mounted, so drafts survive.
-const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect'];
-const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator', connect: 'Connect your agent'};
+const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect', 'trophies'];
+const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator', connect: 'Connect your agent', trophies: 'Trophies and Dial'};
 function showView(moveFocus = false) {
   const route = location.hash.slice(1), selected = route === 'import' ? 'library' : viewNames.includes(route) ? route : 'studio';
   for (const name of viewNames.filter(name => name !== 'studio')) $('view-' + name).hidden = name !== selected;
@@ -277,6 +277,7 @@ function render(s) {
   const structure=JSON.stringify([s.library,s.queue,s.schedules,s.programs,s.history,s.station.auto_fill]);
   if (structure!==lastStructure && !arranging) {renderStructure(s);lastStructure=structure;}
   renderConsole(s);
+  renderGame(s);
 }
 async function refresh() {
   if (polling||!unlocked) return;
@@ -727,6 +728,98 @@ $('stream-paste').addEventListener('submit', async event => {
   } catch (error) { out.textContent = error.message; out.classList.add('error'); }
   finally { $('stream-save').disabled = false; }
 });
+
+// --- the game layer: Dial the station pet, levels, trophies and celebrations. Everything comes from real station facts:
+// lifetime stats kept by the engine (status.stats), the library, what is playing, the stream and the agent link.
+const LEVELS = [[0, 'Bedroom Booth'], [50, 'Garage Signal'], [150, 'Basement Broadcast'], [350, 'Rooftop Antenna'], [700, 'Pirate Frequency'],
+  [1200, 'Night City FM'], [2000, 'Full Power'], [3200, 'Big Signal'], [5000, 'Legend of the Dial']];
+const BADGES = [
+  ['first-song', 'First song', 'Your station played its first song.', (g) => g.stats.aired_music >= 1],
+  ['first-break', 'First DJ break', 'A DJ break or station ID went out between songs.', (g) => g.stats.aired_speech >= 1],
+  ['first-hour', 'First hour on air', 'A full hour of airtime, all told.', (g) => g.stats.on_air_seconds >= 3600],
+  ['premieres', 'Made here ×10', 'Ten songs and voices made right here by your music and voice makers.', (g) => g.made >= 10],
+  ['crate-digger', 'Crate digger', 'Twenty-five tracks in your library.', (g) => g.library >= 25],
+  ['night-owl', 'Night owl', 'On air between midnight and four in the morning.', (g) => g.running && new Date().getHours() < 4],
+  ['agent-dj', 'Agent DJ', 'Your own agent took the decks.', (g) => g.agentSeen],
+  ['went-live', 'Went live', 'Your station streamed to the world.', (g) => g.live],
+];
+const artUrl = (name) => (window.MYRADIO_ART && window.MYRADIO_ART[name]) || `/art/${name}.png`;
+const keep = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
+const save = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* not kept in this browser */ } };
+let earned = new Set(keep('myradio-badges', [])), lastLevel = keep('myradio-level', null), knownTracks = null, premiereAt = 0, petPoke = 0;
+const xpOf = (st) => Math.floor(st.on_air_seconds / 60) + 10 * st.aired_music + 5 * st.aired_speech + st.fades;
+function levelOf(xp) { let i = 0; while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1][0]) i++; return i; }
+function minutes(sec) { const m = Math.floor(sec / 60); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`; }
+function celebrate(text) {
+  toast(text);
+  if (motionOff || reducedMotion.matches) return;
+  const layer = $('confetti'), colors = ['#d8edac', '#ff946e', '#e9c46a', '#8fd3ff', '#f4f2ed'];
+  for (let i = 0; i < 36; i++) {
+    const bit = document.createElement('i');
+    bit.style.left = `${8 + Math.random() * 84}%`; bit.style.background = colors[i % colors.length];
+    bit.style.setProperty('--drift', `${(Math.random() - 0.5) * 240}px`); bit.style.animationDelay = `${Math.random() * 0.35}s`;
+    layer.append(bit); setTimeout(() => bit.remove(), 2400);
+  }
+}
+function petMood(s, g) {
+  const cur = s.current, live = s.broadcast.state === 'streaming';
+  if (!s.running) return ['sleepy', 'Zzz… press Start to wake me.'];
+  if (live) return ['onair', 'We’re live! Say hi to the world.'];
+  if (Date.now() - premiereAt < 90000) return ['excited', 'A brand-new song just landed!'];
+  if (!cur || (!queueItems.length && !s.station.auto_fill)) return ['hungry', 'I’m hungry… tap me to queue a song.'];
+  if (cur.kind === 'speech') return ['happy', 'Shh, the DJ is talking.'];
+  return ['singing', `♪ ${cur.title}`];
+}
+function renderGame(s) {
+  const st = s.stats || {on_air_seconds: 0, aired_music: 0, aired_speech: 0, aired_ad: 0, fades: 0};
+  const gen = s.extensions && s.extensions.generation && s.extensions.generation.status;
+  const agentAge = s.agent_link && s.agent_link.seen_at ? Date.now() / 1000 - s.agent_link.seen_at : null;
+  const g = {stats: st, running: s.running, library: s.library.length, made: gen && gen.jobs ? gen.jobs.succeeded || 0 : 0,
+             agentSeen: agentAge !== null && agentAge < 1800, live: s.broadcast.state === 'streaming'};
+  // a new song in the library: a premiere worth celebrating (not on the first look at the library)
+  const music = s.library.filter((t) => t.kind === 'music').map((t) => t.id);
+  if (knownTracks) { const fresh = s.library.find((t) => t.kind === 'music' && !knownTracks.has(t.id)); if (fresh) { premiereAt = Date.now(); celebrate(`New song! “${fresh.title}” just came off the machine.`); } }
+  knownTracks = new Set(music);
+  // level and XP
+  const xp = xpOf(st), lv = levelOf(xp), [floor, name] = LEVELS[lv], next = LEVELS[lv + 1];
+  const pct = next ? Math.min(100, Math.round(((xp - floor) / (next[0] - floor)) * 100)) : 100;
+  $('lv-number').textContent = `LV ${lv + 1}`; $('lv-name').textContent = name; $('xp-fill').style.width = `${pct}%`;
+  $('level-title').textContent = `LV ${lv + 1} · ${name}`; $('level-xp').textContent = `${xp.toLocaleString()} XP`; $('xp-big').style.width = `${pct}%`;
+  $('level-next').textContent = next ? `${(next[0] - xp).toLocaleString()} XP to LV ${lv + 2}, ${next[1]}. XP comes from minutes on air and songs and breaks played.` : 'Top level. Legend of the dial.';
+  $('stat-air').textContent = minutes(st.on_air_seconds); $('stat-songs').textContent = st.aired_music.toLocaleString();
+  $('stat-breaks').textContent = st.aired_speech.toLocaleString(); $('stat-fades').textContent = st.fades.toLocaleString();
+  if (lastLevel !== null && lv > lastLevel) celebrate(`Level up! LV ${lv + 1} · ${name}`);
+  if (lastLevel !== lv) { lastLevel = lv; save('myradio-level', lv); }
+  // badges: earned once, kept in this browser; the facts that earn them are the station's own
+  for (const [id, title, , test] of BADGES) if (!earned.has(id) && test(g)) { earned.add(id); save('myradio-badges', [...earned]); celebrate(`Badge unlocked: ${title}`); }
+  const shelf = $('badges'); shelf.textContent = '';
+  for (const [id, title, how] of BADGES) {
+    const got = earned.has(id), li = node('li', undefined, 'badge-slot' + (got ? ' got' : ''));
+    const img = node('img'); img.src = artUrl(`badge-${id}`); img.alt = ''; img.width = 64; img.height = 64; img.addEventListener('error', () => img.classList.add('missing'));
+    li.append(img, node('strong', title), node('small', got ? how : `Locked · ${how}`)); shelf.append(li);
+  }
+  $('badge-count').textContent = `${earned.size} of ${BADGES.length}`;
+  // Dial
+  const [mood, line] = Date.now() - petPoke < 2500 ? [petMoodNow, petLine] : petMood(s, g);
+  for (const el of [$('pet-img'), $('pet-big')]) { const src = artUrl(`dial-${mood}`); if (el.dataset.mood !== mood) { el.dataset.mood = mood; el.src = src; } }
+  $('pet').dataset.mood = mood; $('pet-say').textContent = line; $('pet-mood').textContent = line;
+}
+let petMoodNow = 'happy', petLine = '';
+const PET_LINES = ['Best station on the dial.', 'Turn it up!', 'Every song here was made for you.', 'I love this one.', 'Beep boop, still on air.', 'You’re a natural at this.'];
+$('pet').addEventListener('click', async () => {
+  const mood = $('pet').dataset.mood;
+  $('pet').classList.remove('boing'); void $('pet').offsetWidth; $('pet').classList.add('boing');
+  if (mood === 'hungry' && state) {
+    const pick = state.library.find((t) => t.kind === 'music' && t.available !== false);
+    if (!pick) { toast('Dial is hungry, but the crate is empty. Add audio or ask your agent for a song.'); return; }
+    try { await api('/api/action', {operation: 'queue.add', arguments: {track_id: pick.id}}); petMoodNow = 'excited'; petLine = `Yum! Queued “${pick.title}”.`; petPoke = Date.now(); toast(`Dial queued “${pick.title}”.`); await refresh(); }
+    catch (error) { toast(error.message); }
+    return;
+  }
+  petMoodNow = mood === 'sleepy' ? 'sleepy' : 'excited'; petLine = mood === 'sleepy' ? 'Five more minutes… (press Start)' : PET_LINES[Math.floor(Math.random() * PET_LINES.length)];
+  petPoke = Date.now(); if (state) renderGame(state);
+});
+for (const el of [$('pet-img'), $('pet-big')]) el.addEventListener('error', () => el.classList.add('missing'));
 
 // --- decorative motion (paper trace): pausable, and off for reduced motion
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');

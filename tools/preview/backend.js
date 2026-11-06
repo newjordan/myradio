@@ -45,6 +45,7 @@
   function fresh(mode) {
     const onair = mode !== 'first';
     D = {
+      stats: {on_air_seconds: 15120, aired_music: 61, aired_speech: 14, aired_ad: 2, fades: 9},
       mode: onair ? 'onair' : 'first',
       station: onair ? {name: 'Porchlight FM', tagline: 'Late-night sounds for stargazers and makers.', auto_fill: true}
                      : {name: 'My radio', tagline: 'Your station. Your frequency.', auto_fill: true},
@@ -83,7 +84,14 @@
     if (!t) return;
     D.current = {...t}; D.elapsed = 0; event(t.title, 'playing');
   }
-  function finish(ev) { if (D.current) { D.last = D.current.id; event(D.current.title, ev); } D.current = null; D.elapsed = 0; }
+  function finish(ev) {
+    if (D.current) {
+      D.last = D.current.id; event(D.current.title, ev);
+      D.stats.on_air_seconds += D.elapsed; if (D.elapsed >= 1) D.stats['aired_' + (D.current.kind || 'music')] = (D.stats['aired_' + (D.current.kind || 'music')] || 0) + 1;
+      if (ev === 'faded to next') D.stats.fades++;
+    }
+    D.current = null; D.elapsed = 0;
+  }
 
   let lastTick = performance.now();
   setInterval(() => {
@@ -107,6 +115,7 @@
       stream: {listeners: 0, dropped: 0}, chat_mode: 'commands',
       broadcast: {...D.broadcast, format: 'MP3 · 128 kbit/s · 44.1 kHz stereo', encoder_available: true, last_sent: null},
       agent_link: D.agentLink || {seen_at: null, last: null},
+      stats: {...D.stats, on_air_seconds: Math.round((D.stats.on_air_seconds + (D.current ? D.elapsed : 0)) * 10) / 10}, fading: false,
       imports: {conversion_available: true, max_upload_bytes: 104857600, max_decoded_bytes: 104857600},
     };
   }

@@ -10,6 +10,7 @@ real app. The output has no doctype, html, head or body tags: the artifact publi
 same artifact URL after any change to the studio or to these files.
 """
 import base64
+import json
 import sys
 from pathlib import Path
 
@@ -40,15 +41,21 @@ body = must(body, '\n<dialog id="unlock">', '\n' + read('dialogs.html') + '\n<di
 
 # ---- the real app.js, with the preview's adjustments (more sections; in-page confirm, since the viewer blocks confirm())
 app = js
-app = must(app, "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect'];",
-                "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect', 'start', 'shows', 'team', 'discover'];")
-app = must(app, "connect: 'Connect your agent'};", "connect: 'Connect your agent', start: 'Set up your station', shows: 'Shows', team: 'On-air team', discover: 'Researchers'};")
+app = must(app, "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect', 'trophies'];",
+                "const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect', 'trophies', 'start', 'shows', 'team', 'discover'];")
+app = must(app, "trophies: 'Trophies and Dial'};", "trophies: 'Trophies and Dial', start: 'Set up your station', shows: 'Shows', team: 'On-air team', discover: 'Researchers'};")
 app = must(app, "const route = location.hash.slice(1), selected",
                 "const route = (h => h === 'my-station' ? 'settings' : /^start-/.test(h) ? 'start' : h)(location.hash.slice(1)), selected")
 app = must(app, "if (dangerous && !confirm('Delete this audio", "if (dangerous && !await uiConfirm('Delete this audio")
 app = must(app, "if(!confirm('Forget the saved AI", "if(!await uiConfirm('Forget the saved AI")
 assert 'confirm(' not in app.replace('uiConfirm(', '')
 
+art_dir = web / 'art'
+art = {f.stem: 'data:image/' + f.suffix[1:] + ';base64,' + base64.b64encode(f.read_bytes()).decode()
+       for f in sorted(art_dir.glob('*.png')) + sorted(art_dir.glob('*.webp'))} if art_dir.is_dir() else {}
+for name, uri in art.items():
+    body = body.replace(f'src="/art/{name}.png"', f'src="{uri}"')
+art_script = 'window.MYRADIO_ART = ' + json.dumps(art) + ';'
 head = '<title>myradio Studio</title>\n<meta name="claude:viewport-fit-sides" content="cover">'
 preview_css = """/* Preview additions for the one-page studio */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
@@ -61,7 +68,7 @@ preview_css += ('\n/* Backdrop: an empty radio room at night, kept dark and soft
                 'background:linear-gradient(90deg,#0b1019f0 0%,#0b1019c4 40%,#0b101966 100%),'
                 'url(data:image/webp;base64,' + backdrop + ') 70% 50%/cover no-repeat}')
 parts = [head, '<style>', css.rstrip('\n'), read('preview.css'), preview_css, '</style>', body,
-         '<script>', read('backend.js'), '</script>', '<script>', app.rstrip('\n'), '</script>',
+         '<script>', art_script, '</script>', '<script>', read('backend.js'), '</script>', '<script>', app.rstrip('\n'), '</script>',
          '<script>', read('layer.js'), '</script>', '<script>', read('onboarding.js'), '</script>']
 page = '\n'.join(parts) + '\n'
 assert '<!doctype' not in page.lower() and '</body>' not in page and 'preview-layer-source' not in page

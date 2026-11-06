@@ -20,5 +20,5 @@ include = ["myradio*"]
 
 [tool.setuptools.package-data]
 "myradio.prompts" = ["data/*.json"]
-"myradio" = ["web/*.html", "web/*.js", "web/*.css"]
+"myradio" = ["web/*.html", "web/*.js", "web/*.css", "web/art/*.png", "web/art/*.webp"]
 

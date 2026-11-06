@@ -239,3 +239,17 @@ body[data-active-view="start"] .welcome{display:none}
 @media(prefers-reduced-motion:reduce){.ob-stages li.busy::before{box-shadow:none}}
 
 .x-pretend{margin-top:12px;width:auto;font-size:13px;border-style:dashed}
+/* Onboarding as a little quest, guided by Dial */
+.ob-scene{position:relative;margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#0b1019;aspect-ratio:16/7;max-width:100%}
+.ob-scene>img{width:100%;height:100%;object-fit:cover;display:block}
+.ob-scene>img.missing{visibility:hidden}
+.ob-guide{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:flex-end;gap:10px}
+.ob-guide img{width:56px;height:56px;flex-shrink:0;filter:drop-shadow(0 4px 8px #000a);animation:pet-bop 1.2s ease-in-out infinite}
+.ob-guide span{background:#f3e6c2;color:#1d2526;border-radius:10px 10px 10px 2px;padding:8px 12px;font:600 13px/1.4 ui-monospace,monospace;box-shadow:0 6px 16px #0008;max-width:520px}
+body.motion-off .ob-guide img{animation:none}
+.ob-xp{display:flex;align-items:center;gap:10px;font:700 12px ui-monospace,monospace;color:var(--accent)}
+.ob-xp div{flex:1;height:10px;border-radius:5px;background:#3b4252;overflow:hidden}
+.ob-xp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#e9c46a);transition:width .8s cubic-bezier(.3,1.4,.5,1)}
+.ob-steps li[aria-current=step] span{background:var(--accent);color:#223029;border-color:var(--accent);animation:pet-boing .5s}
+.ob-steps li.done span{background:#263329;color:var(--accent);border-color:#85976d}
+@media(max-width:600px){.ob-scene{aspect-ratio:4/3}.ob-guide span{font-size:12px}.ob-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}

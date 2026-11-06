@@ -153,6 +153,9 @@ class Station:
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
         ensure_queue_order(self.db)
+        # Lifetime station stats for the studio's levels and badges. Kept out of SCHEMA so backups stay as they are:
+        # these describe this station's life on this machine, not its audio or identity.
+        self.db.execute("CREATE TABLE IF NOT EXISTS stats (key TEXT PRIMARY KEY, value REAL NOT NULL)")
         defaults = {"name": "My radio", "tagline": "Your station. Your frequency.", "auto_fill": True}
         for key, value in defaults.items():
             self.db.execute("INSERT OR IGNORE INTO settings VALUES (?,?)", (key, json.dumps(value)))
@@ -295,6 +298,14 @@ class Station:
                 result["broadcast"] = self.broadcast.status()
             return result
 
+    def _stats(self):
+        """Lifetime counts: seconds on air, items aired by kind, fades. Includes the track on air now."""
+        stats = {r[0]: r[1] for r in self.db.execute("SELECT key,value FROM stats")}
+        out = {"on_air_seconds": round(stats.get("on_air_seconds", 0.0) + (self.elapsed if self.current else 0.0), 1),
+               "aired_music": int(stats.get("aired_music", 0)), "aired_speech": int(stats.get("aired_speech", 0)),
+               "aired_ad": int(stats.get("aired_ad", 0)), "fades": int(stats.get("fades", 0))}
+        return out
+
     def _read_status(self):
         with self.lock:
             settings = {r[0]: json.loads(r[1]) for r in self.db.execute("SELECT key,value FROM settings") if r[0] != "playing"}
@@ -308,6 +319,7 @@ class Station:
                 "station": settings, "running": self.running,
                 "current": self.public(self.current) if self.current else None,
                 "fading": self.fade is not None,
+                "stats": self._stats(),
                 "elapsed": round(self.elapsed, 2), "error": self.error,
                 "queue": [dict(r) for r in self.db.execute("SELECT q.id,t.id AS track_id,t.title,t.artist,t.duration,t.kind FROM queue q JOIN tracks t ON t.id=q.track_id ORDER BY q.pos,q.id")],
                 "library": [self.public(dict(r)) for r in self.db.execute("SELECT t.*, (f.track_id IS NULL) AS available, f.message AS playback_error FROM tracks t LEFT JOIN media_failures f ON f.track_id=t.id ORDER BY t.title,t.id")],
@@ -532,8 +544,18 @@ class Station:
             self._emit("transport", state="started" if operation == "transport.start" else "stopped")
         return {"ok": True, "operation": operation}
 
+    def _count(self, key, amount=1.0):
+        self.db.execute("INSERT INTO stats(key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=value+excluded.value",
+                        (key, float(amount)))
+
     def _finish(self, event):
         if self.current:
+            if self.elapsed > 0:
+                self._count("on_air_seconds", self.elapsed)
+                if self.elapsed >= 1.0 and event != "playback failed":
+                    self._count("aired_" + str(self.current.get("kind") or "music"))
+            if event == "faded to next":
+                self._count("fades")
             self.last_track = self.current["id"]
             self._event(self.current["title"], event)
             self._emit("track_finished", result=event, track=self.public(self.current))
