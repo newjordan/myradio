@@ -1,0 +1,52 @@
+# DJ voices for myradio: bake-off and research (2026-11-06)
+
+Goal: a selection of DJ voices that cut the mustard for users, local first, with cloud options for those who want them.
+The user's recommendation stands: users connect their favourite agent, which writes the DJ copy; the voice speaks it.
+
+## Local voices (rendered on the DGX Spark, toymaker)
+
+Same runtime as the music (audio.cpp), same box, every voice reading the same hype line and the same song lead-in while a
+YuE2 song rendered at the same moment. Speed is the lead-in's realtime factor with the model already loaded. An hour with a
+break every 2 or 3 songs needs roughly 3 to 8 minutes of talk, so anything above about 0.2× keeps up. Listening page:
+https://claude.ai/artifact/UF4JR17zJtggZ1RdqMPUik (private). Takes and timings: `~/myradio-promo/examples/voice-bakeoff/`.
+
+| Voice | Beside music | Size (Q8) | Licence (commercial use) | How the energy is asked for |
+| --- | --- | --- | --- | --- |
+| Chatterbox Turbo | 1.72× | 0.7 GB | MIT (Yes) | inline tags such as [laugh]; one built-in voice |
+| Chatterbox | 1.42× | 2.1 GB | MIT (Yes) | exaggeration dial; clones a reference voice (task `clon`) |
+| VoxCPM2 | 1.03× | 3.0 GB | Apache-2.0 (Yes) | (style description) before the text; clones |
+| Kokoro 82M | 11.20× | 0.2 GB | Apache-2.0 (Yes) | 54 built-in voices, speed only |
+| Qwen3-TTS CustomVoice | 0.63× | 2.8 GB | Apache-2.0 (Yes) | built-in voices plus an instruction |
+| Qwen3-TTS VoiceDesign | 0.62× | 2.8 GB | Apache-2.0 (Yes) | voice described in words (task `vdes`) |
+| VibeVoice 1.5B | 0.50× | 3.2 GB | MIT (Yes) | podcast-style speakers from voice samples |
+| Drama 3 B70 Turbo | 0.36× | 22.7 GB | Fish Audio Community License (Conditional) | free-form tone tags and wording; clones |
+| Maya1 | 0.24× | 4.0 GB | Apache-2.0 (Yes) | voice described in words plus <laugh>-style tags |
+| IndexTTS2 | 0.23× | 3.6 GB | bilibili Model Use License (Conditional) | emotion text and strength; clones (`voice_ref`) |
+
+Not taken forward: Higgs, Voxtral TTS, OmniVoice, F5 and Fish S2 (non-commercial only); MOSS-TTSD (two-host dialogue,
+12 GB, cloning drifts between turns per its own docs); Drama3-small (its IQ3_XXS format needs a newer audio.cpp).
+
+**Drama 3 is prompt-driven** (the user's point): the same model and line, prompted four ways (voice direction, hype wording
+with tags, tags through the line, stadium announcer), gave clearly different takes; hype wording plus tags produced the most
+performed reads (16 to 19 s for the line against 11 to 13 s for the others). Good Drama copy is written as a performance.
+
+## Cloud voices (researched from the providers' pages, not rendered)
+
+1. **ElevenLabs Eleven v4** (and v4 Turbo): top of the public speech arena, richest hype tags. The free plan is
+   non-commercial; monetised streams need Starter ($6/month) or above. About $0.36 to $0.72 per hour of airtime on v4.
+2. **Inworld TTS-2**: free-form hype directions and laughs, low latency, commercial use even on the free plan.
+3. **Google Gemini 3.8 Flash TTS**: cheapest good option (about $0.07 to $0.14 per hour of airtime); free tier uses your data;
+   price doubles on 2027-01-01.
+4. **Cartesia Sonic 3.6**: explicit excited/euphoric emotions; commercial use from the $5 Pro plan.
+
+Going away: Hume's TTS (2026-11-13), PlayHT (closed 2025-12-31), OpenAI's tts models (retiring 2027-01-06).
+
+## What this means for users (to confirm by ear)
+
+- **Everyone gets a voice that runs on their own machine and may be used commercially**: the MIT/Apache models above.
+  Chatterbox and Chatterbox Turbo are the fastest expressive ones beside music; Kokoro is the tiny fallback for small
+  machines (no emotion control).
+- **Drama 3** is the most performative when prompted well, at 23 GB and a conditional licence: the premium local choice
+  for big machines.
+- **Cloud for the best voice with no GPU cost**: ElevenLabs (paid plan for monetised streams), or Inworld for the simplest
+  licence.
