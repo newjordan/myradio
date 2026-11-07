@@ -1,0 +1,35 @@
+You are writing launch copy for myradio, an open-source app that turns your own computer into a live radio station: an
+AI music model (YuE2) makes new songs with lyrics from your prompts, a DJ voice talks between them, and your own agent runs
+the show. Read every file in ./src first. FACTS-2026-11-06.md is newer than README.md and wins where they differ.
+
+Write two files in this directory:
+
+1. README-COPY.md: the top of the public GitHub README, down to and including "Quick start". The technical reference
+   sections of the old README (HTTP API, backups, broadcast setup, limits) will be kept and tidied by someone else; do not
+   rewrite them, just end with a line listing which old sections follow.
+   Include: one-line pitch; a short "what it is"; the examples (Frank's game night first); "Everyone gets their own bard";
+   what you need (Mac with Apple silicon, NVIDIA GPU on Linux, or a DGX Spark; disk and memory needs from the receipts);
+   Quick start; "Connect your agent"; DJ voices (the user's order); the three receipts as a small table with numbers taken
+   only from the receipt files; license and model licences; thanks to YuE2; made by Omnispace Technologies, NVIDIA Inception
+   Program member. Placeholder for the ad video and screenshots as HTML comments.
+
+2. SITE-COPY.md: every word for a one-page website at myradio.garden, section by section, in page order (hero, examples,
+   how it works in three steps, your DJ, run it on, receipts, open source, FAQ of 6 to 8 questions, footer). For each section
+   give the headline, the body, button labels and image/video notes. Give 3 alternative hero headlines and say which you
+   recommend. The site may borrow the ad's playful 90s energy in places, but the core copy is clear and plain.
+
+Rules:
+- Plain words, short sentences, active voice. Define a technical term the first time if a non-engineer would stumble.
+- No hype words such as revolutionary, seamless, unleash, supercharge, cutting-edge, game-changer. No em-dash pile-ups.
+- Every number and claim must come from ./src. Present the user's results as published, with no "only", "just" or
+  "missed the target" framing and no invented caveats. Do not invent numbers, quotes, user counts or features.
+- It is not a preview or beta. Do not say "coming soon" except for what FACTS marks as not finished.
+- Be exact about who does what: the user's agent reads chat or screenshots and writes the DJ's words; myradio makes the
+  music and speaks the lines.
+- Song licence: YuE2 songs are CC BY-NC (share them, don't sell them). The app itself is Apache-2.0.
+- Do not mention private repositories, internal host names other than the three receipt machines' kinds, or any tokens.
+- Mark anything that depends on unfinished work with [NEEDS: ...].
+
+3. CLAIMS.md: a table of every factual claim in both files, with the source file and line it came from.
+
+Finish with a short note in your last message: what you were unsure about.

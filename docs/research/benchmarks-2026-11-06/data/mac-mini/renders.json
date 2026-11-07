@@ -1,0 +1,184 @@
+[
+  {
+    "title": "Bedroom Floor",
+    "audio_s": 147.13,
+    "render_s": 142.21,
+    "realtime_x": 1.03,
+    "seed": 1670447504
+  },
+  {
+    "title": "Bedroom Floor (take 2)",
+    "audio_s": 142.7,
+    "render_s": 133.14,
+    "realtime_x": 1.07,
+    "seed": 1392845888
+  },
+  {
+    "title": "Detention Kings",
+    "audio_s": 125.82,
+    "render_s": 119.27,
+    "realtime_x": 1.05,
+    "seed": 1213716302
+  },
+  {
+    "title": "Detention Kings (take 2)",
+    "audio_s": 112.68,
+    "render_s": 105.03,
+    "realtime_x": 1.07,
+    "seed": 2902846967
+  },
+  {
+    "title": "Engine Heart",
+    "audio_s": 164.08,
+    "render_s": 151.94,
+    "realtime_x": 1.08,
+    "seed": 301126056
+  },
+  {
+    "title": "Engine Heart (take 2)",
+    "audio_s": 179.9,
+    "render_s": 182.49,
+    "realtime_x": 0.99,
+    "seed": 905793861
+  },
+  {
+    "title": "Gas Station Sunrise",
+    "audio_s": 123.04,
+    "render_s": 115.76,
+    "realtime_x": 1.06,
+    "seed": 1709427319
+  },
+  {
+    "title": "Gas Station Sunrise (take 2)",
+    "audio_s": 144.95,
+    "render_s": 146.37,
+    "realtime_x": 0.99,
+    "seed": 1649282679
+  },
+  {
+    "title": "Half Past Curfew",
+    "audio_s": 114.6,
+    "render_s": 106.09,
+    "realtime_x": 1.08,
+    "seed": 1229366696
+  },
+  {
+    "title": "Half Past Curfew (take 2)",
+    "audio_s": 89.92,
+    "render_s": 79.04,
+    "realtime_x": 1.14,
+    "seed": 2457758429
+  },
+  {
+    "title": "Half Past Curfew (take 3)",
+    "audio_s": 111.92,
+    "render_s": 102.99,
+    "realtime_x": 1.09,
+    "seed": 3724332460
+  },
+  {
+    "title": "Last Show at the Rink",
+    "audio_s": 97.82,
+    "render_s": 86.18,
+    "realtime_x": 1.14,
+    "seed": 2529904970
+  },
+  {
+    "title": "Last Show at the Rink (take 2)",
+    "audio_s": 127.88,
+    "render_s": 124.89,
+    "realtime_x": 1.02,
+    "seed": 4117617719
+  },
+  {
+    "title": "Mixtape Summer",
+    "audio_s": 135.69,
+    "render_s": 131.6,
+    "realtime_x": 1.03,
+    "seed": 1784919770
+  },
+  {
+    "title": "Mixtape Summer (take 2)",
+    "audio_s": 123.69,
+    "render_s": 114.67,
+    "realtime_x": 1.08,
+    "seed": 1650270697
+  },
+  {
+    "title": "Postcard from the Basement",
+    "audio_s": 150.99,
+    "render_s": 149.44,
+    "realtime_x": 1.01,
+    "seed": 2275130377
+  },
+  {
+    "title": "Postcard from the Basement (take 2)",
+    "audio_s": 114.28,
+    "render_s": 100.42,
+    "realtime_x": 1.14,
+    "seed": 3534093552
+  },
+  {
+    "title": "Postcard from the Basement (take 3)",
+    "audio_s": 118.43,
+    "render_s": 107.56,
+    "realtime_x": 1.1,
+    "seed": 1390852920
+  },
+  {
+    "title": "Senior Skip Day",
+    "audio_s": 139.72,
+    "render_s": 138.68,
+    "realtime_x": 1.01,
+    "seed": 2738719374
+  },
+  {
+    "title": "Senior Skip Day (take 2)",
+    "audio_s": 147.04,
+    "render_s": 144.24,
+    "realtime_x": 1.02,
+    "seed": 1887738900
+  },
+  {
+    "title": "Static on the Line",
+    "audio_s": 144.92,
+    "render_s": 138.11,
+    "realtime_x": 1.05,
+    "seed": 3966698691
+  },
+  {
+    "title": "Static on the Line (take 2)",
+    "audio_s": 157.82,
+    "render_s": 159.95,
+    "realtime_x": 0.99,
+    "seed": 2594069980
+  },
+  {
+    "title": "Ten Feet Tall",
+    "audio_s": 180.0,
+    "render_s": 188.08,
+    "realtime_x": 0.96,
+    "seed": 1884240218
+  },
+  {
+    "title": "Ten Feet Tall (take 2)",
+    "audio_s": 180.0,
+    "render_s": 189.66,
+    "realtime_x": 0.95,
+    "seed": 2029770995
+  },
+  {
+    "title": "Thunder Road Revival",
+    "audio_s": 179.85,
+    "render_s": 187.04,
+    "realtime_x": 0.96,
+    "seed": 1854467961
+  },
+  {
+    "title": "Thunder Road Revival (take 2)",
+    "audio_s": 180.0,
+    "render_s": 182.09,
+    "realtime_x": 0.99,
+    "seed": 2706575910
+  }
+]

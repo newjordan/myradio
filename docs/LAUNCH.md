@@ -19,7 +19,7 @@ Each item lists what "done" means. Tick it only when that is true and tested.
 | 9 | Clean installs | `myradio setup` from nothing on the Mac mini and on a Linux NVIDIA box, first song on air | open |
 | 10 | Merge and push | branch merged to `main`, pushed; the repository made public (the user confirms the moment) | open |
 | 11 | **Smoke test on a rented rig** | a fresh rented GPU machine (the user picks the provider and approves the cost): install, setup, first song, an hour on air with the agent DJ, receipt written | open, last |
-| 12 | Launch film | "Game Night, Sung Live" (`~/myradio-promo/film/STORYLINES.md`) with Omnispace Technologies branding and the NVIDIA Inception badge on the end card | needs the stream footage or screenshots, Frank's OK, the Omnispace logo file and the official Inception badge file |
+| 12 | Launch film | "Game Night, Sung Live" (`~/myradio-promo/film/STORYLINES.md`) with Omnispace Technologies branding and the NVIDIA Inception badge on the end card | hero film built; Frank's OK given. **"NOW THIS IS MyRadio"** ad (52.6 s, 90s compilation-album parody, Blender title and jewel case, real songs, ElevenLabs "Guy" announcer, Drama 3 station DJ ID, VHS pass, -14 LUFS) rendered 2026-11-06 to `~/myradio-promo/film/now/now-this-is-myradio.mp4` (clean cut and an all-local Drama 3 announcer version beside it); awaiting the user's review |
 
 ## Notes
 

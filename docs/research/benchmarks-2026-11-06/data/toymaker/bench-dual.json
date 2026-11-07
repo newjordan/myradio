@@ -1,0 +1,80 @@
+{
+ "speech_alone": [
+  {
+   "what": "speech",
+   "tag": "speech-alone-0",
+   "chars": 79,
+   "audio_s": 46.44,
+   "wall_s": 30.24,
+   "realtime_x": 1.54
+  },
+  {
+   "what": "speech",
+   "tag": "speech-alone-1",
+   "chars": 245,
+   "audio_s": 17.37,
+   "wall_s": 12.09,
+   "realtime_x": 1.44
+  },
+  {
+   "what": "speech",
+   "tag": "speech-alone-2",
+   "chars": 177,
+   "audio_s": 15.93,
+   "wall_s": 10.75,
+   "realtime_x": 1.48
+  }
+ ],
+ "music_alone": [
+  {
+   "what": "music",
+   "tag": "music-alone",
+   "audio_s": 165.0,
+   "wall_s": 70.51,
+   "realtime_x": 2.34
+  }
+ ],
+ "together_music": [
+  {
+   "what": "music",
+   "tag": "music-together",
+   "audio_s": 132.32,
+   "wall_s": 76.96,
+   "realtime_x": 1.72
+  }
+ ],
+ "together_speech": [
+  {
+   "what": "speech",
+   "tag": "speech-together-0",
+   "chars": 79,
+   "audio_s": 8.59,
+   "wall_s": 13.72,
+   "realtime_x": 0.63
+  },
+  {
+   "what": "speech",
+   "tag": "speech-together-1",
+   "chars": 245,
+   "audio_s": 15.09,
+   "wall_s": 24.16,
+   "realtime_x": 0.62
+  },
+  {
+   "what": "speech",
+   "tag": "speech-together-2",
+   "chars": 177,
+   "audio_s": 13.24,
+   "wall_s": 23.15,
+   "realtime_x": 0.57
+  },
+  {
+   "what": "speech",
+   "tag": "speech-together-3",
+   "chars": 79,
+   "audio_s": 11.19,
+   "wall_s": 16.52,
+   "realtime_x": 0.68
+  }
+ ]
+}

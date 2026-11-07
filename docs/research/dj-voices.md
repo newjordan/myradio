@@ -64,6 +64,11 @@ Local recommendations, in the user's order:
 
 Also noted: Chatterbox is "decent" (MIT, clones any voice, 1.42× beside music).
 
+Cloud: the male announcer on the glass promo is "really good" and approved as a recommendation. It is the
+**ElevenLabs voice "Guy"**, so it belongs with the cloud voices, not the local ones. For a local male announcer, the
+Qwen3-TTS CustomVoice male speakers (Aiden, Dylan, Eric, Ryan, Uncle Fu) were rendered with the same glass script on
+toymaker for comparison (`~/myradio-promo/examples/male-audition/`).
+
 ## What this means for users
 
 - **Jessica (Qwen3-TTS CustomVoice) is proven on air** and is small (2.8 GB), quick (2.69× on the Spark) and Apache-2.0:

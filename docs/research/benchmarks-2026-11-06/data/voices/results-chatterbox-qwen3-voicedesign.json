@@ -1,0 +1,34 @@
+{
+ "voices": [
+  {
+   "model": "chatterbox",
+   "line": "hype",
+   "music_rendering": true,
+   "error": "HTTP 500: {\"error\":{\"message\":\"Chatterbox supports VoiceCloning and VoiceConversion\",\"type\":\"server_error\"}}"
+  },
+  {
+   "model": "chatterbox",
+   "line": "intro",
+   "music_rendering": true,
+   "error": "HTTP 500: {\"error\":{\"message\":\"Chatterbox supports VoiceCloning and VoiceConversion\",\"type\":\"server_error\"}}"
+  },
+  {
+   "model": "qwen3-voicedesign",
+   "line": "hype",
+   "music_rendering": true,
+   "error": "HTTP 500: {\"error\":{\"message\":\"Qwen3 voice design model only supports the VoiceDesign task\",\"type\":\"server_error\"}}"
+  },
+  {
+   "model": "qwen3-voicedesign",
+   "line": "intro",
+   "music_rendering": true,
+   "error": "HTTP 500: {\"error\":{\"message\":\"Qwen3 voice design model only supports the VoiceDesign task\",\"type\":\"server_error\"}}"
+  }
+ ],
+ "music_alongside": [
+  {
+   "audio_s": 165.0,
+   "wall_s": 72.4
+  }
+ ]
+}

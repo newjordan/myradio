@@ -1,0 +1,403 @@
+{
+  "hour_start": "2026-11-06 12:19:08",
+  "seconds": 3611,
+  "played": [
+    {
+      "title": "Learning Rate",
+      "at": 1793989148.9461865,
+      "minute": 0.0
+    },
+    {
+      "title": "One More Epoch",
+      "at": 1793989301.0573573,
+      "minute": 2.5
+    },
+    {
+      "title": "Low Rank Love",
+      "at": 1793989466.9959283,
+      "minute": 5.3
+    },
+    {
+      "title": "Warmup Steps",
+      "at": 1793989588.0221183,
+      "minute": 7.3
+    },
+    {
+      "title": "Validation Rain",
+      "at": 1793989755.3518264,
+      "minute": 10.1
+    },
+    {
+      "title": "Gradient Drift",
+      "at": 1793989922.162196,
+      "minute": 12.9
+    },
+    {
+      "title": "Frozen Layers",
+      "at": 1793990105.539468,
+      "minute": 15.9
+    },
+    {
+      "title": "Early Stopping",
+      "at": 1793990272.0825465,
+      "minute": 18.7
+    },
+    {
+      "title": "Small Batch Sunday",
+      "at": 1793990408.2301996,
+      "minute": 21.0
+    },
+    {
+      "title": "Weights and Measures",
+      "at": 1793990545.0463724,
+      "minute": 23.3
+    },
+    {
+      "title": "Learning Rate (take 2)",
+      "at": 1793990637.5456762,
+      "minute": 24.8
+    },
+    {
+      "title": "Loss Curve Lullaby (take 2)",
+      "at": 1793990789.196272,
+      "minute": 27.3
+    },
+    {
+      "title": "One More Epoch (take 2)",
+      "at": 1793990955.8579743,
+      "minute": 30.1
+    },
+    {
+      "title": "Checkpoint at 3 AM (take 2)",
+      "at": 1793991122.6619592,
+      "minute": 32.9
+    },
+    {
+      "title": "Low Rank Love (take 2)",
+      "at": 1793991288.9912038,
+      "minute": 35.7
+    },
+    {
+      "title": "Checkpoint at 3 AM",
+      "at": 1793991395.2950861,
+      "minute": 37.4
+    },
+    {
+      "title": "Validation Rain (take 2)",
+      "at": 1793991571.286694,
+      "minute": 40.4
+    },
+    {
+      "title": "Gradient Drift (take 2)",
+      "at": 1793991693.3750055,
+      "minute": 42.4
+    },
+    {
+      "title": "Frozen Layers (take 2)",
+      "at": 1793991859.390688,
+      "minute": 45.2
+    },
+    {
+      "title": "Early Stopping (take 2)",
+      "at": 1793991996.881762,
+      "minute": 47.5
+    },
+    {
+      "title": "Small Batch Sunday (take 2)",
+      "at": 1793992103.6168005,
+      "minute": 49.2
+    },
+    {
+      "title": "Weights and Measures (take 2)",
+      "at": 1793992240.8321118,
+      "minute": 51.5
+    },
+    {
+      "title": "Learning Rate (take 3)",
+      "at": 1793992395.2793608,
+      "minute": 54.1
+    },
+    {
+      "title": "Warmup Steps (take 2)",
+      "at": 1793992516.908591,
+      "minute": 56.1
+    },
+    {
+      "title": "One More Epoch (take 3)",
+      "at": 1793992638.4617372,
+      "minute": 58.2
+    }
+  ],
+  "jobs": {
+    "queued": 0,
+    "running": 0,
+    "succeeded": 28,
+    "failed": 0,
+    "cancelled": 0,
+    "expired": 0,
+    "interrupted": 0
+  },
+  "renders": [
+    {
+      "title": "Checkpoint at 3 AM (take 3)",
+      "state": "succeeded",
+      "audio_s": 143.51,
+      "render_s": 38.33,
+      "realtime_x": 3.74,
+      "error": null
+    },
+    {
+      "title": "One More Epoch (take 3)",
+      "state": "succeeded",
+      "audio_s": 154.32,
+      "render_s": 41.0,
+      "realtime_x": 3.76,
+      "error": null
+    },
+    {
+      "title": "Loss Curve Lullaby (take 3)",
+      "state": "succeeded",
+      "audio_s": 180.0,
+      "render_s": 48.02,
+      "realtime_x": 3.75,
+      "error": null
+    },
+    {
+      "title": "Learning Rate (take 3)",
+      "state": "succeeded",
+      "audio_s": 127.16,
+      "render_s": 36.02,
+      "realtime_x": 3.53,
+      "error": null
+    },
+    {
+      "title": "Weights and Measures (take 2)",
+      "state": "succeeded",
+      "audio_s": 155.36,
+      "render_s": 40.95,
+      "realtime_x": 3.79,
+      "error": null
+    },
+    {
+      "title": "Small Batch Sunday (take 2)",
+      "state": "succeeded",
+      "audio_s": 127.64,
+      "render_s": 36.98,
+      "realtime_x": 3.45,
+      "error": null
+    },
+    {
+      "title": "Early Stopping (take 2)",
+      "state": "succeeded",
+      "audio_s": 107.24,
+      "render_s": 31.77,
+      "realtime_x": 3.38,
+      "error": null
+    },
+    {
+      "title": "Frozen Layers (take 2)",
+      "state": "succeeded",
+      "audio_s": 136.41,
+      "render_s": 38.56,
+      "realtime_x": 3.54,
+      "error": null
+    },
+    {
+      "title": "Gradient Drift (take 2)",
+      "state": "succeeded",
+      "audio_s": 166.21,
+      "render_s": 43.91,
+      "realtime_x": 3.78,
+      "error": null
+    },
+    {
+      "title": "Validation Rain (take 2)",
+      "state": "succeeded",
+      "audio_s": 131.96,
+      "render_s": 37.01,
+      "realtime_x": 3.57,
+      "error": null
+    },
+    {
+      "title": "Warmup Steps (take 2)",
+      "state": "succeeded",
+      "audio_s": 115.79,
+      "render_s": 33.58,
+      "realtime_x": 3.45,
+      "error": null
+    },
+    {
+      "title": "Low Rank Love (take 2)",
+      "state": "succeeded",
+      "audio_s": 101.64,
+      "render_s": 31.91,
+      "realtime_x": 3.19,
+      "error": null
+    },
+    {
+      "title": "Checkpoint at 3 AM (take 2)",
+      "state": "succeeded",
+      "audio_s": 170.24,
+      "render_s": 45.24,
+      "realtime_x": 3.76,
+      "error": null
+    },
+    {
+      "title": "One More Epoch (take 2)",
+      "state": "succeeded",
+      "audio_s": 161.36,
+      "render_s": 42.01,
+      "realtime_x": 3.84,
+      "error": null
+    },
+    {
+      "title": "Loss Curve Lullaby (take 2)",
+      "state": "succeeded",
+      "audio_s": 167.78,
+      "render_s": 44.61,
+      "realtime_x": 3.76,
+      "error": null
+    },
+    {
+      "title": "Learning Rate (take 2)",
+      "state": "succeeded",
+      "audio_s": 149.48,
+      "render_s": 41.19,
+      "realtime_x": 3.63,
+      "error": null
+    },
+    {
+      "title": "Weights and Measures",
+      "state": "succeeded",
+      "audio_s": 99.83,
+      "render_s": 29.52,
+      "realtime_x": 3.38,
+      "error": null
+    },
+    {
+      "title": "Small Batch Sunday",
+      "state": "succeeded",
+      "audio_s": 141.56,
+      "render_s": 41.55,
+      "realtime_x": 3.41,
+      "error": null
+    },
+    {
+      "title": "Early Stopping",
+      "state": "succeeded",
+      "audio_s": 137.56,
+      "render_s": 39.08,
+      "realtime_x": 3.52,
+      "error": null
+    },
+    {
+      "title": "Frozen Layers",
+      "state": "succeeded",
+      "audio_s": 159.72,
+      "render_s": 43.8,
+      "realtime_x": 3.65,
+      "error": null
+    },
+    {
+      "title": "Gradient Drift",
+      "state": "succeeded",
+      "audio_s": 178.31,
+      "render_s": 47.09,
+      "realtime_x": 3.79,
+      "error": null
+    },
+    {
+      "title": "Validation Rain",
+      "state": "succeeded",
+      "audio_s": 166.56,
+      "render_s": 42.85,
+      "realtime_x": 3.89,
+      "error": null
+    },
+    {
+      "title": "Warmup Steps",
+      "state": "succeeded",
+      "audio_s": 179.43,
+      "render_s": 52.16,
+      "realtime_x": 3.44,
+      "error": null
+    },
+    {
+      "title": "Low Rank Love",
+      "state": "succeeded",
+      "audio_s": 114.24,
+      "render_s": 35.51,
+      "realtime_x": 3.22,
+      "error": null
+    },
+    {
+      "title": "Checkpoint at 3 AM",
+      "state": "succeeded",
+      "audio_s": 171.16,
+      "render_s": 44.32,
+      "realtime_x": 3.86,
+      "error": null
+    },
+    {
+      "title": "One More Epoch",
+      "state": "succeeded",
+      "audio_s": 162.27,
+      "render_s": 43.16,
+      "realtime_x": 3.76,
+      "error": null
+    },
+    {
+      "title": "Loss Curve Lullaby",
+      "state": "succeeded",
+      "audio_s": 180.0,
+      "render_s": 46.12,
+      "realtime_x": 3.9,
+      "error": null
+    },
+    {
+      "title": "Learning Rate",
+      "state": "succeeded",
+      "audio_s": 149.16,
+      "render_s": 41.2,
+      "realtime_x": 3.62,
+      "error": null
+    }
+  ],
+  "library": [
+    "Checkpoint at 3 AM",
+    "Checkpoint at 3 AM (take 2)",
+    "Checkpoint at 3 AM (take 3)",
+    "Early Stopping",
+    "Early Stopping (take 2)",
+    "Frozen Layers",
+    "Frozen Layers (take 2)",
+    "Gradient Drift",
+    "Gradient Drift (take 2)",
+    "Learning Rate",
+    "Learning Rate (take 2)",
+    "Learning Rate (take 3)",
+    "Loss Curve Lullaby",
+    "Loss Curve Lullaby (take 2)",
+    "Loss Curve Lullaby (take 3)",
+    "Low Rank Love",
+    "Low Rank Love (take 2)",
+    "One More Epoch",
+    "One More Epoch (take 2)",
+    "One More Epoch (take 3)",
+    "Small Batch Sunday",
+    "Small Batch Sunday (take 2)",
+    "Validation Rain",
+    "Validation Rain (take 2)",
+    "Warmup Steps",
+    "Warmup Steps (take 2)",
+    "Weights and Measures",
+    "Weights and Measures (take 2)"
+  ],
+  "running_at_end": true,
+  "health_at_end": {
+    "state": "playing",
+    "unavailable_tracks": 0,
+    "ready_tracks": 28,
+    "message": ""
+  }
+}
