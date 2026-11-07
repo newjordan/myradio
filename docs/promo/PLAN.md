@@ -145,6 +145,17 @@ Fish Audio, in Frosty40's B70 Turbo build (check its license wording on the mode
 - The local DJ voice is real (Drama 3 on the Spark); the ElevenLabs voice adapter is not built yet.
 - Output is Icecast MP3; YouTube and Twitch need an RTMP output that does not exist yet.
 
+## Brand marks on the final ad
+
+- **Omnispace Technologies**: the maker's company branding on the end card (the user's request, 2026-11-06), from the
+  company's own logo file, never redrawn. Design tokens exist in the AngelX source (`design/omnispace/tokens.css`); the
+  logo file itself is still needed.
+- **NVIDIA Inception Program badge**: the official member badge from the Inception member portal, placed and sized as
+  NVIDIA's badge guidelines say (clear space, no recolouring or edits, no implied endorsement of the product). Needs the
+  official file.
+- Both sit on the end card under the myradio mark, after "Everyone gets their own bard" and the YuE2 thanks; neither
+  appears earlier in the film.
+
 ## Home for the release
 
 **myradio.garden** (the user's domain for this release): the end card, descriptions and launch posts point there. It is
