@@ -384,7 +384,12 @@ def load_token(directory):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="myradio local station and agent dashboard")
+    args_in = sys.argv[1:] if argv is None else list(argv)
+    if args_in[:1] == ["setup"]:
+        from .installer import main as setup_main
+        return setup_main(args_in[1:])
+    parser = argparse.ArgumentParser(description="myradio local station and agent dashboard",
+                                     epilog="Run `myradio setup` first to download the music model and engine.")
     parser.add_argument("--data-dir", default=os.environ.get("MYRADIO_DATA_DIR", str(Path.home() / ".myradio")))
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--no-browser", action="store_true")
