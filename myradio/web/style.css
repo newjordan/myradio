@@ -283,3 +283,12 @@ body.motion-off dialog.approve[open],body.motion-off dialog.approve-live[open]{a
 @media(max-width:600px){.approve-body{padding:4px 18px 20px}dialog.approve-live .dialog-top,dialog.approve-live .dialog-copy,dialog.approve-live .confirm-live,dialog.approve-live .dialog-foot{margin-left:18px;margin-right:18px}}
 dialog.approve-live .confirm-live{width:calc(100% - 52px)}
 @media(max-width:600px){dialog.approve-live .confirm-live{width:calc(100% - 36px)}}
+/* Crate lists: Music, DJ clips, Spots */
+.crate-tabs{display:flex;gap:4px;padding:3px;border:1px solid #3d4351;border-radius:9px;background:#141922}
+.crate-tab{flex:1;min-height:38px;padding:4px 8px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:12.5px;font-weight:650;gap:6px}
+.crate-tab:hover{background:#ffffff0a;color:var(--text)}
+.crate-tab[aria-selected=true]{background:linear-gradient(160deg,#2f3646,#262c39);color:var(--text);box-shadow:inset 0 -2px var(--tab,var(--accent))}
+.crate-tab[data-kind=speech]{--tab:var(--coral)}.crate-tab[data-kind=ad]{--tab:#e9c46a}
+.crate-tab .n{font:600 11px ui-monospace,monospace;color:var(--muted);background:#ffffff10;border-radius:10px;padding:1px 7px}
+.crate-tab[aria-selected=true] .n{color:var(--text)}
+.crate-tab{white-space:nowrap;padding:4px 6px;font-size:12px}.crate-tab .n{padding:1px 6px}

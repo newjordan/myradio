@@ -410,11 +410,42 @@ function renderQueue(focusEntry) {
   }
   if (state) renderTape(state);
 }
+// The crate has a list per kind (music, DJ clips, spots) so a song or a DJ clip is quick to pick and swap.
+let crateKind = 'music';
+try { crateKind = localStorage.getItem('myradio-crate') || 'music'; } catch { /* storage may be unavailable */ }
+const CRATE_EMPTY = {music: 'No songs yet. Import music, or ask your agent or music maker for one.',
+                     speech: 'No DJ clips yet. Your agent or voice maker adds lead-ins, links and station IDs here.',
+                     ad: 'No sponsor spots yet.'};
 function renderCrate(library) {
   const crate = $('crate'); crate.replaceChildren();
   const ready = library.filter(track => track.available);
-  for (const track of ready) crate.append(cartNode(track, 0, true));
-  if (!ready.length) { const none = node('p', library.length ? 'No playable audio. Repair it in the Library.' : 'Your crate fills up as you import audio.', 'none'); crate.append(none); }
+  const counts = {music: 0, speech: 0, ad: 0};
+  for (const track of ready) counts[track.kind] = (counts[track.kind] || 0) + 1;
+  if (crateKind === 'ad' && !counts.ad) crateKind = 'music';
+  for (const kind of ['music', 'speech', 'ad']) {
+    const tab = $('crate-tab-' + kind), on = kind === crateKind;
+    $('crate-n-' + kind).textContent = String(counts[kind]);
+    tab.setAttribute('aria-selected', String(on)); tab.tabIndex = on ? 0 : -1;
+    if (kind === 'ad') tab.hidden = !counts.ad;
+  }
+  crate.setAttribute('aria-labelledby', 'crate-tab-' + crateKind);
+  const shown = ready.filter(track => track.kind === crateKind);
+  for (const track of shown) crate.append(cartNode(track, 0, true));
+  if (!shown.length) crate.append(node('p', library.length ? CRATE_EMPTY[crateKind] : 'Your crate fills up as you import audio.', 'none'));
+}
+function pickCrate(kind, focus = false) {
+  crateKind = kind; try { localStorage.setItem('myradio-crate', kind); } catch { /* not kept */ }
+  if (state) renderCrate(state.library);
+  if (focus) $('crate-tab-' + kind).focus();
+}
+for (const tab of document.querySelectorAll('.crate-tab')) {
+  tab.addEventListener('click', () => pickCrate(tab.dataset.kind));
+  tab.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+    const tabs = [...document.querySelectorAll('.crate-tab')].filter(t => !t.hidden);
+    const at = tabs.indexOf(tab), next = tabs[(at + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+    event.preventDefault(); pickCrate(next.dataset.kind, true);
+  });
 }
 
 // --- queue changes: shown at once, then confirmed by the station
