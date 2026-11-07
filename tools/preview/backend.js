@@ -275,7 +275,7 @@
       D.station.name = o.name; D.station.tagline = o.tagline; D.makers = {music: true, voice: o.voice !== 'none'}; D.setup = {saved: true, host: o.voice};
       const song = mk('first' + (++seq), o.title, o.name, o.seconds, 'music'); D.library.push(song);
       let intro = null;
-      if (o.voice !== 'none') { intro = mk('intro' + (++seq), 'DJ intro · ' + o.name, o.voice === 'elevenlabs' ? 'Your DJ · ElevenLabs voice' : 'Your DJ · Drama 3 voice', 14, 'speech'); D.library.push(intro); }
+      if (o.voice !== 'none') { intro = mk('intro' + (++seq), 'DJ intro · ' + o.name, 'Your DJ · ' + ({ elevenlabs: 'ElevenLabs voice', qwen: 'Qwen3-TTS voice', drama: 'Drama 3 voice', index: 'IndexTTS2 voice' }[o.voice] || 'local voice'), 14, 'speech'); D.library.push(intro); }
       D.running = true; D.onboarded = Date.now();
       D.current = {...(intro || song)}; D.elapsed = 0; event(D.current.title, 'playing');
       if (intro) D.queue.unshift(qrow(song));
