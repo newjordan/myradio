@@ -40,17 +40,23 @@ Your station is private until you choose to go live.
 - A birthday song with the family's inside jokes
 - A song for the one you love
 
-## Proof
+## Speed
 
-We ran a station for a full hour on three computers, every song made during the hour:
+The station runs on our work making YuE2 and Drama 3 fast on one graphics card. On a single Intel Arc Pro B70, YuE2 went
+from 0.63× to 3.09× realtime and Drama 3 speech got 2.6× faster; the YuE2 work then carried over to NVIDIA cards.
+The [research paper](docs/research/benchmarks-2026-11-06/PAPER.md) has the details, and the builds are on Hugging Face:
+[YuE2 Turbo Radio](https://huggingface.co/Frosty40/YuE2-Turbo-Radio) and
+[Drama 3 B70 Turbo](https://huggingface.co/Frosty40/Drama-3-B70-Turbo-GGUF).
 
-| Computer | Speed (minutes of music per minute of work) |
+| Graphics card | Music speed (minutes of music per minute of work) |
 | --- | --- |
-| Mac mini (M4 Pro) | 1.03× realtime |
-| RTX 4080 desktop | 3.64× realtime |
-| DGX Spark | 2.29× realtime, with the DJ voice running beside it |
+| Intel Arc Pro B70 | 3.09× realtime |
+| NVIDIA RTX 4080 | 3.64× realtime over an hour on air |
+| NVIDIA DGX Spark | 2.29× realtime, with the DJ voice running beside it |
+| Apple Mac mini (M4 Pro) | 1.03× realtime |
 
-The details are in [docs/runs](docs/runs/) and the [research paper](docs/research/benchmarks-2026-11-06/PAPER.md).
+Before release we ran a station for a full hour on the RTX 4080, the DGX Spark and the Mac mini; those runs are in
+[docs/runs](docs/runs/).
 
 ## More
 
