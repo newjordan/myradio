@@ -1,0 +1,29 @@
+# myradio launch: the full working version (started 2026-11-06)
+
+The user's call (2026-11-06): **no preview release**. "We launch the most complete working version of this thing we can put
+together", licensed **Apache-2.0**, with a final **smoke test on a rented rig** (a fresh cloud GPU machine) once everything
+is finished. Work happens on branch `spark-dual-loader` until it merges to `main`.
+
+Each item lists what "done" means. Tick it only when that is true and tested.
+
+| # | Item | Done when | Status |
+| --- | --- | --- | --- |
+| 1 | License | `LICENSE` (Apache-2.0, official text), `NOTICE` (models and runtimes keep their own licenses), package metadata | **done** (`7637785`) |
+| 2 | Security fixes | the 15 medium findings in `reports/security-review-*.md` applied with their tests, first the status poll that copies the library under the playout lock | open |
+| 3 | Engine defects from the soak run | F3, F5, F9, F10 fixed (`reports/soak-findings.md`), their `expectedFailure` markers removed | open |
+| 4 | `myradio setup` | one command: detects the machine (Apple silicon, NVIDIA, DGX Spark), downloads the music model, the runtime and the chosen voice with progress, resume and checksums, writes the generation config (the dual loader where it fits), makes one test song; the hand setups in `docs/runs/` are its script | open |
+| 5 | Runtimes for every platform | Linux + NVIDIA: the published CUDA build (x86-64) or a build from the published source (aarch64/Spark, as on toymaker); Mac: a published Metal build (the user's to publish) or a source build | open (Mac binary is the user's) |
+| 6 | Real first run in the studio | the quest walk-through from the preview, wired to `myradio setup`'s progress: models, hook-up, one prompt, first song on air | open |
+| 7 | DJ voice default | Jessica (Qwen3-TTS CustomVoice) as the local default through `speech_http`; an ElevenLabs adapter for the cloud option; the agent writes the copy | open |
+| 8 | Release packaging | version 0.4.0, CHANGELOG, public README (quick start, the three receipts, Connect your agent, research help), docs tidied (no links to private repos), wheel built and installed outside the checkout | open |
+| 9 | Clean installs | `myradio setup` from nothing on the Mac mini and on a Linux NVIDIA box, first song on air | open |
+| 10 | Merge and push | branch merged to `main`, pushed; the repository made public (the user confirms the moment) | open |
+| 11 | **Smoke test on a rented rig** | a fresh rented GPU machine (the user picks the provider and approves the cost): install, setup, first song, an hour on air with the agent DJ, receipt written | open, last |
+| 12 | Launch film | "Game Night, Sung Live" (`~/myradio-promo/film/STORYLINES.md`) with Omnispace Technologies branding and the NVIDIA Inception badge on the end card | needs the stream footage or screenshots, Frank's OK, the Omnispace logo file and the official Inception badge file |
+
+## Notes
+
+- Plan usage was at 98% of the weekly limit on 2026-11-06 (resets 2026-11-09); the large items (4, 6, 7) are planned
+  for after the reset.
+- The live station (`~/turbo`) and its B70 stay off limits; build and test on toymaker, apollo and the Mac mini.
+- Never push or make the repository public without the user's explicit go-ahead at that moment; no GitHub Actions.
