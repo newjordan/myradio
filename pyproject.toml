@@ -7,6 +7,8 @@ name = "myradio"
 version = "0.3.2"
 description = "A local-first radio studio with persistent playout and shared agent controls"
 requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+classifiers = ["License :: OSI Approved :: Apache Software License", "Programming Language :: Python :: 3"]
 # Windows has no system timezone database; recurring programs and ad flights need the IANA zones from tzdata there.
 dependencies = ["tzdata; sys_platform == 'win32'"]
 
@@ -21,5 +23,5 @@ include = ["myradio*"]
 
 [tool.setuptools.package-data]
 "myradio.prompts" = ["data/*.json"]
-"myradio" = ["web/*.html", "web/*.js", "web/*.css"]
+"myradio" = ["web/*.html", "web/*.js", "web/*.css", "web/art/*.png", "web/art/*.webp"]
 

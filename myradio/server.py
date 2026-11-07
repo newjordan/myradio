@@ -169,6 +169,13 @@ class Handler(BaseHTTPRequestHandler):
                 name = "index.html" if path == "/" else path[1:]
                 mime = {"index.html": "text/html; charset=utf-8", "app.js": "text/javascript; charset=utf-8", "style.css": "text/css; charset=utf-8"}[name]
                 return self.respond(200, (WEB / name).read_bytes(), content_type=mime)
+            art = re.fullmatch(r"/art/([a-z0-9-]{1,48})\.(png|webp)", path)
+            if art:
+                file = WEB / "art" / f"{art.group(1)}.{art.group(2)}"
+                if not file.is_file():
+                    return self.respond(404, {"error": "Not found."})
+                return self.respond(200, file.read_bytes(), content_type="image/" + art.group(2),
+                                    extra={"Cache-Control": "max-age=86400"})
             asset = re.fullmatch(r"/panels/([a-z0-9_-]{1,40}\.(?:js|css))", path)
             if asset:
                 return self.panel_asset(asset.group(1))
@@ -380,7 +387,12 @@ def load_token(directory):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="myradio local station and agent dashboard")
+    args_in = sys.argv[1:] if argv is None else list(argv)
+    if args_in[:1] == ["setup"]:
+        from .installer import main as setup_main
+        return setup_main(args_in[1:])
+    parser = argparse.ArgumentParser(description="myradio local station and agent dashboard",
+                                     epilog="Run `myradio setup` first to download the music model and engine.")
     parser.add_argument("--data-dir", default=os.environ.get("MYRADIO_DATA_DIR", str(Path.home() / ".myradio")))
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--no-browser", action="store_true")

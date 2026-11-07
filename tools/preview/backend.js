@@ -45,6 +45,7 @@
   function fresh(mode) {
     const onair = mode !== 'first';
     D = {
+      stats: {on_air_seconds: 15120, aired_music: 61, aired_speech: 14, aired_ad: 2, fades: 9},
       mode: onair ? 'onair' : 'first',
       station: onair ? {name: 'Porchlight FM', tagline: 'Late-night sounds for stargazers and makers.', auto_fill: true}
                      : {name: 'My radio', tagline: 'Your station. Your frequency.', auto_fill: true},
@@ -83,7 +84,14 @@
     if (!t) return;
     D.current = {...t}; D.elapsed = 0; event(t.title, 'playing');
   }
-  function finish(ev) { if (D.current) { D.last = D.current.id; event(D.current.title, ev); } D.current = null; D.elapsed = 0; }
+  function finish(ev) {
+    if (D.current) {
+      D.last = D.current.id; event(D.current.title, ev);
+      D.stats.on_air_seconds += D.elapsed; if (D.elapsed >= 1) D.stats['aired_' + (D.current.kind || 'music')] = (D.stats['aired_' + (D.current.kind || 'music')] || 0) + 1;
+      if (ev === 'faded to next') D.stats.fades++;
+    }
+    D.current = null; D.elapsed = 0;
+  }
 
   let lastTick = performance.now();
   setInterval(() => {
@@ -107,6 +115,7 @@
       stream: {listeners: 0, dropped: 0}, chat_mode: 'commands',
       broadcast: {...D.broadcast, format: 'MP3 · 128 kbit/s · 44.1 kHz stereo', encoder_available: true, last_sent: null},
       agent_link: D.agentLink || {seen_at: null, last: null},
+      stats: {...D.stats, on_air_seconds: Math.round((D.stats.on_air_seconds + (D.current ? D.elapsed : 0)) * 10) / 10}, fading: false,
       imports: {conversion_available: true, max_upload_bytes: 104857600, max_decoded_bytes: 104857600},
     };
   }
@@ -138,6 +147,7 @@
         if (D.current) { D.queue.unshift(qrow(D.current)); finish('stopped'); }
         break;
       case 'transport.skip': finish('skipped'); if (D.running) startNext(); break;
+      case 'transport.fade_next': finish('faded to next'); if (D.running) startNext(); break;
       case 'queue.add': {
         track(need('track_id')); if (D.queue.length >= 1000) throw new Error('Queue is full (1,000 items).');
         if ('position' in a && !(Number.isInteger(a.position) && a.position >= 0)) throw new Error('Invalid position.');
@@ -235,7 +245,9 @@
   };
 
   // In-page confirmation (the viewer disables window.confirm, and a native box is not friendly anyway).
-  G.uiConfirm = (message, okLabel) => new Promise(resolve => {
+  G.uiConfirm = (message, okLabel) => typeof approve === 'function'
+    ? approve({title: (okLabel || 'Confirm') + '?', text: message, ok: okLabel || 'Confirm', art: 'approve-delete'})
+    : new Promise(resolve => {
     const d = document.getElementById('confirm-dialog'), ok = d.querySelector('[data-ok]'), cancel = d.querySelector('[data-cancel]');
     d.querySelector('p').textContent = message; ok.textContent = okLabel || 'Confirm';
     const done = v => { d.close(); ok.onclick = cancel.onclick = d.oncancel = null; resolve(v); };
@@ -263,7 +275,7 @@
       D.station.name = o.name; D.station.tagline = o.tagline; D.makers = {music: true, voice: o.voice !== 'none'}; D.setup = {saved: true, host: o.voice};
       const song = mk('first' + (++seq), o.title, o.name, o.seconds, 'music'); D.library.push(song);
       let intro = null;
-      if (o.voice !== 'none') { intro = mk('intro' + (++seq), 'DJ intro · ' + o.name, o.voice === 'elevenlabs' ? 'Your DJ · ElevenLabs voice' : 'Your DJ · Drama 3 voice', 14, 'speech'); D.library.push(intro); }
+      if (o.voice !== 'none') { intro = mk('intro' + (++seq), 'DJ intro · ' + o.name, 'Your DJ · ' + ({ elevenlabs: 'ElevenLabs voice', qwen: 'Qwen3-TTS voice', drama: 'Drama 3 voice', index: 'IndexTTS2 voice' }[o.voice] || 'local voice'), 14, 'speech'); D.library.push(intro); }
       D.running = true; D.onboarded = Date.now();
       D.current = {...(intro || song)}; D.elapsed = 0; event(D.current.title, 'playing');
       if (intro) D.queue.unshift(qrow(song));

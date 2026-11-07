@@ -12,6 +12,7 @@ from download to their own station playing its first song in a few obvious steps
 | --- | --- | --- |
 | [Skatepark Radio](runs/2026-11-06-mac-mini-hour.md), pop punk and hard rock | Mac mini, Apple M4 Pro, Metal | One hour on air, 25 fresh songs aired back to back, 60.6 min of music made in 58.8 min, 0 failed renders, agent DJ |
 | [Late Epoch](runs/2026-11-06-apollo-hour.md), lofi study beats about fine-tuning | apollo, RTX 4080, CUDA | One hour on air, 25 fresh songs aired, 68.9 min of music made in 19.0 min (3.64× realtime), first song on air 56 s after the request, 0 failed renders, agent DJ |
+| [Late Epoch with a DJ](runs/2026-11-06-toymaker-dual-loader-hour.md), the dual loader | DGX Spark (toymaker), CUDA | One hour on air, 24 songs and 12 DJ clips made live on one box, music at 2.29× realtime beside the voice, 0 failed renders, agent wrote the DJ copy |
 | Published model numbers | RTX 4080, Intel Arc Pro B70, M4 Pro | See [RESEARCH.md](RESEARCH.md) and the model cards |
 
 Both runs used the real path a newcomer takes: install myradio, download the model from Hugging Face (checksums verified),
@@ -27,7 +28,7 @@ clip of every song as it aired) are the raw material for the launch films.
 | 3. Get the music runtime for this machine | Linux + NVIDIA: a ready CUDA build is published (`apollo/runtime/full-song/audiocpp_cli` in YuE2-Turbo-Radio). Mac: built locally. Intel Arc: built locally | Publish a Mac (Metal) build next to the CUDA one so setup can download it; Intel Arc next |
 | 4. Hook up | Done by hand: one settings file per machine (runtime, model files, the published speed settings) | Setup writes it from a per-platform table and runs one test song |
 | 5. Pick a station style, first songs | The walk-through in the preview (Menu → Set up your station); agents do it today through Connect your agent | The real first-run flow in the studio |
-| 6. DJ | Connect your agent works today (MCP, one Copy) | ElevenLabs voice adapter (recommended voice), local Drama 3 after |
+| 6. DJ | Connect your agent works today (MCP, one Copy): the agent writes the DJ copy. Local voices run today through the dual loader: Drama 3 (Spark run) and Qwen3-TTS (Jessica, on air on the B70) | Setup offers the voice packages, local in the user's order: Qwen3-TTS CustomVoice / Jessica (2.8 GB, Apache-2.0), Drama 3 B70 Turbo with style-C prompting (23 GB), IndexTTS2 (3.6 GB); or ElevenLabs (cloud) |
 
 ## Checklist
 

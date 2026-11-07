@@ -18,13 +18,21 @@ from typing import Mapping, Optional
 
 from .config import Env, check_base_url, check_url_path, get_bool, get_file_name, get_float, get_int, get_str, check_paths
 from .errors import ConfigError, WorkerError, message_for
-from .payloads import SPEECH_ROLES
+from .payloads import CHARS_PER_SECOND, SPEECH_ROLES, spoken_text
 from .speech import split_takes
 from .workers_base import GenerationRequest, ProbeResult, Worker, WorkerOutput, missing_files
 
 FRAMES_PER_SECOND = 21.5  # Drama 3 audio frames per second of speech, used to turn seconds into a token limit
 AUDIO_TYPES = ("audio/",)
 OPTION_RANGES = {"temperature": (0.0, 2.0), "top_p": (0.0, 1.0), "top_k": (1, 1000)}
+RUN_ON_FACTOR = 2.5     # a take this many times longer than its words need has kept talking past the script
+RUN_ON_SLACK_S = 6.0    # ...and at least this many seconds over, so short lines with a natural pause are not refused
+
+
+def ran_on(text: str, seconds: float) -> bool:
+    """True when a take is far longer than its script: the voice kept going after the last word."""
+    expected = len(spoken_text(text)) / CHARS_PER_SECOND
+    return seconds > max(expected * RUN_ON_FACTOR, expected + RUN_ON_SLACK_S)
 
 
 def _status_error(status: int, body: bytes) -> WorkerError:
@@ -134,11 +142,16 @@ class DramaHttpWorker(Worker):
             headers["Authorization"] = f"Bearer {value}"
         return headers
 
-    def _post_speech(self, text: str, seed: int, max_seconds: float, deadline_s: float, cancel: threading.Event):
+    def _speech_body(self, text: str, seed: int, max_seconds: float) -> dict:
         o = self.options
         body = {"model": o["model"], "input": text, "response_format": "wav", "seed": int(seed),
                 "max_tokens": int(math.ceil(max_seconds * FRAMES_PER_SECOND))}
         body.update(o["generation_options"])
+        return body
+
+    def _post_speech(self, text: str, seed: int, max_seconds: float, deadline_s: float, cancel: threading.Event):
+        o = self.options
+        body = self._speech_body(text, seed, max_seconds)
         try:
             response = self.ctx.http.request("POST", o["host"], o["port"], o["path"] + o["speech_path"],
                                              body=json.dumps(body).encode("utf-8"), headers=self._headers(), deadline_s=deadline_s,
@@ -164,6 +177,9 @@ class DramaHttpWorker(Worker):
     def _take(self, role: str, text: str, seed: int, max_seconds: float, deadline_s: float, cancel: threading.Event):
         pcm = self._post_speech(text, seed, max_seconds, deadline_s, cancel)
         self.check_take(pcm, role, 0.1, max_seconds + 3.0)
+        if ran_on(text, pcm.seconds):
+            raise WorkerError("bad_output", "The voice kept talking past the script. It will be tried again with a new seed.",
+                              detail=f"{pcm.seconds:.1f} s of audio for {len(spoken_text(text))} characters")
         return pcm
 
     def _warm_up(self, cancel: threading.Event) -> float:

@@ -1,0 +1,226 @@
+[
+ {
+  "title": "Checkpoint at 3 AM",
+  "state": "succeeded",
+  "audio_s": 171.16,
+  "render_s": 44.32,
+  "realtime_x": 3.86,
+  "error": null
+ },
+ {
+  "title": "Checkpoint at 3 AM (take 2)",
+  "state": "succeeded",
+  "audio_s": 170.24,
+  "render_s": 45.24,
+  "realtime_x": 3.76,
+  "error": null
+ },
+ {
+  "title": "Checkpoint at 3 AM (take 3)",
+  "state": "succeeded",
+  "audio_s": 143.51,
+  "render_s": 38.33,
+  "realtime_x": 3.74,
+  "error": null
+ },
+ {
+  "title": "Early Stopping",
+  "state": "succeeded",
+  "audio_s": 137.56,
+  "render_s": 39.08,
+  "realtime_x": 3.52,
+  "error": null
+ },
+ {
+  "title": "Early Stopping (take 2)",
+  "state": "succeeded",
+  "audio_s": 107.24,
+  "render_s": 31.77,
+  "realtime_x": 3.38,
+  "error": null
+ },
+ {
+  "title": "Frozen Layers",
+  "state": "succeeded",
+  "audio_s": 159.72,
+  "render_s": 43.8,
+  "realtime_x": 3.65,
+  "error": null
+ },
+ {
+  "title": "Frozen Layers (take 2)",
+  "state": "succeeded",
+  "audio_s": 136.41,
+  "render_s": 38.56,
+  "realtime_x": 3.54,
+  "error": null
+ },
+ {
+  "title": "Gradient Drift",
+  "state": "succeeded",
+  "audio_s": 178.31,
+  "render_s": 47.09,
+  "realtime_x": 3.79,
+  "error": null
+ },
+ {
+  "title": "Gradient Drift (take 2)",
+  "state": "succeeded",
+  "audio_s": 166.21,
+  "render_s": 43.91,
+  "realtime_x": 3.78,
+  "error": null
+ },
+ {
+  "title": "Learning Rate",
+  "state": "succeeded",
+  "audio_s": 149.16,
+  "render_s": 41.2,
+  "realtime_x": 3.62,
+  "error": null
+ },
+ {
+  "title": "Learning Rate (take 2)",
+  "state": "succeeded",
+  "audio_s": 149.48,
+  "render_s": 41.19,
+  "realtime_x": 3.63,
+  "error": null
+ },
+ {
+  "title": "Learning Rate (take 3)",
+  "state": "succeeded",
+  "audio_s": 127.16,
+  "render_s": 36.02,
+  "realtime_x": 3.53,
+  "error": null
+ },
+ {
+  "title": "Loss Curve Lullaby",
+  "state": "succeeded",
+  "audio_s": 180.0,
+  "render_s": 46.12,
+  "realtime_x": 3.9,
+  "error": null
+ },
+ {
+  "title": "Loss Curve Lullaby (take 2)",
+  "state": "succeeded",
+  "audio_s": 167.78,
+  "render_s": 44.61,
+  "realtime_x": 3.76,
+  "error": null
+ },
+ {
+  "title": "Loss Curve Lullaby (take 3)",
+  "state": "succeeded",
+  "audio_s": 180.0,
+  "render_s": 48.02,
+  "realtime_x": 3.75,
+  "error": null
+ },
+ {
+  "title": "Low Rank Love",
+  "state": "succeeded",
+  "audio_s": 114.24,
+  "render_s": 35.51,
+  "realtime_x": 3.22,
+  "error": null
+ },
+ {
+  "title": "Low Rank Love (take 2)",
+  "state": "succeeded",
+  "audio_s": 101.64,
+  "render_s": 31.91,
+  "realtime_x": 3.19,
+  "error": null
+ },
+ {
+  "title": "One More Epoch",
+  "state": "succeeded",
+  "audio_s": 162.27,
+  "render_s": 43.16,
+  "realtime_x": 3.76,
+  "error": null
+ },
+ {
+  "title": "One More Epoch (take 2)",
+  "state": "succeeded",
+  "audio_s": 161.36,
+  "render_s": 42.01,
+  "realtime_x": 3.84,
+  "error": null
+ },
+ {
+  "title": "One More Epoch (take 3)",
+  "state": "succeeded",
+  "audio_s": 154.32,
+  "render_s": 41.0,
+  "realtime_x": 3.76,
+  "error": null
+ },
+ {
+  "title": "Small Batch Sunday",
+  "state": "succeeded",
+  "audio_s": 141.56,
+  "render_s": 41.55,
+  "realtime_x": 3.41,
+  "error": null
+ },
+ {
+  "title": "Small Batch Sunday (take 2)",
+  "state": "succeeded",
+  "audio_s": 127.64,
+  "render_s": 36.98,
+  "realtime_x": 3.45,
+  "error": null
+ },
+ {
+  "title": "Validation Rain",
+  "state": "succeeded",
+  "audio_s": 166.56,
+  "render_s": 42.85,
+  "realtime_x": 3.89,
+  "error": null
+ },
+ {
+  "title": "Validation Rain (take 2)",
+  "state": "succeeded",
+  "audio_s": 131.96,
+  "render_s": 37.01,
+  "realtime_x": 3.57,
+  "error": null
+ },
+ {
+  "title": "Warmup Steps",
+  "state": "succeeded",
+  "audio_s": 179.43,
+  "render_s": 52.16,
+  "realtime_x": 3.44,
+  "error": null
+ },
+ {
+  "title": "Warmup Steps (take 2)",
+  "state": "succeeded",
+  "audio_s": 115.79,
+  "render_s": 33.58,
+  "realtime_x": 3.45,
+  "error": null
+ },
+ {
+  "title": "Weights and Measures",
+  "state": "succeeded",
+  "audio_s": 99.83,
+  "render_s": 29.52,
+  "realtime_x": 3.38,
+  "error": null
+ },
+ {
+  "title": "Weights and Measures (take 2)",
+  "state": "succeeded",
+  "audio_s": 155.36,
+  "render_s": 40.95,
+  "realtime_x": 3.79,
+  "error": null
+ }
+]

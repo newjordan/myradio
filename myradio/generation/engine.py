@@ -51,7 +51,8 @@ KEEP_TAKE_BYTES = 128 * 1024 * 1024  # the largest finished take that is kept in
 PROVEN = ("test_clip_made", "real_job_completed")
 FIXTURE_TITLE_PREFIX = "[FIXTURE] "
 FIXTURE_ARTIST = "FIXTURE - not real music"
-KIND_LABELS = {"drama_http": "Voice maker (Drama 3)", "yue2_cli": "Music maker (YuE2)", "fixture": "Test tones (not real audio)"}
+KIND_LABELS = {"drama_http": "Voice maker (Drama 3)", "speech_http": "Voice maker", "yue2_cli": "Music maker (YuE2)",
+               "yue2_http": "Music maker (YuE2, kept loaded)", "fixture": "Test tones (not real audio)"}
 EVIDENCE_LABELS = {"none": "Not checked yet", "setup_checked": "Set up and checked; nothing made yet",
                    "test_clip_made": "A short test was made", "real_job_completed": "Real work has been made",
                    "test_tones": "Test tones only; nothing real has been made"}

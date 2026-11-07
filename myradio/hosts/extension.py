@@ -1,7 +1,8 @@
 """The hosts extension: on-air personalities and the script composer.
 
-It writes text only. It never makes audio, never calls a model and never touches the network by
-default; the generation lane turns a script into speech. Everything it knows is kept in its own
+It writes text only. It never makes audio, and it only calls a language model when the operator
+connects one in config.json (``writer``; the connection itself lives in myradio/writer.py, outside
+this package, so the hosts lane never touches the network); the generation lane turns a script into speech. Everything it knows is kept in its own
 SQLite file under the extension's directory.
 """
 from __future__ import annotations
@@ -17,6 +18,7 @@ from .formats import FORMATS
 from .segments import SEGMENT_IDS
 from .service import HostsService
 from .textsafe import EVENT_TAGS
+from myradio.writer import WriterError, make_complete, parse_writer
 
 DB_FILE = "hosts.sqlite3"
 _TAG_NAME = re.compile(r"[a-z][a-z ]{0,24}")
@@ -32,6 +34,7 @@ class HostsExtension(Extension):
         self.service: Optional[HostsService] = None
         self._conn: Optional[sqlite3.Connection] = None
         self._notes: List[str] = []
+        self._writer: Optional[dict] = None
 
     # ---- lifecycle -------------------------------------------------------------------------------
     def start(self, ctx: Context) -> None:
@@ -50,6 +53,11 @@ class HostsExtension(Extension):
             raise HostsError("The saved hosts file is damaged. Move hosts.sqlite3 out of the hosts folder and restart "
                              "myradio; the built-in hosts will work again.") from None
         self._conn = conn      # kept so tests can see that stop() released it; the service owns it
+        if self._writer is not None:
+            try:
+                self.service.set_writer(make_complete(self._writer), timeout=self._writer["timeout_s"])
+            except WriterError as exc:
+                self._notes.append(f"The writing assistant was not connected: {exc}")
 
     def stop(self) -> None:
         service, self._conn = self.service, None
@@ -76,6 +84,13 @@ class HostsExtension(Extension):
                     self._notes.append(f"The effect setting {str(key)[:20]!r} in config.json was ignored.")
         elif given:
             self._notes.append("The event_tags setting in config.json must be an object, so it was ignored.")
+        self._writer = None
+        if config.get("writer") is not None:
+            try:
+                self._writer, notes = parse_writer(config["writer"])
+                self._notes.extend(notes)
+            except WriterError as exc:
+                self._notes.append(f"The writing assistant was not connected: {exc}")
         zone = config.get("timezone")
         if zone is not None and not (isinstance(zone, str) and 0 < len(zone) <= 64):
             self._notes.append("The timezone setting in config.json was ignored.")

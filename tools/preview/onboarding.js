@@ -6,9 +6,23 @@
   const demo = window.__demo;
   const q = s => document.querySelector(s), qa = s => [...document.querySelectorAll(s)];
   const STEPS = ['install', 'hookup', 'prompt', 'first'];
+  const art = name => (window.MYRADIO_ART && window.MYRADIO_ART[name]) || `/art/${name}.png`;
+  ['#ob-scene-img', '#ob-guide-img'].forEach(sel => { const el = q(sel); if (el) el.addEventListener('error', () => el.classList.add('missing')); });
+  const SCENES = {install: ['scene-welcome', 'dial-happy', 'Hi, I’m Dial! Let’s build your own private radio station. First quest: bring the music home. Pick a voice for your DJ and press Install.'],
+                  hookup: ['scene-hookup', 'dial-excited', 'Quest 2: wire the studio. I’m plugging everything in and making a little test sound.'],
+                  prompt: ['scene-welcome', 'dial-singing', 'Quest 3: what should your station sound like? Tell me in a sentence, or pick an idea.'],
+                  first: ['scene-firstsong', 'dial-singing', 'Final quest: your very first song is being made right now. Nobody has ever heard it.']};
+  function guide(step, line, scene, mood) {
+    const [s0, m0, l0] = SCENES[step] || SCENES.install;
+    q('#ob-scene-img').src = art(scene || s0); q('#ob-guide-img').src = art(mood || m0); q('#ob-guide-say').textContent = line || l0;
+    const done = STEPS.indexOf(step), xp = done * 25;
+    q('#ob-xp-label').textContent = `${xp} / 100 XP`; q('#ob-xp-fill').style.width = `${xp}%`;
+  }
   const MUSIC = {label: 'Music maker · YuE2 Turbo Radio', bytes: 4.53e9};
   const VOICE = {
     elevenlabs: {label: 'DJ voice · ElevenLabs', bytes: 0, check: ['DJ voice connected', 'ElevenLabs accepted the key and read a test line.']},
+    qwen: {label: 'DJ voice · Qwen3-TTS (Jessica)', bytes: 2.82e9, check: ['DJ voice warmed up', 'Qwen3-TTS on this computer read a test line in Jessica’s voice.']},
+    index: {label: 'DJ voice · IndexTTS2', bytes: 3.63e9, check: ['DJ voice warmed up', 'IndexTTS2 on this computer read a test line in your chosen voice.']},
     drama: {label: 'DJ voice · Drama 3 B70 Turbo', bytes: 24.3e9, check: ['DJ voice warmed up', 'Drama 3 on this computer: first audio in 0.3 s (the model card’s figure).']},
     none: {label: 'No DJ', bytes: 0, check: ['No DJ voice yet', 'Music only for now. Add a voice any time from the menu.']},
   };
@@ -37,6 +51,7 @@
       if (i === at) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
       li.querySelector('span').textContent = i < at ? '✓' : String(i + 1);
     });
+    guide(step);
     if (focus && !q('#view-start').hidden) q(`#ob-h-${step}`).focus({preventScroll: true});
     const body = q('#sheet .sheet-body'); if (body) body.scrollTop = 0;
   }
@@ -58,6 +73,7 @@
     }
     err.hidden = true;
     st.voice = v;
+    guide('install', 'Hauling in your music model now. It’s a big tape, so this is the longest part!', 'scene-install', 'dial-excited');
     qa('#view-start [data-panel=install] input, #ob-install').forEach(el => { el.disabled = true; });
     const items = [MUSIC].concat(VOICE[v].bytes ? [VOICE[v]] : []);
     const box = q('#ob-downloads'); box.hidden = false;
@@ -152,11 +168,16 @@
       qa('#ob-stages li').forEach(li => { li.className = 'ok'; });
       q('#ob-render').value = 1; q('#ob-render-clock').textContent = `${mmss(f.seconds)} of ${mmss(f.seconds)} made`;
       q('#ob-h-first').textContent = 'Your first song is ready';
+      guide('first', 'We did it! Your station is going on the air. Quest complete!', 'scene-onair', 'dial-onair');
+      q('#ob-xp-label').textContent = '100 / 100 XP'; q('#ob-xp-fill').style.width = '100%';
       say('Your first song is ready. Going on the air.');
       later(() => {
         demo.completeOnboarding(f);
         location.hash = '#studio';
-        later(() => { if (typeof toast === 'function') toast(`${f.name} is on the air, privately on this computer. Customize it any time from the menu.`); }, 400);
+        later(() => {
+          const msg = `${f.name} is on the air, privately on this computer. Customize it any time from the menu.`;
+          if (typeof celebrate === 'function') celebrate(msg); else if (typeof toast === 'function') toast(msg);
+        }, 400);
       }, 900);
     }
     q('#ob-skip-render').onclick = done;

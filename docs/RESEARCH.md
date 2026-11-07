@@ -14,8 +14,10 @@ as ideas, not as results.
 | --- | --- | --- |
 | [YuE2 Turbo Radio](https://huggingface.co/Frosty40/YuE2-Turbo-Radio) (music, 4.53 GB, YuE2-3B Q8_0 + F16 VAE) | RTX 4080 16 GB, CUDA | 3.17× realtime for a 69 s song, 3.32× for a 4:17 song (8 steps); streaming first audio 8.6 to 9.4 s including cold start; 16 songs in a row at 2.6 to 3.0× |
 | same | RTX 4080 16 GB, CUDA, in myradio | a live station for a full hour: 25 fresh songs aired, 68.9 min of music made in 19.0 min (3.64× realtime), first song on air 56 s after the request, 0 failed renders ([receipt](runs/2026-11-06-apollo-hour.md)) |
-| same | Intel Arc Pro B70, SYCL | 3.09× realtime (8 steps), while also serving a live station |
+| same, plus [Drama 3 B70 Turbo](https://huggingface.co/Frosty40/Drama-3-B70-Turbo-GGUF) as the DJ voice | DGX Spark (GB10), CUDA, dual loader in myradio | music and DJ voice in one server (24 GB): an hour on air with 24 songs and 12 DJ clips, 61.8 min of music made in 27.0 min (2.29× realtime) while the voice shared the GPU, 0 failed renders ([receipt](runs/2026-11-06-toymaker-dual-loader-hour.md)) |
+| same | Intel Arc Pro B70, SYCL | 3.09× session realtime (8 steps, Nov 1), up from 0.63× on stock settings; streaming first audio 7.6 s; a 30-minute queue; then ran the live Knight Shift Radio station |
 | same | Apple M4 Pro (Mac mini), Metal | keeps a live station fed for a full hour: 25 fresh songs aired back to back, 60.6 min of music made in 58.8 min, 0 failed renders ([receipt](runs/2026-11-06-mac-mini-hour.md)) |
+| Qwen3-TTS 1.7B CustomVoice (speech, 2.8 GB Q8): Jessica, the news voice | Intel Arc Pro B70 (live station) and DGX Spark | reads Knight Shift Radio's hourly news desk on air from the B70; through audio.cpp on the Spark, a 127 s desk in 47 s (2.69× realtime) ([notes](research/dj-voices.md)) |
 | [Drama 3 B70 Turbo](https://huggingface.co/Frosty40/Drama-3-B70-Turbo-GGUF) (speech, 24.3 GB) | Intel Arc Pro B70 | 26.1 ms to make a 46.4 ms audio frame (0.56 real-time factor, 2.6× faster than stock); streaming first audio 0.27 to 0.35 s |
 
 The model cards hold the receipts. myradio adds one more kind: an hour of real airplay, with each song's render time and a

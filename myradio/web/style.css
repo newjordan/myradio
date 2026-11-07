@@ -196,3 +196,99 @@ dialog.menu .lock{margin:4px 24px 20px;width:calc(100% - 48px)}
 .stream-parsed{min-height:1.4em;font-size:13px;color:var(--muted);margin:-6px 0 12px;overflow-wrap:anywhere}.stream-parsed.error{color:var(--error)}
 .connect code{font:12px ui-monospace,monospace;color:var(--cream);overflow-wrap:anywhere}
 .deck-link{display:block;color:var(--accent);text-decoration:none}.deck-link:hover{text-decoration:underline}
+/* ===== Game layer: Dial the station pet, levels, trophies, celebrations ===== */
+.pet{position:relative;flex-shrink:0;width:56px;height:56px;padding:0;min-height:0;border:0;background:transparent;border-radius:12px;cursor:pointer}
+.pet:hover{background:#ffffff0d}.pet:focus-visible{outline-offset:2px}
+.pet-img{width:52px;height:52px;display:block;margin:2px auto;filter:drop-shadow(0 2px 3px #0005)}
+.pet-img.missing,.pet-big.missing{visibility:hidden}
+.pet[data-mood=singing] .pet-img,.pet[data-mood=excited] .pet-img{animation:pet-bop .9s ease-in-out infinite}
+.pet[data-mood=sleepy] .pet-img{animation:pet-breathe 3.2s ease-in-out infinite}
+.pet[data-mood=onair] .pet-img{filter:drop-shadow(0 0 10px #ff946e99)}
+.pet.boing .pet-img{animation:pet-boing .45s cubic-bezier(.3,1.6,.5,1)}
+.pet-say{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);z-index:12;width:max-content;max-width:220px;padding:6px 10px;border-radius:8px;background:#f3e6c2;color:#1d2526;font:600 12px/1.35 ui-monospace,monospace;box-shadow:0 6px 16px #0006;pointer-events:none;opacity:0;transition:opacity .2s}
+.pet-say:before{content:'';position:absolute;left:50%;top:-5px;width:10px;height:10px;background:#f3e6c2;transform:translateX(-50%) rotate(45deg)}
+.pet:hover .pet-say,.pet:focus-visible .pet-say,.pet.boing .pet-say{opacity:1}
+@keyframes pet-bop{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes pet-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04,.97)}}
+@keyframes pet-boing{0%{transform:scale(1)}40%{transform:scale(1.18,.85) translateY(-6px)}100%{transform:scale(1)}}
+.level-chip{display:grid;grid-template-columns:auto auto;grid-template-rows:auto 5px;column-gap:8px;align-items:center;padding:6px 12px;border:1px solid #4a5161;border-radius:10px;background:linear-gradient(160deg,#262c39,#1c212c);color:var(--text);text-decoration:none;min-height:44px}
+.level-chip:hover{border-color:var(--accent)}
+.level-chip .lv{font:800 12px ui-monospace,monospace;letter-spacing:.06em;color:var(--accent)}
+.level-chip .lv-name{font-size:12px;font-weight:650;white-space:nowrap}
+.level-chip .xp{grid-column:1/-1;height:5px;border-radius:3px;background:#3b4252;overflow:hidden;margin-top:4px}
+.level-chip .xp i,.xp-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#e9c46a);border-radius:3px;transition:width .6s ease}
+.pet-stage{display:flex;gap:20px;align-items:center;background:radial-gradient(ellipse at 20% 50%,#2b3550,transparent 70%),var(--surface);border:1px solid var(--border);border-radius:17px;padding:18px 22px}
+.pet-big{width:160px;height:160px;flex-shrink:0}
+.pet-title{font-size:1.7rem;letter-spacing:-.04em;margin:2px 0 6px}
+.xp-bar{height:12px;border-radius:6px;background:#3b4252;overflow:hidden;margin:4px 0 10px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0 0}
+.stat-grid div{background:#141a26;border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.stat-grid dt{font-size:.7rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.stat-grid dd{margin:4px 0 0;font:800 1.25rem ui-monospace,monospace;color:var(--cream,#f3e6c2)}
+.badges{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.badge-slot{display:grid;justify-items:center;text-align:center;gap:4px;padding:14px 10px;border:1px dashed #4a5161;border-radius:12px;background:#151a24}
+.badge-slot img{width:64px;height:64px;filter:grayscale(1) brightness(.45)}
+.badge-slot img.missing{visibility:hidden}
+.badge-slot strong{font-size:.85rem}.badge-slot small{font-size:.72rem;color:var(--muted);line-height:1.35}
+.badge-slot.got{border-style:solid;border-color:#85976d;background:linear-gradient(170deg,#263329,#1b202c)}
+.badge-slot.got img{filter:none;animation:badge-shine 4s ease-in-out infinite}
+@keyframes badge-shine{0%,90%,100%{transform:none}95%{transform:rotate(-6deg) scale(1.06)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:8px;height:8px;image-rendering:pixelated;animation:confetti-fall 2.1s cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes confetti-fall{to{transform:translate(var(--drift,0),105vh) rotate(540deg);opacity:.2}}
+/* pressable hardware: buttons and carts feel physical */
+.transport-row button,.pad,.guard,.knob,.cart,.level-chip{transition:transform .08s ease,box-shadow .08s ease,background .15s}
+.transport-row button:active:not(:disabled),.pad:active:not(:disabled),.level-chip:active{transform:translateY(2px);box-shadow:inset 0 2px 4px #0008}
+.cart:active{transform:scale(.99)}
+.transport-row #skip:active:not(:disabled){background:#3a3550}
+body.motion-off .pet-img,body.motion-off .badge-slot.got img{animation:none!important}
+body.motion-off .confetti{display:none}
+@media(max-width:1050px){.level-chip .lv-name{display:none}.level-chip{grid-template-columns:auto;padding:6px 10px}}
+@media(max-width:850px){.pet{width:46px;height:46px}.pet-img{width:42px;height:42px}.pet-say{max-width:170px}}
+@media(max-width:600px){.pet-stage{flex-direction:column;text-align:center}.pet-big{width:128px;height:128px}}
+@media(max-width:600px){.masthead{gap:8px}.masthead .station-id{display:none}.pet{width:42px;height:42px}.pet-img{width:40px;height:40px}.level-chip{padding:6px 8px}}
+/* On air: the console lamp gets a thin glowing tube of light set into its frame; the desk button a quiet warm outline */
+.state-lamp.live{position:relative;border-color:#160d0c;box-shadow:inset 0 0 15px #0008,0 1px #ffffff12}
+.state-lamp.live:after{content:'';position:absolute;inset:3px;border-radius:3px;pointer-events:none;border:1.5px solid #ffb27a;
+  box-shadow:0 0 3px #ff9a5c,0 0 7px #ff6a2acc,inset 0 0 3px #ff9a5c,inset 0 0 8px #ff6a2a55;animation:tube 3.2s ease-in-out infinite}
+@keyframes tube{0%,100%{opacity:1}50%{opacity:.72}}
+.guard.on-air,.guard.on-air:disabled{opacity:1;cursor:default;background:linear-gradient(180deg,#4a2620,#33191a);color:#ffe7d2;border-color:#e08a5c;
+  box-shadow:0 4px #1b1315,inset 0 0 0 1px #ff9a5c55,0 0 6px #ff6a2a44}
+.guard.on-air:before{background:#e9a06f}
+.guard.on-air .ember-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:#ffd6a8;box-shadow:0 0 5px #ff8a3d;vertical-align:1px;animation:tube 2.4s ease-in-out infinite}
+.guard.igniting{border-color:#c98458;box-shadow:0 4px #1b1315,inset 0 0 0 1px #ff9a5c33}
+body.motion-off .state-lamp.live:after,body.motion-off .guard.on-air .ember-dot{animation:none}
+@media(prefers-reduced-motion:reduce){.state-lamp.live:after,.guard.on-air .ember-dot{animation:none}}
+/* ===== Approval cards: illustrated, a little bouncy ===== */
+dialog.approve,dialog.approve-live{padding:0;overflow:hidden;max-width:440px;border:1px solid #5a6170;border-radius:18px;background:linear-gradient(180deg,#1f2533,#171c27)}
+dialog.approve[open],dialog.approve-live[open]{animation:approve-in .32s cubic-bezier(.3,1.4,.5,1)}
+@keyframes approve-in{from{transform:translateY(14px) scale(.94);opacity:0}to{transform:none;opacity:1}}
+.approve-art{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.approve-art.missing{display:none}
+.approve-body{padding:4px 26px 24px;display:grid;gap:10px}
+.approve-body h2{font-size:1.45rem;letter-spacing:-.03em;margin:0}
+.approve-body .eyebrow{margin:0;color:var(--coral)}
+.approve-body p{font-size:.92rem;margin:0}
+.approve-actions{display:flex;gap:10px;margin-top:8px}
+.approve-actions button{flex:1;width:auto;min-height:48px;border-radius:12px;font-weight:700}
+.approve-ok{background:var(--coral);border-color:var(--coral);color:#211b1c;box-shadow:0 4px #8f4a33}
+.approve-ok:hover{background:#ffb396}
+.approve-ok:active,.approve-actions .quiet:active{transform:translateY(3px);box-shadow:none}
+.approve-actions .quiet{border:1px solid #4c5364;box-shadow:0 4px #11151c}
+dialog.approve-live .dialog-top,dialog.approve-live .dialog-copy,dialog.approve-live .confirm-live,dialog.approve-live .dialog-foot{margin-left:26px;margin-right:26px}
+dialog.approve-live .dialog-top{margin-top:2px}
+dialog.approve-live .dialog-foot{margin-bottom:22px}
+body.motion-off dialog.approve[open],body.motion-off dialog.approve-live[open]{animation:none}
+@media(prefers-reduced-motion:reduce){dialog.approve[open],dialog.approve-live[open]{animation:none}}
+@media(max-width:600px){.approve-body{padding:4px 18px 20px}dialog.approve-live .dialog-top,dialog.approve-live .dialog-copy,dialog.approve-live .confirm-live,dialog.approve-live .dialog-foot{margin-left:18px;margin-right:18px}}
+dialog.approve-live .confirm-live{width:calc(100% - 52px)}
+@media(max-width:600px){dialog.approve-live .confirm-live{width:calc(100% - 36px)}}
+/* Crate lists: Music, DJ clips, Spots */
+.crate-tabs{display:flex;gap:4px;padding:3px;border:1px solid #3d4351;border-radius:9px;background:#141922}
+.crate-tab{flex:1;min-height:38px;padding:4px 8px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:12.5px;font-weight:650;gap:6px}
+.crate-tab:hover{background:#ffffff0a;color:var(--text)}
+.crate-tab[aria-selected=true]{background:linear-gradient(160deg,#2f3646,#262c39);color:var(--text);box-shadow:inset 0 -2px var(--tab,var(--accent))}
+.crate-tab[data-kind=speech]{--tab:var(--coral)}.crate-tab[data-kind=ad]{--tab:#e9c46a}
+.crate-tab .n{font:600 11px ui-monospace,monospace;color:var(--muted);background:#ffffff10;border-radius:10px;padding:1px 7px}
+.crate-tab[aria-selected=true] .n{color:var(--text)}
+.crate-tab{white-space:nowrap;padding:4px 6px;font-size:12px}.crate-tab .n{padding:1px 6px}

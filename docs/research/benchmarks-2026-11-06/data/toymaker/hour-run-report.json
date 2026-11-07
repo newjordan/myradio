@@ -1,0 +1,642 @@
+{
+  "hour_start": "2026-11-06 14:48:32",
+  "seconds": 3610,
+  "played": [
+    {
+      "title": "Learning Rate",
+      "at": 1793998128.0062451,
+      "minute": 0.3,
+      "kind": "music"
+    },
+    {
+      "title": "Loss Curve Lullaby",
+      "at": 1793998253.2256799,
+      "minute": 2.3,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: Learning Rate",
+      "at": 1793998421.454319,
+      "minute": 5.1,
+      "kind": "speech"
+    },
+    {
+      "title": "Learning Rate",
+      "at": 1793998436.7695506,
+      "minute": 5.4,
+      "kind": "music"
+    },
+    {
+      "title": "Warmup Steps",
+      "at": 1793998573.8779805,
+      "minute": 7.7,
+      "kind": "music"
+    },
+    {
+      "title": "Low Rank Love",
+      "at": 1793998726.7085953,
+      "minute": 10.2,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: One More Epoch",
+      "at": 1793998878.6653192,
+      "minute": 12.8,
+      "kind": "speech"
+    },
+    {
+      "title": "One More Epoch",
+      "at": 1793998893.69376,
+      "minute": 13.0,
+      "kind": "music"
+    },
+    {
+      "title": "Gradient Drift",
+      "at": 1793999045.5261388,
+      "minute": 15.5,
+      "kind": "music"
+    },
+    {
+      "title": "Late Epoch ID 1",
+      "at": 1793999201.1092958,
+      "minute": 18.1,
+      "kind": "speech"
+    },
+    {
+      "title": "Validation Rain",
+      "at": 1793999216.1305943,
+      "minute": 18.4,
+      "kind": "music"
+    },
+    {
+      "title": "Early Stopping",
+      "at": 1793999366.5829651,
+      "minute": 20.9,
+      "kind": "music"
+    },
+    {
+      "title": "Small Batch Sunday",
+      "at": 1793999487.7151623,
+      "minute": 22.9,
+      "kind": "music"
+    },
+    {
+      "title": "Frozen Layers",
+      "at": 1793999623.4701164,
+      "minute": 25.2,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: Checkpoint at 3 AM",
+      "at": 1793999743.8842273,
+      "minute": 27.2,
+      "kind": "speech"
+    },
+    {
+      "title": "Wren: link 1",
+      "at": 1793999758.909963,
+      "minute": 27.4,
+      "kind": "speech"
+    },
+    {
+      "title": "Wren: One More Epoch",
+      "at": 1793999774.0308561,
+      "minute": 27.7,
+      "kind": "speech"
+    },
+    {
+      "title": "Wren: Learning Rate",
+      "at": 1793999790.3530617,
+      "minute": 28.0,
+      "kind": "speech"
+    },
+    {
+      "title": "Checkpoint at 3 AM",
+      "at": 1793999805.3787827,
+      "minute": 28.2,
+      "kind": "music"
+    },
+    {
+      "title": "Loss Curve Lullaby (take 2)",
+      "at": 1793999955.7490764,
+      "minute": 30.7,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: link 1",
+      "at": 1794000091.1377752,
+      "minute": 33.0,
+      "kind": "speech"
+    },
+    {
+      "title": "Learning Rate (take 2)",
+      "at": 1794000106.4455645,
+      "minute": 33.2,
+      "kind": "music"
+    },
+    {
+      "title": "Checkpoint at 3 AM (take 2)",
+      "at": 1794000241.7989738,
+      "minute": 35.5,
+      "kind": "music"
+    },
+    {
+      "title": "Low Rank Love (take 2)",
+      "at": 1794000393.448812,
+      "minute": 38.0,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: link 2",
+      "at": 1794000501.3221824,
+      "minute": 39.8,
+      "kind": "speech"
+    },
+    {
+      "title": "One More Epoch (take 2)",
+      "at": 1794000516.392446,
+      "minute": 40.1,
+      "kind": "music"
+    },
+    {
+      "title": "Warmup Steps (take 2)",
+      "at": 1794000652.7551315,
+      "minute": 42.3,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: Weights and Measures",
+      "at": 1794000787.280056,
+      "minute": 44.6,
+      "kind": "speech"
+    },
+    {
+      "title": "Weights and Measures",
+      "at": 1794000802.309814,
+      "minute": 44.8,
+      "kind": "music"
+    },
+    {
+      "title": "Frozen Layers (take 2)",
+      "at": 1794000968.4596422,
+      "minute": 47.6,
+      "kind": "music"
+    },
+    {
+      "title": "Early Stopping (take 2)",
+      "at": 1794001119.269022,
+      "minute": 50.1,
+      "kind": "music"
+    },
+    {
+      "title": "Gradient Drift (take 2)",
+      "at": 1794001240.026367,
+      "minute": 52.1,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: link 3",
+      "at": 1794001406.3835323,
+      "minute": 54.9,
+      "kind": "speech"
+    },
+    {
+      "title": "Learning Rate (take 3)",
+      "at": 1794001421.4490125,
+      "minute": 55.1,
+      "kind": "music"
+    },
+    {
+      "title": "Validation Rain (take 2)",
+      "at": 1794001541.7474825,
+      "minute": 57.1,
+      "kind": "music"
+    },
+    {
+      "title": "Wren: link 4",
+      "at": 1794001707.512609,
+      "minute": 59.9,
+      "kind": "speech"
+    }
+  ],
+  "jobs": {
+    "queued": 1,
+    "running": 0,
+    "succeeded": 40,
+    "failed": 0,
+    "cancelled": 0,
+    "expired": 0,
+    "interrupted": 0
+  },
+  "renders": [
+    {
+      "title": "Loss Curve Lullaby (take 3)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 127.9,
+      "render_s": 53.41,
+      "realtime_x": 2.39,
+      "error": null
+    },
+    {
+      "title": "Learning Rate (take 3)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 124.91,
+      "render_s": 50.78,
+      "realtime_x": 2.46,
+      "error": null
+    },
+    {
+      "title": "Weights and Measures (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 146.48,
+      "render_s": 64.63,
+      "realtime_x": 2.27,
+      "error": null
+    },
+    {
+      "title": "Small Batch Sunday (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 141.86,
+      "render_s": 58.68,
+      "realtime_x": 2.42,
+      "error": null
+    },
+    {
+      "title": "Late Epoch ID 3",
+      "role": "id",
+      "state": "succeeded",
+      "audio_s": 4.32,
+      "render_s": 3.32,
+      "realtime_x": 1.3,
+      "error": null
+    },
+    {
+      "title": "Wren: link 4",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 11.8,
+      "render_s": 8.12,
+      "realtime_x": 1.45,
+      "error": null
+    },
+    {
+      "title": "Wren: link 3",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 13.65,
+      "render_s": 9.37,
+      "realtime_x": 1.46,
+      "error": null
+    },
+    {
+      "title": "Early Stopping (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 124.31,
+      "render_s": 52.98,
+      "realtime_x": 2.35,
+      "error": null
+    },
+    {
+      "title": "Frozen Layers (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 149.61,
+      "render_s": 62.6,
+      "realtime_x": 2.39,
+      "error": null
+    },
+    {
+      "title": "Gradient Drift (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 165.0,
+      "render_s": 77.96,
+      "realtime_x": 2.12,
+      "error": null
+    },
+    {
+      "title": "Validation Rain (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 165.0,
+      "render_s": 70.69,
+      "realtime_x": 2.33,
+      "error": null
+    },
+    {
+      "title": "Warmup Steps (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 124.75,
+      "render_s": 53.0,
+      "realtime_x": 2.35,
+      "error": null
+    },
+    {
+      "title": "Low Rank Love (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 114.67,
+      "render_s": 52.85,
+      "realtime_x": 2.17,
+      "error": null
+    },
+    {
+      "title": "Checkpoint at 3 AM (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 138.4,
+      "render_s": 58.82,
+      "realtime_x": 2.35,
+      "error": null
+    },
+    {
+      "title": "One More Epoch (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 144.2,
+      "render_s": 65.45,
+      "realtime_x": 2.2,
+      "error": null
+    },
+    {
+      "title": "Wren: Weights and Measures",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 13.28,
+      "render_s": 9.2,
+      "realtime_x": 1.44,
+      "error": null
+    },
+    {
+      "title": "Loss Curve Lullaby (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 135.14,
+      "render_s": 53.57,
+      "realtime_x": 2.52,
+      "error": null
+    },
+    {
+      "title": "Learning Rate (take 2)",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 138.56,
+      "render_s": 56.33,
+      "realtime_x": 2.46,
+      "error": null
+    },
+    {
+      "title": "Late Epoch ID 2",
+      "role": "id",
+      "state": "succeeded",
+      "audio_s": 5.9,
+      "render_s": 10.53,
+      "realtime_x": 0.56,
+      "error": null
+    },
+    {
+      "title": "Wren: link 2",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 13.65,
+      "render_s": 22.38,
+      "realtime_x": 0.61,
+      "error": null
+    },
+    {
+      "title": "Wren: link 1",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 12.44,
+      "render_s": 20.39,
+      "realtime_x": 0.61,
+      "error": null
+    },
+    {
+      "title": "Weights and Measures",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 165.0,
+      "render_s": 91.24,
+      "realtime_x": 1.81,
+      "error": null
+    },
+    {
+      "title": "Small Batch Sunday",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 129.8,
+      "render_s": 54.12,
+      "realtime_x": 2.4,
+      "error": null
+    },
+    {
+      "title": "Early Stopping",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 119.2,
+      "render_s": 50.63,
+      "realtime_x": 2.35,
+      "error": null
+    },
+    {
+      "title": "Wren: Validation Rain",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 12.19,
+      "render_s": 9.14,
+      "realtime_x": 1.33,
+      "error": null
+    },
+    {
+      "title": "Frozen Layers",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 132.7,
+      "render_s": 52.75,
+      "realtime_x": 2.52,
+      "error": null
+    },
+    {
+      "title": "Gradient Drift",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 165.0,
+      "render_s": 74.89,
+      "realtime_x": 2.2,
+      "error": null
+    },
+    {
+      "title": "Late Epoch ID 1",
+      "role": "id",
+      "state": "succeeded",
+      "audio_s": 4.67,
+      "render_s": 8.84,
+      "realtime_x": 0.53,
+      "error": null
+    },
+    {
+      "title": "Validation Rain",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 158.0,
+      "render_s": 67.74,
+      "realtime_x": 2.33,
+      "error": null
+    },
+    {
+      "title": "Wren: Low Rank Love",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 13.75,
+      "render_s": 9.55,
+      "realtime_x": 1.44,
+      "error": null
+    },
+    {
+      "title": "Warmup Steps",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 149.75,
+      "render_s": 60.48,
+      "realtime_x": 2.48,
+      "error": null
+    },
+    {
+      "title": "Wren: One More Epoch",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 12.72,
+      "render_s": 20.52,
+      "realtime_x": 0.62,
+      "error": null
+    },
+    {
+      "title": "Low Rank Love",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 147.64,
+      "render_s": 62.16,
+      "realtime_x": 2.37,
+      "error": null
+    },
+    {
+      "title": "Wren: Checkpoint at 3 AM",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 14.05,
+      "render_s": 23.61,
+      "realtime_x": 0.6,
+      "error": null
+    },
+    {
+      "title": "Wren: Loss Curve Lullaby",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 15.8,
+      "render_s": 36.2,
+      "realtime_x": 0.44,
+      "error": null
+    },
+    {
+      "title": "Checkpoint at 3 AM",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 149.96,
+      "render_s": 68.03,
+      "realtime_x": 2.2,
+      "error": null
+    },
+    {
+      "title": "Wren: Learning Rate",
+      "role": "host_break",
+      "state": "succeeded",
+      "audio_s": 17.0,
+      "render_s": 28.09,
+      "realtime_x": 0.61,
+      "error": null
+    },
+    {
+      "title": "One More Epoch",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 151.44,
+      "render_s": 68.42,
+      "realtime_x": 2.21,
+      "error": null
+    },
+    {
+      "title": "Loss Curve Lullaby",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 160.91,
+      "render_s": 77.28,
+      "realtime_x": 2.08,
+      "error": null
+    },
+    {
+      "title": "Learning Rate",
+      "role": "song",
+      "state": "succeeded",
+      "audio_s": 139.64,
+      "render_s": 59.46,
+      "realtime_x": 2.35,
+      "error": null
+    }
+  ],
+  "library": [
+    "Checkpoint at 3 AM",
+    "Checkpoint at 3 AM (take 2)",
+    "Early Stopping",
+    "Early Stopping (take 2)",
+    "Frozen Layers",
+    "Frozen Layers (take 2)",
+    "Gradient Drift",
+    "Gradient Drift (take 2)",
+    "Late Epoch ID 1",
+    "Late Epoch ID 2",
+    "Late Epoch ID 3",
+    "Learning Rate",
+    "Learning Rate (take 2)",
+    "Learning Rate (take 3)",
+    "Loss Curve Lullaby",
+    "Loss Curve Lullaby (take 2)",
+    "Loss Curve Lullaby (take 3)",
+    "Low Rank Love",
+    "Low Rank Love (take 2)",
+    "One More Epoch",
+    "One More Epoch (take 2)",
+    "Small Batch Sunday",
+    "Small Batch Sunday (take 2)",
+    "Validation Rain",
+    "Validation Rain (take 2)",
+    "Warmup Steps",
+    "Warmup Steps (take 2)",
+    "Weights and Measures",
+    "Weights and Measures (take 2)",
+    "Wren: Checkpoint at 3 AM",
+    "Wren: Learning Rate",
+    "Wren: Loss Curve Lullaby",
+    "Wren: Low Rank Love",
+    "Wren: One More Epoch",
+    "Wren: Validation Rain",
+    "Wren: Weights and Measures",
+    "Wren: link 1",
+    "Wren: link 2",
+    "Wren: link 3",
+    "Wren: link 4"
+  ],
+  "running_at_end": true,
+  "health_at_end": {
+    "state": "playing",
+    "unavailable_tracks": 0,
+    "ready_tracks": 40,
+    "message": ""
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "hour_start": "2026-11-06 11:05:35",
+  "seconds": 3604,
+  "played": [
+    {
+      "title": "Half Past Curfew",
+      "at": 1793984750.9670672,
+      "minute": 0.3
+    },
+    {
+      "title": "Postcard from the Basement",
+      "at": 1793984977.393888,
+      "minute": 4.0
+    },
+    {
+      "title": "Engine Heart",
+      "at": 1793985128.9765778,
+      "minute": 6.6
+    },
+    {
+      "title": "Mixtape Summer",
+      "at": 1793985295.0640182,
+      "minute": 9.3
+    },
+    {
+      "title": "Detention Kings",
+      "at": 1793985415.9591181,
+      "minute": 11.3
+    },
+    {
+      "title": "Static on the Line",
+      "at": 1793985551.912175,
+      "minute": 13.6
+    },
+    {
+      "title": "Gas Station Sunrise",
+      "at": 1793985687.9300463,
+      "minute": 15.9
+    },
+    {
+      "title": "Thunder Road Revival",
+      "at": 1793985824.8476427,
+      "minute": 18.2
+    },
+    {
+      "title": "Ten Feet Tall",
+      "at": 1793985992.419407,
+      "minute": 20.9
+    },
+    {
+      "title": "Senior Skip Day",
+      "at": 1793986174.6343591,
+      "minute": 24.0
+    },
+    {
+      "title": "Bedroom Floor",
+      "at": 1793986310.5361543,
+      "minute": 26.2
+    },
+    {
+      "title": "Half Past Curfew (take 2)",
+      "at": 1793986461.6155226,
+      "minute": 28.8
+    },
+    {
+      "title": "Last Show at the Rink",
+      "at": 1793986553.0623982,
+      "minute": 30.3
+    },
+    {
+      "title": "Postcard from the Basement (take 2)",
+      "at": 1793986658.4319782,
+      "minute": 32.0
+    },
+    {
+      "title": "Engine Heart (take 2)",
+      "at": 1793986764.0393786,
+      "minute": 33.8
+    },
+    {
+      "title": "Mixtape Summer (take 2)",
+      "at": 1793986945.3181016,
+      "minute": 36.8
+    },
+    {
+      "title": "Detention Kings (take 2)",
+      "at": 1793987066.1112163,
+      "minute": 38.8
+    },
+    {
+      "title": "Static on the Line (take 2)",
+      "at": 1793987186.609608,
+      "minute": 40.8
+    },
+    {
+      "title": "Gas Station Sunrise (take 2)",
+      "at": 1793987337.4593382,
+      "minute": 43.4
+    },
+    {
+      "title": "Thunder Road Revival (take 2)",
+      "at": 1793987488.9056482,
+      "minute": 45.9
+    },
+    {
+      "title": "Ten Feet Tall (take 2)",
+      "at": 1793987670.9946058,
+      "minute": 48.9
+    },
+    {
+      "title": "Senior Skip Day (take 2)",
+      "at": 1793987838.3108544,
+      "minute": 51.7
+    },
+    {
+      "title": "Bedroom Floor (take 2)",
+      "at": 1793987990.364308,
+      "minute": 54.2
+    },
+    {
+      "title": "Last Show at the Rink (take 2)",
+      "at": 1793988142.0254035,
+      "minute": 56.8
+    },
+    {
+      "title": "Half Past Curfew (take 3)",
+      "at": 1793988263.318477,
+      "minute": 58.8
+    }
+  ],
+  "jobs": {
+    "queued": 1,
+    "running": 1,
+    "succeeded": 26,
+    "failed": 0,
+    "cancelled": 0,
+    "expired": 0,
+    "interrupted": 0
+  },
+  "renders": [
+    {
+      "title": "Postcard from the Basement (take 3)",
+      "state": "succeeded",
+      "audio_s": 118.43385487528344,
+      "render_s": null,
+      "error": null
+    },
+    {
+      "title": "Half Past Curfew (take 3)",
+      "state": "succeeded",
+      "audio_s": 111.92070294784581,
+      "render_s": null,
+      "error": null
+    },
+    {
+      "title": "Last Show at the Rink (take 2)",
+      "state": "succeeded",
+      "audio_s": 127.88009070294784,
+      "render_s": null,
+      "error": null
+    },
+    {
+      "title": "Bedroom Floor (take 2)",
+      "state": "succeeded",
+      "audio_s": 142.70408163265307,
+      "render_s": null,
+      "error": null
+    },
+    {
+      "title": "Senior Skip Day (take 2)",
+      "state": "succeeded",
+      "audio_s": 147.0407709750567,
+      "render_s": null,
+      "error": null
+    }
+  ],
+  "library": [
+    "Bedroom Floor",
+    "Bedroom Floor (take 2)",
+    "Detention Kings",
+    "Detention Kings (take 2)",
+    "Engine Heart",
+    "Engine Heart (take 2)",
+    "Gas Station Sunrise",
+    "Gas Station Sunrise (take 2)",
+    "Half Past Curfew",
+    "Half Past Curfew (take 2)",
+    "Half Past Curfew (take 3)",
+    "Last Show at the Rink",
+    "Last Show at the Rink (take 2)",
+    "Mixtape Summer",
+    "Mixtape Summer (take 2)",
+    "Postcard from the Basement",
+    "Postcard from the Basement (take 2)",
+    "Postcard from the Basement (take 3)",
+    "Senior Skip Day",
+    "Senior Skip Day (take 2)",
+    "Static on the Line",
+    "Static on the Line (take 2)",
+    "Ten Feet Tall",
+    "Ten Feet Tall (take 2)",
+    "Thunder Road Revival",
+    "Thunder Road Revival (take 2)"
+  ],
+  "running_at_end": true,
+  "health_at_end": {
+    "state": "playing",
+    "unavailable_tracks": 0,
+    "ready_tracks": 26,
+    "message": ""
+  }
+}

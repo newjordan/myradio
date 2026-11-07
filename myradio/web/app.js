@@ -9,8 +9,8 @@ if (fragment.has('token')) {
   history.replaceState(null, '', location.pathname + location.search);
 }
 // One page: the studio is always there. Every other section opens as a sheet over it; forms stay mounted, so drafts survive.
-const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect'];
-const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator', connect: 'Connect your agent'};
+const viewNames = ['studio', 'library', 'schedule', 'broadcast', 'settings', 'help', 'operator', 'connect', 'trophies'];
+const sheetTitles = {library: 'Library', schedule: 'Schedule', broadcast: 'Broadcast', settings: 'Settings', help: 'Guide', operator: 'Station operator', connect: 'Connect your agent', trophies: 'Trophies and Dial'};
 function showView(moveFocus = false) {
   const route = location.hash.slice(1), selected = route === 'import' ? 'library' : viewNames.includes(route) ? route : 'studio';
   for (const name of viewNames.filter(name => name !== 'studio')) $('view-' + name).hidden = name !== selected;
@@ -102,11 +102,28 @@ function node(tag, text, className) {
   if (className) element.className = className;
   return element;
 }
+// --- approval cards: the studio's own confirm, with an illustration, instead of the browser's plain box
+document.querySelectorAll('.approve-art').forEach(img => img.addEventListener('error', () => img.classList.add('missing')));
+function approve({title, text, ok = 'Confirm', cancel = 'Keep it', art = 'approve-delete', eyebrow = 'PLEASE CONFIRM'}) {
+  const dlg = $('approve');
+  $('approve-title').textContent = title; $('approve-text').textContent = text; $('approve-eyebrow').textContent = eyebrow;
+  $('approve-art').src = (window.MYRADIO_ART && window.MYRADIO_ART[art]) || `/art/${art}.png`;
+  const okBtn = dlg.querySelector('[data-ok]'), cancelBtn = dlg.querySelector('[data-cancel]');
+  okBtn.textContent = ok; cancelBtn.textContent = cancel;
+  return new Promise(resolve => {
+    const done = value => { dlg.close(); okBtn.onclick = cancelBtn.onclick = dlg.oncancel = dlg.onclick = null; resolve(value); };
+    okBtn.onclick = () => done(true); cancelBtn.onclick = () => done(false);
+    dlg.oncancel = event => { event.preventDefault(); done(false); };
+    dlg.onclick = event => { if (event.target === dlg) done(false); };
+    dlg.showModal(); cancelBtn.focus();
+  });
+}
 function actionButton(label, operation, args, dangerous = false) {
   const button = node('button', label, dangerous ? 'danger' : '');
   button.type = 'button';
   button.addEventListener('click', async () => {
-    if (dangerous && !confirm('Delete this audio from the local library? This cannot be undone.')) return;
+    if (dangerous && !await approve({title: 'Delete this audio?', text: 'It leaves your local library for good. This cannot be undone.',
+                                     ok: 'Delete it', art: 'approve-delete', eyebrow: 'LIBRARY · DELETE'})) return;
     button.disabled = true;
     try { await action(operation, args); }
     finally { button.disabled = false; }
@@ -117,7 +134,7 @@ async function action(operation, args = {}) {
   try { await api('/api/action', {operation, arguments: args}); notice(''); await refresh(); }
   catch (error) { notice(error.message); }
 }
-for (const [id, op] of [['start','transport.start'],['stop','transport.stop'],['skip','transport.skip']]) {
+for (const [id, op] of [['start','transport.start'],['stop','transport.stop'],['skip','transport.fade_next']]) {
   $(id).addEventListener('click', () => action(op));
 }
 async function loadAgentSettings() {
@@ -138,7 +155,8 @@ $('agent-form').addEventListener('submit',async event=>{
   finally { $('agent-save').disabled=false; }
 });
 $('agent-disconnect').addEventListener('click',async()=>{
-  if(!confirm('Forget the saved AI connection and clear this session’s chat/proposals? Local command mode will remain available.'))return;
+  if(!await approve({title: 'Forget the AI connection?', text: 'The saved connection is removed and this session’s chat and proposals are cleared. Local command mode stays available.',
+                     ok: 'Forget it', art: 'approve-forget', eyebrow: 'OPERATOR · DISCONNECT'}))return;
   try {await api('/api/agent',{disconnect:true});await loadAgentSettings();$('chat-log').replaceChildren();await refresh();notice('Operator disconnected; private saved settings removed.');}
   catch(error){notice(error.message);}
 });
@@ -277,6 +295,7 @@ function render(s) {
   const structure=JSON.stringify([s.library,s.queue,s.schedules,s.programs,s.history,s.station.auto_fill]);
   if (structure!==lastStructure && !arranging) {renderStructure(s);lastStructure=structure;}
   renderConsole(s);
+  renderGame(s);
 }
 async function refresh() {
   if (polling||!unlocked) return;
@@ -391,11 +410,42 @@ function renderQueue(focusEntry) {
   }
   if (state) renderTape(state);
 }
+// The crate has a list per kind (music, DJ clips, spots) so a song or a DJ clip is quick to pick and swap.
+let crateKind = 'music';
+try { crateKind = localStorage.getItem('myradio-crate') || 'music'; } catch { /* storage may be unavailable */ }
+const CRATE_EMPTY = {music: 'No songs yet. Import music, or ask your agent or music maker for one.',
+                     speech: 'No DJ clips yet. Your agent or voice maker adds lead-ins, links and station IDs here.',
+                     ad: 'No sponsor spots yet.'};
 function renderCrate(library) {
   const crate = $('crate'); crate.replaceChildren();
   const ready = library.filter(track => track.available);
-  for (const track of ready) crate.append(cartNode(track, 0, true));
-  if (!ready.length) { const none = node('p', library.length ? 'No playable audio. Repair it in the Library.' : 'Your crate fills up as you import audio.', 'none'); crate.append(none); }
+  const counts = {music: 0, speech: 0, ad: 0};
+  for (const track of ready) counts[track.kind] = (counts[track.kind] || 0) + 1;
+  if (crateKind === 'ad' && !counts.ad) crateKind = 'music';
+  for (const kind of ['music', 'speech', 'ad']) {
+    const tab = $('crate-tab-' + kind), on = kind === crateKind;
+    $('crate-n-' + kind).textContent = String(counts[kind]);
+    tab.setAttribute('aria-selected', String(on)); tab.tabIndex = on ? 0 : -1;
+    if (kind === 'ad') tab.hidden = !counts.ad;
+  }
+  crate.setAttribute('aria-labelledby', 'crate-tab-' + crateKind);
+  const shown = ready.filter(track => track.kind === crateKind);
+  for (const track of shown) crate.append(cartNode(track, 0, true));
+  if (!shown.length) crate.append(node('p', library.length ? CRATE_EMPTY[crateKind] : 'Your crate fills up as you import audio.', 'none'));
+}
+function pickCrate(kind, focus = false) {
+  crateKind = kind; try { localStorage.setItem('myradio-crate', kind); } catch { /* not kept */ }
+  if (state) renderCrate(state.library);
+  if (focus) $('crate-tab-' + kind).focus();
+}
+for (const tab of document.querySelectorAll('.crate-tab')) {
+  tab.addEventListener('click', () => pickCrate(tab.dataset.kind));
+  tab.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+    const tabs = [...document.querySelectorAll('.crate-tab')].filter(t => !t.hidden);
+    const at = tabs.indexOf(tab), next = tabs[(at + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+    event.preventDefault(); pickCrate(next.dataset.kind, true);
+  });
 }
 
 // --- queue changes: shown at once, then confirmed by the station
@@ -560,6 +610,14 @@ function renderConsole(s) {
   $('transport-note').textContent = s.running ? (outputBusy ? 'Stop also ends the live stream.' : s.current ? `Playing ${s.current.title}` : 'Waiting for playable audio.') : s.library.length ? 'Your next sound is standing by.' : 'Import audio to start.';
   $('broadcast-note').textContent = outputBusy ? detail : b.configured ? 'Private until you say otherwise.' : 'No stream host saved yet.';
   $('guard').disabled = outputBusy; $('deck-disconnect').disabled = !outputBusy || b.state === 'stopping';
+  // On air, the guard burns like a warm fire; while connecting it is just catching.
+  const onAir = b.state === 'streaming', igniting = !onAir && outputBusy && b.state !== 'stopping';
+  $('guard').classList.toggle('on-air', onAir); $('guard').classList.toggle('igniting', igniting);
+  if (onAir !== ($('guard').dataset.live === '1')) {
+    $('guard').dataset.live = onAir ? '1' : '';
+    $('guard').innerHTML = onAir ? '<span><i class="ember-dot" aria-hidden="true"></i>ON AIR<span class="long"> · LIVE</span></span>' : GUARD_IDLE;
+    $('guard').setAttribute('aria-label', onAir ? 'On air: your station is live' : 'Lift the GO LIVE guard');
+  }
   $('deck-connect').hidden = outputBusy || b.configured; $('broadcast-note').hidden = !$('deck-connect').hidden;
   if (document.body.dataset.activeView === 'connect') renderLinks(s);
   document.body.classList.toggle('playing', !!s.current);
@@ -567,6 +625,7 @@ function renderConsole(s) {
 }
 
 // --- the GO LIVE guard (desk and Broadcast view)
+const GUARD_IDLE = $('guard').innerHTML;
 function updateGuard(s) {
   const b = s.broadcast, busy = b.active || b.state === 'stopping';
   $('go-live').disabled = busy || !s.running || !b.configured || !b.encoder_available;
@@ -632,7 +691,7 @@ function ago(seconds) {
   if (seconds < 3600) return `${Math.round(seconds / 60)} min ago`;
   return `${Math.round(seconds / 3600)} h ago`;
 }
-const AGENT_DID = {'queue.move': 'moved a cart', 'queue.add': 'added a cart', 'queue.remove': 'removed a cart', 'transport.skip': 'skipped a track',
+const AGENT_DID = {'queue.move': 'moved a cart', 'queue.add': 'added a cart', 'queue.remove': 'removed a cart', 'transport.skip': 'skipped a track', 'transport.fade_next': 'faded to the next track',
                    'transport.start': 'started the station', 'transport.stop': 'stopped the station', status: 'checked the station', broadcast: 'saved the stream',
                    'schedule.add': 'scheduled a moment', 'program.add': 'added a weekly program', 'broadcast.start': 'went live', 'broadcast.stop': 'disconnected the stream'};
 async function loadConnect() {
@@ -658,8 +717,8 @@ function kitText(info, dj, stream) {
   let n = 2;
   if (dj) lines.push('', `${n++}. Be the DJ`,
     '- Keep 3 to 6 carts queued and plan a flow: vary energy and tempo, avoid the same artist twice in a row, and don’t repeat a song within an hour.',
-    '- Your tools: station_status, queue_add (position 0 plays next), queue_move, queue_remove, transport_start, transport_skip, schedule_add and program_add.',
-    '- About every 15 minutes, queue one of the station’s spoken carts (library kind "speech": station IDs and links). You can’t say new lines yet: that needs the DJ voice, which is still being set up.',
+    '- Your tools: station_status, queue_add (position 0 plays next), queue_move, queue_remove, transport_start, transport_fade_next (fades out and plays the next cart straight away), transport_skip, schedule_add, program_add and generation_enqueue.',
+    '- You write the DJ’s words. If the station has a DJ voice (station_status shows the voice maker ready), write short, lively lines yourself: a lead-in naming the next song every 2 or 3 songs and a station ID about every 15 minutes. Ask for each with generation_enqueue (role host_break or id, priority 85 so it is made now), then queue it right before its song. Without a DJ voice, queue the station’s spoken carts (library kind "speech") instead.',
     '- Don’t delete library audio, rename the station, or call broadcast_start or broadcast_stop unless I ask. broadcast_start makes the station public.',
     '- Check station_status every few minutes. After each change, tell me in one line what you did and why.');
   if (stream) lines.push('', `${n++}. Set up the outbound stream`,
@@ -732,6 +791,101 @@ $('stream-paste').addEventListener('submit', async event => {
   } catch (error) { out.textContent = error.message; out.classList.add('error'); }
   finally { $('stream-save').disabled = false; }
 });
+
+// --- the game layer: Dial the station pet, levels, trophies and celebrations. Everything comes from real station facts:
+// lifetime stats kept by the engine (status.stats), the library, what is playing, the stream and the agent link.
+const LEVELS = [[0, 'Bedroom Booth'], [50, 'Garage Signal'], [150, 'Basement Broadcast'], [350, 'Rooftop Antenna'], [700, 'Pirate Frequency'],
+  [1200, 'Night City FM'], [2000, 'Full Power'], [3200, 'Big Signal'], [5000, 'Legend of the Dial']];
+const BADGES = [
+  ['first-song', 'First song', 'Your station played its first song.', (g) => g.stats.aired_music >= 1],
+  ['first-break', 'First DJ break', 'A DJ break or station ID went out between songs.', (g) => g.stats.aired_speech >= 1],
+  ['first-hour', 'First hour on air', 'A full hour of airtime, all told.', (g) => g.stats.on_air_seconds >= 3600],
+  ['premieres', 'Made here ×10', 'Ten songs and voices made right here by your music and voice makers.', (g) => g.made >= 10],
+  ['crate-digger', 'Crate digger', 'Twenty-five tracks in your library.', (g) => g.library >= 25],
+  ['night-owl', 'Night owl', 'On air between midnight and four in the morning.', (g) => g.running && new Date().getHours() < 4],
+  ['agent-dj', 'Agent DJ', 'Your own agent took the decks.', (g) => g.agentSeen],
+  ['went-live', 'Went live', 'Your station streamed to the world.', (g) => g.live],
+];
+const artUrl = (name) => (window.MYRADIO_ART && window.MYRADIO_ART[name]) || `/art/${name}.png`;
+const keep = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
+const save = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* not kept in this browser */ } };
+let earned = new Set(keep('myradio-badges', [])), lastLevel = keep('myradio-level', null), knownTracks = null, premiereAt = 0, petPoke = 0;
+const xpOf = (st) => Math.floor(st.on_air_seconds / 60) + 10 * st.aired_music + 5 * st.aired_speech + st.fades;
+function levelOf(xp) { let i = 0; while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1][0]) i++; return i; }
+function minutes(sec) { const m = Math.floor(sec / 60); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`; }
+function celebrate(text) {
+  toast(text);
+  if (motionOff || reducedMotion.matches) return;
+  const layer = $('confetti'), colors = ['#d8edac', '#ff946e', '#e9c46a', '#8fd3ff', '#f4f2ed'];
+  for (let i = 0; i < 36; i++) {
+    const bit = document.createElement('i');
+    bit.style.left = `${8 + Math.random() * 84}%`; bit.style.background = colors[i % colors.length];
+    bit.style.setProperty('--drift', `${(Math.random() - 0.5) * 240}px`); bit.style.animationDelay = `${Math.random() * 0.35}s`;
+    layer.append(bit); setTimeout(() => bit.remove(), 2400);
+  }
+}
+function petMood(s, g) {
+  const cur = s.current, live = s.broadcast.state === 'streaming';
+  if (!s.running) return ['sleepy', 'Zzz… press Start to wake me.'];
+  if (live) return ['onair', 'We’re live! Say hi to the world.'];
+  if (Date.now() - premiereAt < 90000) return ['excited', 'A brand-new song just landed!'];
+  if (!cur || (!queueItems.length && !s.station.auto_fill)) return ['hungry', 'I’m hungry… tap me to queue a song.'];
+  if (cur.kind === 'speech') return ['happy', 'Shh, the DJ is talking.'];
+  return ['singing', `♪ ${cur.title}`];
+}
+function renderGame(s) {
+  const st = s.stats || {on_air_seconds: 0, aired_music: 0, aired_speech: 0, aired_ad: 0, fades: 0};
+  const gen = s.extensions && s.extensions.generation && s.extensions.generation.status;
+  const agentAge = s.agent_link && s.agent_link.seen_at ? Date.now() / 1000 - s.agent_link.seen_at : null;
+  const g = {stats: st, running: s.running, library: s.library.length, made: gen && gen.jobs ? gen.jobs.succeeded || 0 : 0,
+             agentSeen: agentAge !== null && agentAge < 1800, live: s.broadcast.state === 'streaming'};
+  // a new song in the library: a premiere worth celebrating (not on the first look at the library)
+  const music = s.library.filter((t) => t.kind === 'music').map((t) => t.id);
+  if (knownTracks) { const fresh = s.library.find((t) => t.kind === 'music' && !knownTracks.has(t.id)); if (fresh) { premiereAt = Date.now(); celebrate(`New song! “${fresh.title}” just came off the machine.`); } }
+  knownTracks = new Set(music);
+  // level and XP
+  const xp = xpOf(st), lv = levelOf(xp), [floor, name] = LEVELS[lv], next = LEVELS[lv + 1];
+  const pct = next ? Math.min(100, Math.round(((xp - floor) / (next[0] - floor)) * 100)) : 100;
+  $('lv-number').textContent = `LV ${lv + 1}`; $('lv-name').textContent = name; $('xp-fill').style.width = `${pct}%`;
+  $('level-title').textContent = `LV ${lv + 1} · ${name}`; $('level-xp').textContent = `${xp.toLocaleString()} XP`; $('xp-big').style.width = `${pct}%`;
+  $('level-next').textContent = next ? `${(next[0] - xp).toLocaleString()} XP to LV ${lv + 2}, ${next[1]}. XP comes from minutes on air and songs and breaks played.` : 'Top level. Legend of the dial.';
+  $('stat-air').textContent = minutes(st.on_air_seconds); $('stat-songs').textContent = st.aired_music.toLocaleString();
+  $('stat-breaks').textContent = st.aired_speech.toLocaleString(); $('stat-fades').textContent = st.fades.toLocaleString();
+  if (lastLevel !== null && lv > lastLevel) celebrate(`Level up! LV ${lv + 1} · ${name}`);
+  if (lastLevel !== lv) { lastLevel = lv; save('myradio-level', lv); }
+  // badges: earned once, kept in this browser; the facts that earn them are the station's own
+  for (const [id, title, , test] of BADGES) if (!earned.has(id) && test(g)) { earned.add(id); save('myradio-badges', [...earned]); celebrate(`Badge unlocked: ${title}`); }
+  const shelf = $('badges'); shelf.textContent = '';
+  for (const [id, title, how] of BADGES) {
+    const got = earned.has(id), li = node('li', undefined, 'badge-slot' + (got ? ' got' : ''));
+    const img = node('img'); img.src = artUrl(`badge-${id}`); img.alt = ''; img.width = 64; img.height = 64; img.addEventListener('error', () => img.classList.add('missing'));
+    li.append(img, node('strong', title), node('small', got ? how : `Locked · ${how}`)); shelf.append(li);
+  }
+  $('badge-count').textContent = `${earned.size} of ${BADGES.length}`;
+  // Dial
+  const [mood, line] = Date.now() - petPoke < 2500 ? [petMoodNow, petLine] : petMood(s, g);
+  // the small masthead Dial sings without the drawn notes (it bops instead); the Trophies sheet shows the full art
+  for (const [el, art] of [[$('pet-img'), mood === 'singing' ? 'happy' : mood], [$('pet-big'), mood]]) {
+    if (el.dataset.mood !== art) { el.dataset.mood = art; el.src = artUrl(`dial-${art}`); }
+  }
+  $('pet').dataset.mood = mood; $('pet-say').textContent = line; $('pet-mood').textContent = line;
+}
+let petMoodNow = 'happy', petLine = '';
+const PET_LINES = ['Best station on the dial.', 'Turn it up!', 'Every song here was made for you.', 'I love this one.', 'Beep boop, still on air.', 'You’re a natural at this.'];
+$('pet').addEventListener('click', async () => {
+  const mood = $('pet').dataset.mood;
+  $('pet').classList.remove('boing'); void $('pet').offsetWidth; $('pet').classList.add('boing');
+  if (mood === 'hungry' && state) {
+    const pick = state.library.find((t) => t.kind === 'music' && t.available !== false);
+    if (!pick) { toast('Dial is hungry, but the crate is empty. Add audio or ask your agent for a song.'); return; }
+    try { await api('/api/action', {operation: 'queue.add', arguments: {track_id: pick.id}}); petMoodNow = 'excited'; petLine = `Yum! Queued “${pick.title}”.`; petPoke = Date.now(); toast(`Dial queued “${pick.title}”.`); await refresh(); }
+    catch (error) { toast(error.message); }
+    return;
+  }
+  petMoodNow = mood === 'sleepy' ? 'sleepy' : 'excited'; petLine = mood === 'sleepy' ? 'Five more minutes… (press Start)' : PET_LINES[Math.floor(Math.random() * PET_LINES.length)];
+  petPoke = Date.now(); if (state) renderGame(state);
+});
+for (const el of [$('pet-img'), $('pet-big')]) el.addEventListener('error', () => el.classList.add('missing'));
 
 // --- decorative motion (paper trace): pausable, and off for reduced motion
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
