@@ -1,5 +1,5 @@
 """Agent plugins in integrations/: the shared launcher, the Hermes plugin's tools against a real station server,
-the omp package and the angelX installer. No harness needs to be installed; the Hermes plugin is driven through a
+and the omp package. No harness needs to be installed; the Hermes plugin is driven through a
 stand-in for its plugin context."""
 import importlib.util
 import io
@@ -24,7 +24,6 @@ ROOT = Path(__file__).resolve().parent.parent
 INTEGRATIONS = ROOT / "integrations"
 HERMES = INTEGRATIONS / "hermes"
 OMP = INTEGRATIONS / "omp"
-ANGELX = INTEGRATIONS / "angelx"
 
 
 def audio(sample):
@@ -127,12 +126,11 @@ class StationFixture(unittest.TestCase):
 
 class LauncherTests(StationFixture):
     def test_copies_are_identical(self):
-        copies = {folder.name: (folder / "myradio_mcp.py").read_bytes() for folder in (HERMES, OMP, ANGELX)}
-        self.assertEqual(len(set(copies.values())), 1, "edit integrations/hermes/myradio_mcp.py, then copy it to omp/ and angelx/")
-        self.assertEqual((OMP / "skills/myradio-dj/SKILL.md").read_bytes(), (ANGELX / "skills/myradio-dj/SKILL.md").read_bytes())
+        copies = {folder.name: (folder / "myradio_mcp.py").read_bytes() for folder in (HERMES, OMP)}
+        self.assertEqual(len(set(copies.values())), 1, "edit integrations/hermes/myradio_mcp.py, then copy it to omp/")
 
     def test_every_copy_reaches_the_station_from_any_directory(self):
-        for folder in (HERMES, OMP, ANGELX):
+        for folder in (HERMES, OMP):
             done = self.launch(folder, [{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}},
                                         {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "station_status", "arguments": {}}}])
             replies = [json.loads(line) for line in done.stdout.splitlines()]
@@ -252,40 +250,6 @@ class OmpPackageTests(unittest.TestCase):
         self.assertTrue((OMP / "commands/radio.md").read_text().startswith("---\ndescription:"))
         self.assertIn("\ndescription: ", (OMP / "skills/myradio-dj/SKILL.md").read_text().split("---")[1])
 
-
-class AngelxInstallTests(StationFixture):
-    def install(self, home, *args):
-        env = {**os.environ, "ANGEL_MCP_CONFIG": str(home / "mcp.json"), "ANGEL_SKILLS_DIR": str(home / "skills")}
-        return subprocess.run([sys.executable, str(ANGELX / "install.py"), *args], capture_output=True, text=True,
-                              timeout=60, env=env)
-
-    def test_install_check_and_uninstall_keep_other_servers(self):
-        home = Path(self.temp.name) / "angel"
-        home.mkdir()
-        (home / "mcp.json").write_text(json.dumps({"mcpServers": {"exa": {"command": "npx", "args": ["exa"]}}}))
-        done = self.install(home, "--data-dir", self.temp.name, "--port", str(self.port), "--check")
-        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
-        self.assertIn('Connected to "My radio"', done.stdout)
-        config = json.loads((home / "mcp.json").read_text())
-        self.assertEqual(set(config["mcpServers"]), {"exa", "myradio"})
-        entry = config["mcpServers"]["myradio"]
-        self.assertEqual(entry["args"], [str(ANGELX / "myradio_mcp.py")])
-        self.assertEqual(entry["env"]["MYRADIO_PORT"], str(self.port))
-        self.assertNotIn(self.token, (home / "mcp.json").read_text())
-        self.assertEqual((home / "skills/myradio-dj").resolve(), (ANGELX / "skills/myradio-dj").resolve())
-        self.assertIn("already has the myradio server", self.install(home, "--data-dir", self.temp.name, "--port", str(self.port)).stdout)
-        self.install(home, "--uninstall")
-        self.assertEqual(set(json.loads((home / "mcp.json").read_text())["mcpServers"]), {"exa"})
-        self.assertFalse((home / "skills/myradio-dj").exists())
-
-    def test_refuses_a_broken_config(self):
-        home = Path(self.temp.name) / "angel"
-        home.mkdir()
-        (home / "mcp.json").write_text("{not json")
-        done = self.install(home)
-        self.assertNotEqual(done.returncode, 0)
-        self.assertIn("not valid JSON", done.stderr)
-        self.assertEqual((home / "mcp.json").read_text(), "{not json")
 
 
 if __name__ == "__main__":

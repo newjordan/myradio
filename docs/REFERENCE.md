@@ -127,7 +127,7 @@ Start the station, then configure your MCP-capable agent with a stdio server:
 }
 ```
 
-Ready-made plugins for Hermes Agent, omp (oh-my-pi) and angelX, built on this adapter, are in `integrations/`; each folder's README has its install steps.
+Ready-made plugins for Hermes Agent and omp (oh-my-pi), built on this adapter, are in `integrations/`; each folder's README has its install steps.
 
 Client configuration syntax varies. If installed in a virtual environment, use its absolute Python executable. Match `--port` if you changed the station port. The adapter reads the private token file; it does not launch a second station or model. Its tools inspect status and update identity, transport, queue, one-shot schedules, recurring programs, library and broadcast start/stop. Credentials must be saved privately in the dashboard first. **External-agent tools act immediately.** Restrict access and configure that agent's approval policy before allowing unattended operation. MCP protocol negotiation and tool calls are integration-tested; compatibility with specific third-party agent apps remains to be certified.
 

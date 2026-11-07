@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "myradio"
-version = "0.3.2"
+version = "0.4.0"
 description = "A local-first radio studio with persistent playout and shared agent controls"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}

@@ -7,9 +7,8 @@ Each folder stands on its own and has its own README with install steps.
 |---|---|---|
 | [`hermes/`](hermes/) | [Hermes Agent](https://github.com/NousResearch/hermes-agent) 0.16+ | A native plugin: 11 tools, `/radio`, the `myradio:dj` skill, a DJ-shift cron blueprint |
 | [`omp/`](omp/) | [omp (oh-my-pi)](https://github.com/can1357/oh-my-pi) | A plugin package: the MCP server, a DJ skill, `/radio` |
-| [`angelx/`](angelx/) | [angelX](https://github.com/newjordan/angelX) | The MCP server and a DJ skill, put in place by `install.py` |
 
-All three reuse what the studio's **Connect your agent** sheet sets up: myradio's own MCP adapter
+Both reuse what the studio's **Connect your agent** sheet sets up: myradio's own MCP adapter
 (`python -m myradio.mcp`), which reads the station's private control code from its data folder by itself. No
 plugin asks for, stores or prints a token. `myradio_mcp.py`, identical in each folder, finds myradio and starts
 that adapter:
