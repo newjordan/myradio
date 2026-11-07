@@ -1,0 +1,15 @@
+myradio
+Copyright 2026 Omnispace Technologies and the myradio contributors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+myradio does not include any AI model weights or model runtimes. They are downloaded separately, by you, and each keeps
+its own license. The ones myradio is set up for:
+
+- YuE2 Turbo Radio (music), Frosty40/YuE2-Turbo-Radio: YuE2 by Multimodal Art Projection, CC BY-NC 4.0. Songs it makes
+  may be shared freely but not sold.
+- audio.cpp (the model runtime), ShugoAI LLC and contributors: Apache-2.0; its bundled components keep their own licenses.
+- DJ voices: Qwen3-TTS (Apache-2.0), Drama 3 (Fish Audio Community License), IndexTTS2 (bilibili Model Use License),
+  Chatterbox (MIT), Kokoro (Apache-2.0); see each model's card. ElevenLabs is a separate cloud service with its own terms.
+
+The studio's pixel art (myradio/web/art) and the preview backdrop were made for myradio and are covered by this license.

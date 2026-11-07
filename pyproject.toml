@@ -7,6 +7,8 @@ name = "myradio"
 version = "0.3.2"
 description = "A local-first radio studio with persistent playout and shared agent controls"
 requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+classifiers = ["License :: OSI Approved :: Apache Software License", "Programming Language :: Python :: 3"]
 dependencies = []
 
 [project.scripts]
