@@ -174,7 +174,7 @@ Connect your agent in the studio. Press “Start station”, then “Listen” i
 
 **Headline:** Everyone gets their own bard.
 
-**Body:** Made by Omnispace Technologies, a member of the NVIDIA Inception Program.
+**Body:** Made by Omnispace Technologies, a member of the NVIDIA Inception program.
 
 Thanks to YuE2 for the model powering it.
 

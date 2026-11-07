@@ -60,4 +60,4 @@ The details are in [docs/runs](docs/runs/) and the [research paper](docs/researc
 ## License
 
 myradio is open source under Apache-2.0. Songs made with YuE2 are CC BY-NC 4.0: share them, don't sell them.
-Made by Omnispace Technologies, a member of the NVIDIA Inception Program.
+Made by Omnispace Technologies, a member of the NVIDIA Inception program.

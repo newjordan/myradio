@@ -74,7 +74,7 @@ The myradio app is **Apache-2.0**. Models and the software that runs them are do
 
 Thanks to **YuE2** for the model powering it. YuE2 is by Multimodal Art Projection.
 
-Made by **Omnispace Technologies**, a member of the **NVIDIA Inception Program**.
+Made by **Omnispace Technologies**, a member of the **NVIDIA Inception** program.
 
 ## Quick start
 

@@ -142,7 +142,7 @@ The receipts provide the additional model settings and build identifiers. This a
 
 ## Acknowledgements
 
-We thank Multimodal Art Projection for YuE2; the audio.cpp contributors; Fish Audio for Drama 3; and the Qwen3-TTS contributors. Omnispace Technologies is a member of the NVIDIA Inception Program. We also thank the myradio contributors and listeners who supplied the runs and voice preferences.
+We thank Multimodal Art Projection for YuE2; the audio.cpp contributors; Fish Audio for Drama 3; and the Qwen3-TTS contributors. Omnispace Technologies is a member of the NVIDIA Inception program. We also thank the myradio contributors and listeners who supplied the runs and voice preferences.
 
 ## References
 
