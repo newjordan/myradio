@@ -302,6 +302,7 @@ def runtime_spark(root: Path, rep: Reporter) -> tuple[Path, dict]:
             tf.extractall(root / "runtime", filter="data")
         if not (src / "CMakeLists.txt").exists():
             raise SetupError("The source archive did not contain source/CMakeLists.txt.")
+    _placeholder_demo_voices(src / "webui" / "native" / "demo_voices")
     rep.info("building audio.cpp for the GB10 (about 10 minutes, once)")
     cuda_home = str(Path(nvcc).resolve().parent.parent)
     gen = ["-G", "Ninja"] if shutil.which("ninja") else []
@@ -319,6 +320,22 @@ def runtime_spark(root: Path, rep: Reporter) -> tuple[Path, dict]:
     if not built.exists():
         raise SetupError(f"The build finished but {built} is missing.")
     return built, {}
+
+
+def _placeholder_demo_voices(folder: Path) -> None:
+    """The published source leaves out the web UI's demo voice recordings, which the build embeds. Music needs none of
+    them, so a missing one is replaced by half a second of silence."""
+    import wave
+    folder.mkdir(parents=True, exist_ok=True)
+    for name in ("demo_1_man.wav", "demo_2_man.wav", "demo_3_woman.wav", "demo_4_woman.wav"):
+        path = folder / name
+        if path.exists():
+            continue
+        with wave.open(str(path), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(16000)
+            w.writeframes(b"\x00\x00" * 8000)
 
 
 def runtime_mac(root: Path, rep: Reporter) -> tuple[Path, dict]:
