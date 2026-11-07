@@ -1,0 +1,12 @@
+{
+  "name": "omp-myradio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DJ and run your own myradio station from omp: the station's MCP tools, a DJ skill and /radio.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/newjordan/myradio",
+  "omp": {
+    "name": "myradio",
+    "description": "DJ and run your own myradio station: the station's MCP tools, a DJ skill and /radio."
+  }
+}

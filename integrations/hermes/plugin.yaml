@@ -1,0 +1,36 @@
+name: myradio
+version: 0.1.0
+description: "DJ and run your own myradio station: queue songs, write the DJ's lines, run unattended DJ shifts. Going live stays a human command."
+author: newjordan
+license: Apache-2.0
+homepage: https://github.com/newjordan/myradio
+tags: [music, radio, dj, local]
+kind: standalone
+requires_hermes: ">=0.16.0"
+provides_tools:
+  - myradio_status
+  - myradio_queue_add
+  - myradio_queue_move
+  - myradio_queue_remove
+  - myradio_start
+  - myradio_skip
+  - myradio_fade_next
+  - myradio_schedule_add
+  - myradio_make
+  - myradio_operations
+  - myradio_run
+provides_hooks:
+  - pre_tool_call
+config_schema:
+  myradio_home:
+    type: str
+    default: ""
+    description: "myradio source folder, if you run myradio from a git checkout. Leave blank to find it automatically."
+  data_dir:
+    type: str
+    default: ""
+    description: "The station's data folder. Blank means MYRADIO_DATA_DIR, else ~/.myradio."
+  port:
+    type: int
+    default: 0
+    description: "The station's port. 0 means MYRADIO_PORT, else 8765."

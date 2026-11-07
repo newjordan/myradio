@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "myradio": {
+      "command": "python3",
+      "args": ["${OMP_PLUGIN_ROOT}/myradio_mcp.py"]
+    }
+  }
+}
