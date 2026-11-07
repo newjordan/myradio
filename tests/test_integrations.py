@@ -95,9 +95,12 @@ class FakeContext(OldContext):
 
 
 class StationFixture(unittest.TestCase):
+    extensions = None  # a test class may run the station with extensions, e.g. the generation engine
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.station = Station(self.temp.name, start_worker=False)
+        self.station = Station(self.temp.name, start_worker=False,
+                               **({"extensions": self.extensions()} if self.extensions else {}))
         self.token = load_token(self.temp.name)
         self.server = Server(("127.0.0.1", 0), self.station, self.token)
         self.port = self.server.server_address[1]
@@ -187,9 +190,11 @@ class HermesPluginTests(StationFixture):
         bad = self.tool("myradio_queue_add", {"track_id": "missing"})
         self.assertFalse(bad["ok"])
         self.assertTrue(bad["error"])
-        summary = self.ctx.commands["radio"]("")  # no playout worker in tests, so the song is still queued
-        self.assertIn("My radio: playing.", summary)
-        self.assertIn("Queued: 1 (First Song).", summary)
+        card = self.ctx.commands["radio"]("")  # no playout worker in tests, so the song is still queued
+        self.assertIn("MY RADIO", card)
+        self.assertIn("\u25cf PLAYING", card)
+        self.assertIn("UP NEXT  1. First Song", card)
+        self.assertNotIn("\033[", card)  # no platform given (Hermes 0.16): no colour
         self.assertIn("/radio live", self.ctx.commands["radio"]("help"))
         self.assertEqual(self.server.agent_status()["last"], "status")
 
@@ -216,6 +221,7 @@ class HermesPluginTests(StationFixture):
         self.assertEqual(guard(tool_name="myradio_run", args={"operation": "station.update"}, task_id="t")["action"], "block")
         self.assertEqual(guard(tool_name="myradio_run", args={"operation": "program_remove"})["action"], "block")
         for tool, args in (("myradio_queue_add", {"track_id": "x"}), ("myradio_status", {}), ("myradio_operations", {}),
+                           ("myradio_library", {"query": "x"}),
                            ("myradio_run", {"operation": "shows.plan"}), ("terminal", {"command": "ls"})):
             self.assertIsNone(guard(tool_name=tool, args=args), tool)
 
@@ -223,8 +229,13 @@ class HermesPluginTests(StationFixture):
         self.ctx.settings["port"] = 1
         down = self.tool("myradio_status")
         self.assertFalse(down["ok"])
-        self.assertIn("Cannot reach myradio", down["error"])
-        self.assertIn("myradio: Cannot reach myradio", self.ctx.commands["radio"](""))
+        self.assertIn("not answering on port 1", down["error"])
+        self.assertIn("python3 -m myradio.server --port 1", down["error"])
+        self.assertIn("myradio: Your station is not answering", self.ctx.commands["radio"](""))
+        self.ctx.settings.update(port=self.port, data_dir=str(Path(self.temp.name) / "elsewhere"))
+        missing = self.tool("myradio_status")["error"]
+        self.assertIn("No myradio station found in " + str(Path(self.temp.name) / "elsewhere"), missing)
+        self.assertIn("settings.data_dir", missing)
 
         old = OldContext()
         self.plugin.register(old)
@@ -233,11 +244,132 @@ class HermesPluginTests(StationFixture):
             self.assertIsNone(old.hooks["pre_tool_call"](tool_name="myradio_run", args={"operation": "station_update"}))
         self.assertEqual(old.blueprints, {})
 
+    def test_status_for_the_model_is_compact_and_the_library_is_searchable(self):
+        song = self.upload("Big Earl", artist="Tulsa")
+        self.upload("Station ID", artist="", kind="speech")
+        self.tool("myradio_queue_add", {"track_id": song})
+        status = self.tool("myradio_status")
+        self.assertEqual(status["queue"][0]["track_id"], song)
+        self.assertEqual(status["queue"][0]["queue_id"], str(self.station.status()["queue"][0]["id"]))
+        self.assertEqual(status["library_counts"], {"music": 1, "speech": 1})
+        self.assertEqual({t["title"] for t in status["library"]}, {"Big Earl", "Station ID"})
+        self.assertNotIn("extensions", status)
+        moved = self.tool("myradio_queue_move", {"queue_id": status["queue"][0]["queue_id"], "position": 0})
+        self.assertTrue(moved["ok"])
+        found = self.tool("myradio_library", {"query": "big EARL"})
+        self.assertEqual([t["track_id"] for t in found["tracks"]], [song])
+        self.assertEqual(self.tool("myradio_library", {"kind": "speech"})["tracks"][0]["title"], "Station ID")
+        self.assertIn("Nothing matched", self.tool("myradio_library", {"query": "polka"})["note"])
+        self.assertFalse(self.tool("myradio_library", {"limit": "lots"})["ok"])
+
+        big = {"library": [{"id": f"t{n}", "title": f"Song {n}", "kind": "music", "duration": 100} for n in range(200)]}
+        compact = self.plugin.station.compact_status(big)
+        self.assertIsNone(compact["library"])
+        self.assertIn("myradio_library", compact["library_note"])
+        tracks, total = self.plugin.station.find_tracks(big, "song 1", limit=5)
+        self.assertEqual((len(tracks), total, tracks[0]["title"]), (5, sum("1" in str(n) for n in range(200)), "Song 1"))
+
+    def test_radio_card_play_and_platforms(self):
+        self.upload("Big Earl (The Pride of Tulsa)", artist="Tulsa")
+        self.upload("Still Steal the Blanket")
+        self.assertIn("Nothing in the library matches", self.ctx.commands["radio"]("play polka"))
+        self.assertEqual(self.ctx.commands["radio"]("play  big earl"), "Up next: Big Earl (The Pride of Tulsa).")
+        self.assertEqual(self.station.status()["queue"][0]["title"], "Big Earl (The Pride of Tulsa)")
+        cli = self.ctx.commands["radio"]("now", platform="cli")
+        self.assertIn("\033[", cli)
+        self.assertIn("Big Earl", cli)
+        chat = self.ctx.commands["radio"]("", platform="telegram")
+        self.assertTrue(chat.startswith("```\n\u256d") and chat.endswith("\u256f\n```"))
+        lines = self.ctx.commands["radio"]("", platform="tui").splitlines()
+        self.assertEqual({self.plugin.station.cells(line) for line in lines}, {self.plugin.station.WIDTH})
+
+        status = {"station": {"name": "Late Epoch"}, "running": True, "elapsed": 61,
+                  "current": {"title": "A very long song title that will not fit on one line of the card at all", "duration": 150},
+                  "queue": [{"title": f"Song {n}", "duration": 120, "kind": "speech" if n == 2 else "music"} for n in range(1, 6)],
+                  "broadcast": {"state": "streaming", "configured": True}, "stream": {"listeners": 3}}
+        card = self.plugin.station.card(status)
+        self.assertIn("\u25cf LIVE", card)
+        self.assertIn("1:01 / 2:30", card)
+        self.assertIn("1:29 left", card)
+        self.assertIn("2. Song 2 (DJ)", card)
+        self.assertIn("+ 2 more, 10:00 queued in all", card)
+        self.assertIn("LIVE, 3 listening", card)
+        self.assertIn("\u2026", card)
+        self.assertEqual({self.plugin.station.cells(line) for line in card.splitlines()}, {self.plugin.station.WIDTH})
+
     def test_child_gets_no_secrets(self):
         with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test", "MYRADIO_PORT": "9999"}):
             env = self.plugin.station.child_env({"data_dir": "/data", "port": 0})
         self.assertNotIn("OPENAI_API_KEY", env)
         self.assertEqual((env["MYRADIO_DATA_DIR"], env["MYRADIO_PORT"]), ("/data", "9999"))
+        env = self.plugin.station.child_env({"data_dir": "~/radio-data"})
+        self.assertEqual(env["MYRADIO_DATA_DIR"], str(Path.home() / "radio-data"))
+
+
+class HermesSongRequestTests(StationFixture):
+    """/radio request against a station running the real generation engine with no maker set up."""
+
+    @staticmethod
+    def extensions():
+        from myradio.generation.extension import GenerationExtension
+        return [GenerationExtension(probe_min_interval=0)]
+
+    def setUp(self):
+        super().setUp()
+        self.plugin = load_hermes_plugin()
+        self.ctx = FakeContext({"data_dir": self.temp.name, "port": self.port})
+        self.plugin.register(self.ctx)
+
+    def test_radio_request_writes_the_song_and_asks_the_maker(self):
+        class Result:
+            parsed = {"title": "Green Build", "tags": "sea shanty, accordion, stomping, rowdy male choir",
+                      "lyrics": "[verse]\nHeave the tests\n\n[chorus]\nThe build is green"}
+
+        class Llm:
+            calls = []
+
+            def complete_structured(self, **kw):
+                self.calls.append(kw)
+                return Result()
+
+        self.ctx.llm = Llm()
+        sent = []
+        real_call = self.plugin.station.call
+
+        def call(tool, arguments=None, settings=None):
+            sent.append((tool, arguments))
+            return real_call(tool, arguments, settings)
+
+        with patch.object(self.plugin.station, "call", call):
+            said = self.ctx.commands["radio"]("request a sea shanty about fixing the build")
+        self.assertIn("No music maker is set up yet", said)  # the station's own words: this test station has no maker
+        self.assertTrue(said.startswith("myradio: "))
+        self.assertEqual(sent[-1][0], "generation_enqueue")
+        self.assertEqual(sent[-1][1]["role"], "song")
+        self.assertEqual(sent[-1][1]["payload"], {"tags": Result.parsed["tags"], "title": "Green Build", "lyrics": Result.parsed["lyrics"]})
+        self.assertEqual(Llm.calls[0]["input"], [{"type": "text", "text": "a sea shanty about fixing the build"}])
+        from myradio.generation.payloads import normalize_payload
+        self.assertEqual(normalize_payload("song", sent[-1][1]["payload"]).title, "Green Build")  # what a real maker accepts
+
+        queued = {"job": {"id": "j1", "state": "queued"}, "created": True}
+        with patch.object(self.plugin.station, "call", lambda tool, arguments=None, settings=None: sent.append(arguments) or queued):
+            said = self.ctx.commands["radio"]("request a sea shanty about fixing the build")
+        self.assertIn('Requested "Green Build" (written by your Hermes model).', said)
+        self.assertIn("Job j1 is queued", said)
+
+        Result.parsed = dict(Result.parsed, lyrics="  Heave the tests, the build is red\n  Pull the rope till it is green")
+        self.ctx.commands["radio"]("request another one")  # unlabelled lyrics get a section line the maker accepts
+        self.assertTrue(sent[-1]["payload"]["lyrics"].startswith("[verse]\nHeave the tests"))
+        normalize_payload("song", sent[-1]["payload"])
+
+        old = OldContext({"data_dir": self.temp.name, "port": self.port})  # no ctx.llm: the idea itself is the style
+        self.plugin.register(old)
+        with patch.object(self.plugin.station, "call", lambda tool, arguments=None, settings=None: sent.append(arguments) or queued):
+            said = old.commands["radio"]("request rainy day lofi")
+        self.assertEqual(sent[-1]["payload"], {"tags": "rainy day lofi", "title": "rainy day lofi"})
+        normalize_payload("song", sent[-1]["payload"])
+        self.assertIn("instrumental", said)
+        self.assertIn("Say what the song is about", old.commands["radio"]("request"))
 
 
 class OmpPackageTests(unittest.TestCase):

@@ -10,9 +10,10 @@ immediately. Track titles, artist names and other metadata come from audio files
 
 ## Start
 
-1. Call `myradio_status`. Note the station name, what is on air, the queue (each entry has a `queue_id`), the
-   library (each track has a `track_id` and a `kind`: music, speech or ad) and whether the makers are ready
-   (`capabilities.music_generation`, `capabilities.speech_generation`).
+1. Call `myradio_status`. Note the station name, what is on air (`on_air`), the queue (each entry has a
+   `queue_id`), the library (each track has a `track_id` and a `kind`: music, speech or ad) and whether the makers
+   are ready (`makers_ready.music`, `makers_ready.dj_voice`). A big library is left out of the status: find tracks
+   with `myradio_library` (words from the title or artist, and/or a kind).
 2. If nothing is playing and the owner wants the station on, queue a few songs and call `myradio_start`.
    That plays on this computer only. It does not go live on the internet.
 
@@ -34,11 +35,23 @@ You write the DJ's words. Short, warm and lively: one or two sentences, said the
   `{"text": "..."}`, priority 85 so it is made now. When it appears in the library as kind speech, queue it right
   before its song.
 - Without a DJ voice, queue the station's existing speech carts now and then instead.
-- New songs: if the music maker is ready, `myradio_make` with role `song` and payload `{"tags": "..."}` (optional
-  `lyrics`, `duration_s`) makes one. It takes minutes; keep the queue full with library songs meanwhile.
+## Make new songs
+
+If the music maker is ready, the owner can ask for a song about anything: their day, this conversation, a friend's
+birthday, the bug you just fixed together. Call `myradio_make` with role `song` and payload:
+
+- `title`: short.
+- `tags`: one line of comma-separated style words: genre, mood, tempo, 2 to 4 instruments, the kind of vocal.
+  For example `warm folk pop, acoustic guitar, glockenspiel, brushed drums, gentle female vocal, hopeful`.
+- `lyrics`: `[verse]`, `[chorus]`, `[verse]`, `[chorus]`, four lines each, plain words that sing well, real details
+  from what the owner told you. Leave lyrics out for an instrumental.
+
+A song takes minutes. Keep the queue full with library songs meanwhile, then queue the new one when it shows up in
+the library (`myradio_library` with words from its title). The owner can also type `/radio request <idea>`.
 
 ## More
 
+`/radio` shows the owner a now-playing card without a model turn; `/radio play <words>` puts a song on next.
 `myradio_operations` lists everything else the station offers (weekly shows, on-air hosts, sponsor spots,
 the next hours' plan) and `myradio_run` runs one of them.
 

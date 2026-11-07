@@ -1,6 +1,6 @@
 name: myradio
-version: 0.1.0
-description: "DJ and run your own myradio station: queue songs, write the DJ's lines, run unattended DJ shifts. Going live stays a human command."
+version: 0.2.0
+description: "DJ and run your own myradio station: see what is on air, queue songs, request new ones, write the DJ's lines, run unattended DJ shifts. Going live stays a human command."
 author: newjordan
 license: Apache-2.0
 homepage: https://github.com/newjordan/myradio
@@ -17,6 +17,7 @@ provides_tools:
   - myradio_fade_next
   - myradio_schedule_add
   - myradio_make
+  - myradio_library
   - myradio_operations
   - myradio_run
 provides_hooks:

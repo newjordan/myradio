@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Hermes plugin 0.2.0
+
+- `/radio` shows a now-playing card: what is on air, time left, up next, the stream and the makers.
+- `/radio play <words>` finds a library song and plays it next; `/radio request <idea>` asks the music maker for a
+  new song, with the title, style and lyrics written by your Hermes model on Hermes 0.23 and newer; `/radio fade`.
+- New `myradio_library` tool to search the library. `myradio_status` gives the model a compact status, so a big
+  library no longer fills its context.
+- Plain error messages with the exact command to run when the station is not running, the data folder is wrong or
+  the plugin points at a different station.
+- The DJ-shift blueprint can nod to the owner's day from Hermes memory, in general words and never while live.
+
 ## 0.4.0 (2026-11-07)
 
 The first public release. myradio is a radio station that runs at home on your graphics card: it makes new songs in
