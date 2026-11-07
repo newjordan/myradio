@@ -140,7 +140,7 @@ Inspected stopped process IDs: **1027, 1028, 1029, 1030, 1036, 1037, 1038, 1039,
 
 Captured server logs contain private launch codes. **Do not copy those values into docs, screenshots, public URLs or a new handoff.** Treat retained test directories as private; use a fresh directory/token for a fresh demo. This pass did not restart services, change the live station, or delete private data.
 
-Requirements for the current source: Python >=3.10 on Linux/macOS, a browser; FFmpeg separately for common-format import / MP3 output. No runtime Python dependencies. `fcntl` prevents claiming Windows support. Python/Linux verification does not constitute native Mac certification.
+Requirements for the current source: Python >=3.10 on Linux/macOS (Windows 10/11 via `myradio/_platform.py`; smoke-tested on one Windows 11 machine, real FFmpeg/Icecast on Windows not yet tried), a browser; FFmpeg separately for common-format import / MP3 output. No runtime Python dependencies (Windows: `tzdata` for IANA zones). Python/Linux verification does not constitute native Mac certification.
 
 From the checkout, start a fresh local-only instance using a private data-directory path:
 

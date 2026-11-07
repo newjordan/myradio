@@ -17,6 +17,7 @@ from array import array
 from itertools import repeat
 from operator import add, mul, rshift
 
+from .._platform import O_BINARY
 from .pcm import (BIG_ENDIAN, MAX_RATE, MIN_RATE, AudioError, Pcm, _INT32_CODE, bytes16, format_duration,
                   guard_memory, is_int, require_pcm)
 
@@ -96,7 +97,7 @@ def _open_source(source, limit: int) -> _Source:
 
 
 def _open_path(path, limit: int) -> _Source:
-    flags = os.O_RDONLY | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOCTTY", 0)
+    flags = os.O_RDONLY | O_BINARY | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOCTTY", 0)
     try:
         fd = os.open(path, flags)
     except FileNotFoundError:

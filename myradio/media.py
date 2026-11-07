@@ -4,6 +4,8 @@ import stat
 import struct
 import wave
 
+from ._platform import O_BINARY, O_NOFOLLOW, O_NONBLOCK
+
 
 class MediaError(ValueError):
     pass
@@ -26,13 +28,16 @@ class Reader:
 def open_media(path, duration):
     """Return an owned reader only for complete, native PCM at the expected duration.
 
-    O_NONBLOCK avoids hanging on a substituted FIFO; O_NOFOLLOW rejects symlinks.
+    O_NONBLOCK avoids hanging on a substituted FIFO; O_NOFOLLOW rejects symlinks. Windows has neither
+    flag (and no FIFOs in the file system), so there a symbolic link is refused before opening.
     Validate the opened descriptor, not a path that might change before open.
     WAV parsing requires our canonical import header; no unbounded chunk or full-file scan.
     """
     source = audio = None
     try:
-        fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+        if not O_NOFOLLOW and os.path.islink(path):
+            raise MediaError()
+        fd = os.open(path, os.O_RDONLY | O_BINARY | O_NONBLOCK | O_NOFOLLOW)
         source = os.fdopen(fd, 'rb')
         size = os.fstat(source.fileno())
         if not stat.S_ISREG(size.st_mode) or not 44 <= size.st_size <= 100 * 1024 * 1024 + 4096:

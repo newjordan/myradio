@@ -19,6 +19,8 @@ import time
 import unicodedata
 from typing import Optional, Sequence
 
+from .._platform import NEW_GROUP_FLAGS, WINDOWS, PipeReader, kill_tree
+
 MAX_TOOL_OUTPUT = 256 * 1024  # bytes read from any one tool; the rest is discarded
 _READ_CHUNK = 65536
 _POLL_SLICE = 0.05  # how often a waiting call looks at the cancel flag
@@ -48,8 +50,31 @@ class ToolResult:
         return self.ran and self.exit_code == 0 and not (self.timed_out or self.truncated or self.cancelled)
 
 
+class _PipeWatch:
+    """Windows stand-in for a selector watching the tool's output: select() cannot watch pipes there."""
+
+    def __init__(self, stream):
+        self._reader = PipeReader(stream, block=_READ_CHUNK)
+        self._pending = None
+
+    def select(self, timeout: float) -> list:
+        if self._pending is None:
+            self._pending = self._reader.read(timeout)
+        return [True] if self._pending is not None else []
+
+    def take(self) -> bytes:
+        data, self._pending = self._pending, None
+        return data or b""
+
+    def close(self) -> None:
+        self._reader.close(wait=0.5)
+
+
 def _kill_group(process: "subprocess.Popen") -> None:
     """Stop the tool and anything it started. The tool leads its own process group."""
+    if WINDOWS:
+        kill_tree(process)
+        return
     try:
         os.killpg(process.pid, signal.SIGKILL)
         return
@@ -85,7 +110,8 @@ def run_tool(args: Sequence[str], *, timeout: float, max_bytes: int = MAX_TOOL_O
         return ToolResult(timed_out=True, reason="timeout")
     try:
         process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT, close_fds=True, start_new_session=True)
+                                   stderr=subprocess.STDOUT, close_fds=True, start_new_session=True,
+                                   creationflags=NEW_GROUP_FLAGS)
     except FileNotFoundError:
         return ToolResult(reason="missing")
     except PermissionError:
@@ -103,9 +129,12 @@ def run_tool(args: Sequence[str], *, timeout: float, max_bytes: int = MAX_TOOL_O
     selector = None
     try:
         try:
-            selector = selectors.DefaultSelector()
-            selector.register(process.stdout, selectors.EVENT_READ)
-        except (OSError, ValueError):
+            if WINDOWS:
+                selector = _PipeWatch(process.stdout)
+            else:
+                selector = selectors.DefaultSelector()
+                selector.register(process.stdout, selectors.EVENT_READ)
+        except (OSError, ValueError, RuntimeError):
             selector = None
         while selector is not None:
             if cancel is not None and cancel.is_set():
@@ -118,7 +147,7 @@ def run_tool(args: Sequence[str], *, timeout: float, max_bytes: int = MAX_TOOL_O
             events = selector.select(min(_POLL_SLICE, left))
             if events:
                 try:
-                    data = os.read(process.stdout.fileno(), _READ_CHUNK)
+                    data = selector.take() if WINDOWS else os.read(process.stdout.fileno(), _READ_CHUNK)
                 except OSError:
                     data = b""
                 if not data:
@@ -156,15 +185,15 @@ def run_tool(args: Sequence[str], *, timeout: float, max_bytes: int = MAX_TOOL_O
         return ToolResult(ran=True, exit_code=code, output=text, timed_out=timed_out, truncated=truncated,
                           cancelled=cancelled)
     finally:
-        if selector is not None:
-            try:
-                selector.close()
-            except Exception:
-                pass
         if process.poll() is None:
             _kill_group(process)
             try:
                 process.wait(timeout=_REAP_WAIT)
+            except Exception:
+                pass
+        if selector is not None:
+            try:
+                selector.close()
             except Exception:
                 pass
         try:

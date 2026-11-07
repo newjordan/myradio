@@ -7,8 +7,10 @@ are instructions for you to follow yourself; they are never run.
 from __future__ import annotations
 
 import argparse
+import errno
 import json
 import os
+import stat
 import sys
 from typing import Optional, Sequence
 
@@ -79,6 +81,13 @@ def _hand_over_to_null_device(stream) -> None:
         pass
 
 
+def _is_pipe(stream) -> bool:
+    try:
+        return os.name == "nt" and stat.S_ISFIFO(os.fstat(stream.fileno()).st_mode)
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
 def _attempt(stream, action) -> str:
     """Run ``action`` (a write or a flush) on ``stream`` and say what came of it. Never raises."""
     try:
@@ -86,7 +95,10 @@ def _attempt(stream, action) -> str:
         return WROTE
     except BrokenPipeError:  # the reader closed the pipe early (for example "| head")
         outcome = READER_GONE
-    except (OSError, ValueError):  # a full disk, a file that was closed, a terminal that went away
+    except OSError as exc:
+        # Windows reports a reader that went away on a pipe as a plain "invalid argument", not as BrokenPipeError.
+        outcome = READER_GONE if exc.errno == errno.EINVAL and _is_pipe(stream) else FAILED
+    except ValueError:  # a file that was closed
         outcome = FAILED
     _hand_over_to_null_device(stream)
     return outcome

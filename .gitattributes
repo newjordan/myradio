@@ -1,0 +1,6 @@
+# Windows batch files misbehave with LF line endings; keep them CRLF in every checkout.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+# The macOS/Linux launcher must keep LF to run.
+*.command text eol=lf
+*.sh text eol=lf

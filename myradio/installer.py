@@ -149,8 +149,11 @@ def detect() -> Machine:
         chip = _run(["sysctl", "-n", "machdep.cpu.brand_string"]) or "Apple silicon"
         mem = int(_run(["sysctl", "-n", "hw.memsize"]) or 0) / 2**30
         return Machine("mac-metal", f"{chip}, {mem:.0f} GB", chip, mem)
+    if system == "Windows":
+        return Machine("unsupported", "song-making is not set up for Windows yet (it needs macOS or Linux); the studio, playout and "
+                                      "broadcasting already run on Windows from a source checkout, see docs/REFERENCE.md#windows")
     if system != "Linux":
-        return Machine("unsupported", f"{system} is not supported yet (Windows support is being tested); myradio runs on macOS and Linux today")
+        return Machine("unsupported", f"{system} is not supported yet; myradio runs on macOS and Linux today")
     smi = shutil.which("nvidia-smi")
     if not smi:
         return Machine("unsupported", "Linux without an NVIDIA driver (nvidia-smi not found); install the NVIDIA driver first")

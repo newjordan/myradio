@@ -32,6 +32,7 @@ import time
 from pathlib import Path
 from typing import Mapping, Optional
 
+from .._platform import O_BINARY
 from .config import (Env, check_command, check_env, check_paths, get_bool, get_float, get_int, render_arg, template_names)
 from .errors import Cancelled, ConfigError, WorkerError, message_for
 from .payloads import normalize_payload, window_for
@@ -170,7 +171,7 @@ class Yue2CliWorker(Worker):
             raise WorkerError("output_too_large", message_for("output_too_large"), retryable=False, detail=f"{info.st_size} bytes")
         if info.st_size < 44:
             raise WorkerError("no_output", message_for("no_output"), detail=f"the output file has {info.st_size} bytes")
-        fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+        fd = os.open(path, os.O_RDONLY | O_BINARY | getattr(os, "O_NOFOLLOW", 0))
         with os.fdopen(fd, "rb") as handle:
             data = handle.read(cap + 1)
         if len(data) > cap:
@@ -192,7 +193,7 @@ class Yue2CliWorker(Worker):
         instrumental = not payload.get("lyrics")
         lyrics = payload.get("lyrics") or "[instrumental]"
         lyrics_path, out_path, plan_path = work / "lyrics.txt", work / "output.wav", work / "plan.dat"
-        fd = os.open(lyrics_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        fd = os.open(lyrics_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_BINARY, 0o600)
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
             handle.write(lyrics)
         values = {"output_file": str(out_path), "work_dir": str(work), "tags": payload["tags"], "lyrics": lyrics,

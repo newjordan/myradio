@@ -4,13 +4,13 @@ The technical details that used to live in the README: running the studio by han
 
 ## Start your studio
 
-Requirements: **Linux or macOS, Python 3.10+**, a browser, and audio you have permission to use. No runtime Python dependencies, GPU, account, model download, or network installation is required to run this checkout.
+Requirements: **Linux, macOS or Windows 10/11, Python 3.10+**, a browser, and audio you have permission to use. No runtime Python dependencies (on Windows, optionally `tzdata` for recurring programs: see [Windows](#windows)), GPU, account, model download, or network installation is required to run this checkout.
 
 ```sh
 python3 -m myradio.server
 ```
 
-Or open **Start myradio.command** (where your desktop permits executable launchers). This is a source launcher, **not** a signed one-click installer. It opens `http://127.0.0.1:8765/` and unlocks your dashboard using a private launch code in the URL fragment, which the app immediately removes. If your browser does not open, visit that address and enter the code printed in the terminal. Keep that terminal running; Ctrl+C stops the service.
+Or open **Start myradio.command** (where your desktop permits executable launchers), or **myradio.cmd** on Windows. This is a source launcher, **not** a signed one-click installer. It opens `http://127.0.0.1:8765/` and unlocks your dashboard using a private launch code in the URL fragment, which the app immediately removes. If your browser does not open, visit that address and enter the code printed in the terminal. Keep that terminal running; Ctrl+C stops the service.
 
 1. **Import your audio**: WAV, MP3, FLAC, Ogg, AAC/M4A or AIFF. FFmpeg converts common formats locally; native 44.1 kHz, 16-bit PCM WAV works without it. Select music, speech, or advertisement. Minimum 100 ms; maximum 100 MiB input and 100 MiB normalized stereo audio.
 2. **Start station** starts the station clock and music rotation. Queue items override rotation. Speech and advertisements play only when explicitly queued or scheduled.
@@ -33,7 +33,25 @@ Options:
 python3 -m myradio.server --no-browser --port 8765 --data-dir "$HOME/.myradio"
 ```
 
-The data directory contains `station.sqlite3`, normalized WAVs in `media/`, `control.token`, optional `agent.json` with provider credentials and `broadcast.json` with source credentials, and a single-writer lock. Back up the directory **with the service stopped**. Keep the token and provider/broadcast settings private. Windows is not supported yet: the service uses POSIX file locking.
+The data directory contains `station.sqlite3`, normalized WAVs in `media/`, `control.token`, optional `agent.json` with provider credentials and `broadcast.json` with source credentials, and a single-writer lock. Back up the directory **with the service stopped**. Keep the token and provider/broadcast settings private. On Windows the default data directory is `%USERPROFILE%\.myradio`.
+
+### Windows
+
+Windows support is new. The same source runs on Windows 10 and 11 with only platform switches: the single-writer lock uses Windows file locks instead of POSIX `flock`, FFmpeg pipes are read by helper threads (Windows cannot `select()` on pipes), and model workers and doctor tools are stopped with `taskkill /T` instead of process groups. So far it has been run on one Windows 11 computer with Python 3.12: WAV import, playout, the live browser monitor, the studio UI, the single-copy lock, backup and restore, the launcher, the doctor, and the FFmpeg import and Icecast output pipes with a stand-in encoder and a loopback test server. It has not yet been tried with a real FFmpeg build or a real Icecast host on Windows; please report anything that goes wrong.
+
+1. Install **Python 3.10 or later** from [python.org](https://www.python.org/downloads/windows/) and tick **Add python.exe to PATH**. (The `python` that Windows offers to fetch from the Microsoft Store is a placeholder until you install it.)
+2. Optional but recommended: install **FFmpeg** and put its `bin` folder on your `PATH`, for MP3/FLAC/Ogg/AAC imports and Icecast output. For example, in PowerShell: `winget install Gyan.FFmpeg`, then open a new terminal.
+3. Optional: recurring programs and ad flights use IANA timezones, which Windows does not ship. Install them once with `py -m pip install tzdata` (installing this checkout with `pip install .` pulls it in automatically on Windows).
+4. Double-click **myradio.cmd** in the checkout folder, or from PowerShell or Command Prompt in that folder:
+
+```powershell
+py -m myradio.server
+py -m myradio.server --no-browser --port 8765 --data-dir "$env:USERPROFILE\.myradio"
+```
+
+Use `py` (the Python launcher) or `python` wherever this reference says `python3`. The studio opens in your default browser exactly as on other platforms; Ctrl+C in the terminal stops the service. The **Connect your agent** sheet writes Windows paths and a PowerShell form of the stream command when the station runs on Windows. In an MCP configuration use the full path of `python.exe`, for example `"command": "C:\\Users\\you\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"`.
+
+Differences on Windows: the `0600`/`0700` private file modes are not enforced (Windows uses access lists; a data folder inside your user profile is private to your account by default), so keep the data directory inside your profile. Symbolic links in the media folder are refused by a check before opening rather than by `O_NOFOLLOW`. A model worker that starts other programs and then exits by itself can leave those programs running, because Windows has no process groups to sweep afterwards; workers stopped for timeout or cancellation are stopped together with their children. The developer test suite runs on Windows (`python -m unittest discover -s tests`, with `tzdata` installed) but is not yet clean there: the remaining failures come from POSIX assumptions in the tests themselves (`0600` modes, symbolic links, which need administrator rights on Windows, `/bin/sh`, `/dev/full`, the `resource` module, `\n` versus `\r\n` in text output, and temporary folders removed while a test still has a database open).
 
 ## What works today
 

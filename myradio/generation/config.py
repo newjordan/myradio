@@ -26,6 +26,7 @@ import shutil
 import urllib.parse
 from typing import Any, Callable, Mapping, Optional, Sequence
 
+from .._platform import WINDOWS
 from .errors import ConfigError
 from .payloads import ROLES
 from .util import finite_number
@@ -52,6 +53,10 @@ EVAL_LETTERS = {"sh": "c", "bash": "c", "dash": "c", "zsh": "c", "ksh": "c", "fi
 VALUE_LETTERS = {"python": "mWXQ", "python2": "mWXQ", "python3": "mWXQ", "perl": "IMmiFCxdD", "ruby": "IrKCx", "node": "r", "nodejs": "r"}
 LONE_ONLY = frozenset({"powershell", "powershell.exe", "pwsh", "cmd", "cmd.exe"})  # their options are whole words, not letters
 DEFAULT_PASSTHROUGH = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "LD_LIBRARY_PATH", "TZ")
+if WINDOWS:
+    # Most Windows programs cannot start without these (SYSTEMROOT in particular).
+    DEFAULT_PASSTHROUGH += ("SYSTEMROOT", "WINDIR", "PATHEXT", "COMSPEC", "USERPROFILE", "APPDATA", "LOCALAPPDATA",
+                            "PROGRAMDATA", "NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE")
 TOP_LEVEL = frozenset({"version", "artist", "resources", "workers", "buffer", "retry", "finishing", "limits"})
 
 SONG_BUFFER_MAX = (7200, 14400)      # seconds
@@ -230,6 +235,10 @@ def render_arg(arg: str, values: Mapping[str, str]) -> str:
 def _family(program: str) -> str:
     """The lower-case name of a program without its folder or version digits (``/usr/bin/python3.12`` is ``python``)."""
     base = os.path.basename(program).lower()
+    if WINDOWS and base not in INTERPRETERS:
+        root, extension = os.path.splitext(base)
+        if extension in (".exe", ".com", ".bat", ".cmd"):
+            base = root  # C:\Python312\python.exe is python
     return base if base in INTERPRETERS or base in WRAPPERS else base.rstrip("0123456789.")
 
 
@@ -340,7 +349,8 @@ def check_paths(raw: Mapping, key: str, where: str, limit: int = 20) -> tuple:
     out = []
     for item in value:
         if not isinstance(item, str) or "\x00" in item or not os.path.isabs(item) or len(item) > 1024:
-            raise ConfigError(f"{where}: every path in {key} must be a full path starting with /.")
+            start = "a drive letter such as C:\\" if WINDOWS else "/"
+            raise ConfigError(f"{where}: every path in {key} must be a full path starting with {start}.")
         out.append(item)
     return tuple(out)
 

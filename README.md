@@ -20,7 +20,8 @@ myradio
 ```
 
 **Works on:** a Mac with Apple silicon (M1 or newer) · a Linux PC with an NVIDIA graphics card (12 GB or more) ·
-an NVIDIA DGX Spark. Windows is on the way.
+an NVIDIA DGX Spark. On Windows 10/11 the studio, playout and broadcasting run from a source checkout today, with
+your own audio; song-making and the one-line installer are not set up there yet. See [Windows](docs/REFERENCE.md#windows).
 
 ## Make it yours
 

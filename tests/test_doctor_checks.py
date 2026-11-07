@@ -211,12 +211,12 @@ class SystemCheck(CheckCase):
                 result = self.run_check()
                 self.assertEqual(result["status"], "warn")
 
-    def test_windows_fails_plainly(self):
+    def test_windows_is_detected_and_not_called_verified(self):
         self.pretend(system="Windows", machine="AMD64")
         result = self.run_check()
-        self.assertEqual(result["status"], "fail")
+        self.assertEqual(result["status"], "warn")
         self.assertIn("Windows", result["detail"])
-        self.assertIn("Mac or a Linux", result["fix"])
+        self.assertIn("x86-64", result["detail"])
 
     def test_mac_with_apple_silicon_is_detected_and_not_called_verified(self):
         table = self.pretend(system="Darwin", machine="arm64", mac_version="14.5", programs=("sysctl",))
