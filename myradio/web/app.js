@@ -645,7 +645,12 @@ async function loadConnect() {
 function kitText(info, dj, stream) {
   const config = JSON.stringify({mcpServers: {myradio: {command: info.python, args: ['-m', 'myradio.mcp', '--data-dir', info.data_dir, '--port', String(info.port)], cwd: info.package_dir}}}, null, 2);
   const job = dj && stream ? 'DJ my radio station and set up its outbound stream' : dj ? 'DJ my radio station' : stream ? 'set up the outbound stream for my radio station' : 'connect to my radio station';
-  const cli = `"${info.python}" -m myradio.connect --data-dir "${info.data_dir}" --port ${info.port}`;
+  const windows = info.platform === 'windows';
+  // PowerShell needs & to run a quoted program path.
+  const cli = `${windows ? '& ' : ''}"${info.python}" -m myradio.connect --data-dir "${info.data_dir}" --port ${info.port}`;
+  const saveStream = windows
+    ? `  (PowerShell) $env:MYRADIO_SOURCE_PASSWORD = Get-Content C:\\path\\to\\source-password -TotalCount 1; ${cli} stream --url "https://your-host:8443/live.mp3"`
+    : `  MYRADIO_SOURCE_PASSWORD="$(cat /path/to/source-password)" ${cli} stream --url "https://your-host:8443/live.mp3"`;
   const lines = [`You are going to ${job}. The station is "${info.station}", running in myradio on this computer.`, '',
     '1. Connect to the station', 'Add this MCP server to your MCP settings, then reload your tools:', '', config, '',
     'The adapter reads the station’s private control code from that data folder by itself. Never ask me for it, print it or copy it anywhere.',
@@ -661,7 +666,7 @@ function kitText(info, dj, stream) {
     'myradio sends 128 kbit/s MP3 to an Icecast-compatible server. A remote server needs HTTPS with a valid certificate; plain http only works to this computer, which is fine for a test.',
     '- If I don’t have a server yet, help me choose: my own Icecast or AzuraCast server, or a host that gives Icecast source details (mount URL, source user, source password). For a quick private test you can run Icecast on this computer.',
     '- Save the destination with this command. It reads the source password from MYRADIO_SOURCE_PASSWORD, so the password never appears in our chat. Set the variable from wherever the password already is (for example a file your server setup wrote), never by typing it into a command:',
-    `  MYRADIO_SOURCE_PASSWORD="$(cat /path/to/source-password)" ${cli} stream --url "https://your-host:8443/live.mp3"`,
+    saveStream,
     '- If only I know the password, ask me to paste the stream address into the studio’s "Or connect a stream yourself" box instead.',
     `- Check it with: ${cli} status`,
     '- Then tell me it’s ready. Going live is my decision: I press GO LIVE in the studio, or I tell you to call broadcast_start.');

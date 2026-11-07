@@ -35,6 +35,8 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Sequence
 
+from ._platform import O_BINARY
+
 NAME_RE = re.compile(r"[a-z][a-z0-9]{1,23}")
 OP_RE = re.compile(r"[a-z][a-z0-9_]{1,39}")
 ARG_RE = re.compile(r"[a-z][a-z0-9_]{0,31}")
@@ -224,7 +226,7 @@ class Context:
         if path.is_symlink():
             raise ExtensionError("Database path must not be a symbolic link.")
         try:
-            os.close(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600))
+            os.close(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_BINARY, 0o600))
         except FileExistsError:
             pass  # reopening an existing database keeps its mode
         conn = sqlite3.connect(path, check_same_thread=False)
@@ -265,7 +267,7 @@ class Context:
             raise ExtensionError("Refusing to write through a symbolic link.")
         staged = self.state_dir / f".{filename}.{os.urandom(6).hex()}.tmp"
         try:
-            fd = os.open(staged, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            fd = os.open(staged, os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_BINARY, 0o600)
             with os.fdopen(fd, "wb") as handle:
                 handle.write(data)
             os.replace(staged, target)

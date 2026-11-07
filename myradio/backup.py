@@ -6,7 +6,6 @@ import contextlib
 import ctypes
 import sys
 import datetime as dt
-import fcntl
 import hashlib
 import json
 import math
@@ -18,6 +17,7 @@ import tempfile
 import wave
 import zipfile
 
+from ._platform import O_BINARY, WINDOWS, lock_file, unlock_file
 from .scheduling import recurrence
 from .station import SCHEMA, MAX_UPLOAD, RATE, WIDTH, CHANNELS, FRAMES
 
@@ -156,13 +156,13 @@ def offline_lock(directory):
         raise BackupError('Station data paths must not be symbolic links.')
     with lock.open('a') as f:
         try:
-            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lock_file(f)
         except BlockingIOError:
             raise BackupError('Stop the station service before making a backup.') from None
         try:
             yield directory
         finally:
-            fcntl.flock(f, fcntl.LOCK_UN)
+            unlock_file(f)
 
 
 def create_backup(directory, destination):
@@ -211,7 +211,14 @@ def create_backup(directory, destination):
 
 
 def publish_directory(source, destination):
-    """Atomic no-clobber directory rename on the supported POSIX platforms."""
+    """Atomic no-clobber directory rename on the supported platforms.
+
+    Windows' own rename (MoveFileEx without MOVEFILE_REPLACE_EXISTING) already refuses to replace an existing
+    destination, so it needs no special call. Nothing inside ``source`` may be open while it is renamed there.
+    """
+    if WINDOWS:
+        os.rename(source, destination)
+        return
     libc = ctypes.CDLL(None, use_errno=True)
     if sys.platform.startswith('linux') and hasattr(libc, 'renameat2'):
         result = libc.renameat2(-100, os.fsencode(source), -100, os.fsencode(destination), 1)
@@ -233,7 +240,7 @@ def restore_backup(archive_path, destination):
     published = False
     try:
         with (destination / 'station.lock').open('a') as lock:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lock_file(lock)
             with zipfile.ZipFile(archive_path) as archive:
                 entries = archive.infolist()
                 if len(entries) > MAX_TRACKS + 1 or len({i.filename for i in entries}) != len(entries):
@@ -268,7 +275,7 @@ def restore_backup(archive_path, destination):
                 for row in tracks.values():
                     name = 'media/' + row['filename']
                     path = destination / name
-                    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+                    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | O_BINARY, 0o600)
                     h = hashlib.sha256()
                     size = 0
                     with os.fdopen(fd, 'wb') as target, archive.open(name) as source:
@@ -300,6 +307,12 @@ def restore_backup(archive_path, destination):
                     raise BackupError('Restored database failed integrity checks.')
                 db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
             database.chmod(0o600)
+            if not WINDOWS:
+                publish_directory(destination, final_destination)
+                published = True
+        if not published:
+            # Windows cannot rename a folder while a file in it (the lock) is open. The private staging folder
+            # is published as soon as the lock is let go.
             publish_directory(destination, final_destination)
             published = True
         return {'tracks': len(tracks), 'media_bytes': total, 'path': str(final_destination)}

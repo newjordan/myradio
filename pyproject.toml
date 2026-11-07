@@ -7,7 +7,8 @@ name = "myradio"
 version = "0.3.2"
 description = "A local-first radio studio with persistent playout and shared agent controls"
 requires-python = ">=3.10"
-dependencies = []
+# Windows has no system timezone database; recurring programs and ad flights need the IANA zones from tzdata there.
+dependencies = ["tzdata; sys_platform == 'win32'"]
 
 [project.scripts]
 myradio-prompts = "myradio.prompts.__main__:main"

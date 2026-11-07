@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from ._platform import O_BINARY
+
 
 class AgentSettingsError(ValueError):
     pass
@@ -60,7 +62,7 @@ def save_agent(directory, value):
     path = Path(directory) / 'agent.json'
     staged = path.with_name('agent-' + os.urandom(8).hex() + '.tmp')
     try:
-        fd = os.open(staged, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        fd = os.open(staged, os.O_CREAT | os.O_EXCL | os.O_WRONLY | O_BINARY, 0o600)
         with os.fdopen(fd, 'w') as f:
             json.dump(value, f)
             f.flush()

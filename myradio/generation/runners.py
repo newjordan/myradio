@@ -22,6 +22,7 @@ import threading
 import time
 from typing import Mapping, Optional, Sequence
 
+from .._platform import NEW_GROUP_FLAGS, WINDOWS, PipeReader, kill_tree
 from .errors import Cancelled, WorkerError
 
 
@@ -118,6 +119,9 @@ class SubprocessRunner:
             raise WorkerError("worker_failed", "The command is not valid.", retryable=False, detail="argv must be a non-empty list of strings")
         started = time.monotonic()
         deadline = started + deadline_s
+        if WINDOWS:
+            return self._run_windows(argv, cwd=cwd, env=env, deadline=deadline, started=started, cancel=cancel,
+                                     max_dir_bytes=max_dir_bytes, grace_s=grace_s, drain_s=drain_s)
         try:
             proc = subprocess.Popen(list(argv), cwd=os.fspath(cwd), env=dict(env), stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE, shell=False, close_fds=True, start_new_session=True)
@@ -200,6 +204,86 @@ class SubprocessRunner:
                 return True, False
             time.sleep(0.02)
         return True, True
+
+    def _run_windows(self, argv: Sequence[str], *, cwd, env: Mapping[str, str], deadline: float, started: float,
+                     cancel: Optional[threading.Event], max_dir_bytes: Optional[int], grace_s: float, drain_s: float) -> RunResult:
+        """The same contract on Windows, which has no process groups to signal and cannot select() on pipes.
+
+        Helper threads read the two pipes. Stopping uses ``taskkill /T /F``, which ends the program and the
+        programs it started while it is still running; there is no polite TERM step for console programs.
+        A program that started others and then exited by itself cannot be traced afterwards.
+        """
+        try:
+            proc = subprocess.Popen(list(argv), cwd=os.fspath(cwd), env=dict(env), stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, shell=False, close_fds=True, creationflags=NEW_GROUP_FLAGS)
+        except (OSError, ValueError) as exc:
+            raise WorkerError("worker_failed", "The program could not be started. Check that it is installed and allowed to run.",
+                              detail=f"{type(exc).__name__}: {exc}") from None
+        rings = {"out": _Ring(self.ring_bytes), "err": _Ring(self.ring_bytes)}
+        readers = {"out": PipeReader(proc.stdout), "err": PipeReader(proc.stderr)}
+        live = set(readers)
+        reason = None
+        killed = leaked = False
+        try:
+            exited_at: Optional[float] = None
+            next_size_check = started
+            while True:
+                now = time.monotonic()
+                if cancel is not None and cancel.is_set():
+                    reason = "cancelled"
+                elif now >= deadline:
+                    reason = "timeout"
+                elif max_dir_bytes and now >= next_size_check:
+                    next_size_check = now + 0.2
+                    if tree_bytes(cwd, max_dir_bytes) > max_dir_bytes:
+                        reason = "too_large"
+                if reason:
+                    break
+                if exited_at is None and proc.poll() is not None:
+                    exited_at = now
+                if exited_at is not None and (not live or now - exited_at >= drain_s):
+                    break
+                got = False
+                for name in sorted(live):
+                    chunk = readers[name].read(0)
+                    if chunk is None:
+                        continue
+                    got = True
+                    if chunk:
+                        rings[name].add(chunk)
+                    else:
+                        live.discard(name)
+                if not got:
+                    time.sleep(min(self.poll_s, max(0.0, deadline - now)))
+            reason = reason or "exit"
+            if proc.poll() is None:
+                kill_tree(proc)
+                try:
+                    proc.wait(timeout=3.0)
+                except subprocess.TimeoutExpired:
+                    pass
+                killed, leaked = True, proc.poll() is None
+            for name in sorted(live):  # what is already sitting in the pipes
+                for _ in range(32):
+                    chunk = readers[name].read(0.05)
+                    if not chunk:
+                        break
+                    rings[name].add(chunk)
+        finally:
+            if proc.poll() is None:
+                kill_tree(proc)
+                try:
+                    proc.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    pass
+            for reader in readers.values():
+                reader.close(wait=0.5)
+            for stream in (proc.stdout, proc.stderr):
+                try:
+                    stream.close()
+                except OSError:
+                    pass
+        return RunResult(proc.returncode, reason, rings["out"].text(), rings["err"].text(), time.monotonic() - started, killed, leaked)
 
     @staticmethod
     def _drain(selector: selectors.BaseSelector, rings: Mapping[str, _Ring]) -> None:

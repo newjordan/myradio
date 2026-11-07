@@ -40,6 +40,7 @@ import threading
 import time
 from typing import Callable, Optional
 
+from .._platform import WINDOWS
 from .tools import ToolResult, clean_text, display_path, run_tool
 
 LOG = logging.getLogger("myradio.doctor")
@@ -383,9 +384,10 @@ def check_system(settings: Optional[Settings] = None) -> dict:
     machine = platform.machine().lower()
     arch = {"x86_64": "x86-64", "amd64": "x86-64", "aarch64": "ARM64", "arm64": "ARM64"}.get(machine, machine or "an unknown processor")
     if system == "Windows":
-        return _result("system", "fail", "This is Windows, which myradio does not support.",
-                       "myradio runs on macOS and Linux. It needs file-locking features that Windows does not have.",
-                       "Run myradio on a Mac or a Linux computer.")
+        version = clean_text(platform.release(), 30) or "(unknown version)"
+        return _result("system", "warn", f"Windows {version} on {arch}. Windows support is new.",
+                       "The studio, playout, imports, backups and broadcasting are set up for Windows 10 and 11, "
+                       "but they have only been tried on a few Windows computers so far.")
     if system == "Darwin":
         version = platform.mac_ver()[0] or "(unknown version)"
         note = MAC_NOTE
@@ -423,6 +425,8 @@ def _install_tzdata_fix() -> str:
         return "Open a terminal and run: sudo apt install tzdata"
     if family == "arch":
         return "Open a terminal and run: sudo pacman -S tzdata"
+    if WINDOWS and sys.executable:
+        return f'Open Command Prompt and run: "{sys.executable}" -m pip install tzdata'
     return f"Open a terminal and run: {pip}"
 
 
@@ -697,6 +701,10 @@ def check_data_folder(settings: Optional[Settings] = None) -> dict:
         return _result("data-folder", "fail", f"myradio cannot read and save in {shown}.",
                        "The folder belongs to another account, or its settings do not let this account save in it. Choose a different folder with --data-dir.",
                        "Start myradio with a folder of your own, for example: myradio --data-dir ~/.myradio")
+    if WINDOWS:
+        # Windows keeps folder privacy in access lists, which st_mode does not show (every folder reads as open to all),
+        # so only what was actually checked is reported. A folder inside the user's own profile is private by default.
+        return _result("data-folder", "ok", f"myradio can read and save in your station folder {shown}.")
     mode = stat.S_IMODE(info.st_mode)
     if mode & 0o007:
         return _result("data-folder", "fail", f"The station folder {shown} can be opened by other accounts on this computer.",
@@ -839,6 +847,8 @@ def check_sqlite(settings: Optional[Settings] = None) -> dict:
 @_guarded("fcntl")
 def check_fcntl(settings: Optional[Settings] = None) -> dict:
     """File locks, which stop two copies of myradio from using one station folder at once."""
+    if WINDOWS:
+        return _check_windows_locks()
     try:
         import fcntl
     except ImportError:
@@ -856,6 +866,32 @@ def check_fcntl(settings: Optional[Settings] = None) -> dict:
         with handle:
             fcntl.flock(handle, fcntl.LOCK_SH | fcntl.LOCK_NB)
             fcntl.flock(handle, fcntl.LOCK_UN)
+    except OSError as exc:
+        if _out_of_resources(exc):
+            return _result("fcntl", "unknown", f"File locks could not be tried because this program has run out of room to open more files ({_os_reason(exc)}).",
+                           "Close some programs and run the check again.")
+        return _result("fcntl", "fail", f"File locking did not work when tried ({_os_reason(exc)}).",
+                       "myradio refuses to start without it, so two copies cannot damage one station. Try a different Python, or run myradio on a local drive.")
+    return _result("fcntl", "ok", "This computer supports the file locks myradio uses to keep two copies from sharing one station folder.")
+
+
+def _check_windows_locks() -> dict:
+    """The Windows form of the same check: a byte-range lock on a read-only copy of this file, let go at once."""
+    try:
+        import msvcrt
+    except ImportError:
+        return _result("fcntl", "fail", "This copy of Python does not have the Windows file locks myradio relies on.",
+                       "myradio uses them so two copies never write to one station folder.",
+                       "Install Python from https://www.python.org/downloads/windows/ and start myradio with it.")
+    try:
+        try:
+            handle = open(globals().get("__file__") or os.devnull, "rb")
+        except OSError:
+            handle = open(os.devnull, "rb")
+        with handle:
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
     except OSError as exc:
         if _out_of_resources(exc):
             return _result("fcntl", "unknown", f"File locks could not be tried because this program has run out of room to open more files ({_os_reason(exc)}).",

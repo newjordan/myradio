@@ -303,7 +303,8 @@ class AdsExtension(Extension):
     # ---- what the station tells us ----------------------------------------------------------------------------
     def _station_view(self, max_age: float = 0.0) -> _StationView:
         view = self._view
-        if view is not None and time.monotonic() - view.fetched <= max_age:
+        # max_age 0 always fetches: Windows' monotonic clock moves in ~16 ms steps, so "no time has passed" is common there.
+        if view is not None and max_age > 0 and time.monotonic() - view.fetched <= max_age:
             return view
         try:
             status = self._ctx.station.status()

@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 import copy
-import fcntl
 import datetime as dt
 import io
 import json
@@ -17,6 +16,7 @@ import time
 import uuid
 import wave
 
+from ._platform import lock_file, unlock_file
 from .media import open_media, MediaError
 from .scheduling import next_occurrence, recurrence
 from .broadcast import Broadcast, BroadcastError
@@ -138,7 +138,7 @@ class Station:
         self.directory.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.process_lock = open(self.directory / 'station.lock', 'a')
         try:
-            fcntl.flock(self.process_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lock_file(self.process_lock)
         except BlockingIOError:
             self.process_lock.close()
             raise StationError('Another myradio service is using this data directory.') from None
@@ -717,5 +717,5 @@ class Station:
                     pass
             self.subscribers.clear()
             self.db.close()
-            fcntl.flock(self.process_lock, fcntl.LOCK_UN)
+            unlock_file(self.process_lock)
             self.process_lock.close()

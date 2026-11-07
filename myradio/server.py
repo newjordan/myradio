@@ -19,6 +19,7 @@ import time
 from urllib.parse import parse_qs, urlsplit
 import webbrowser
 
+from ._platform import O_BINARY, WINDOWS
 from .broadcast import BroadcastError
 from .chat import Chat
 from .extensions import Request, builtin_extensions
@@ -30,7 +31,8 @@ CSP = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'sel
 
 class Server(ThreadingHTTPServer):
     daemon_threads = True
-    allow_reuse_address = True
+    # On Windows SO_REUSEADDR lets a second program bind the same port and steal requests, so it stays off there.
+    allow_reuse_address = not WINDOWS
     request_queue_size = 16
 
     def __init__(self, address, station, token, public_origin=None):
@@ -275,6 +277,7 @@ class Handler(BaseHTTPRequestHandler):
         station = self.server.station
         return {"python": sys.executable, "package_dir": str(Path(__file__).resolve().parent.parent), "data_dir": str(station.directory),
                 "port": self.server.server_address[1], "station": station.status()["station"].get("name", "My radio"),
+                "platform": "windows" if WINDOWS else "posix",
                 "agent_link": self.server.agent_status()}
 
     def panel_asset(self, name):
@@ -361,7 +364,7 @@ class Handler(BaseHTTPRequestHandler):
 def load_token(directory):
     path = Path(directory) / "control.token"
     try:
-        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_BINARY, 0o600)
     except FileExistsError:
         if path.is_symlink():
             raise StationError("Control token must not be a symbolic link.")

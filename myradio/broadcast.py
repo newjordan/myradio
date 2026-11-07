@@ -23,6 +23,8 @@ import threading
 import time
 from urllib.parse import urlsplit
 
+from ._platform import O_BINARY, WINDOWS, PipeReader, PipeWriter
+
 
 class BroadcastError(ValueError):
     pass
@@ -113,7 +115,7 @@ class Broadcast:
         # Never hold the status/clock lock during disk I/O.
         staged = self.path.with_name("broadcast-" + os.urandom(8).hex() + ".tmp")
         try:
-            fd = os.open(staged, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            fd = os.open(staged, os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_BINARY, 0o600)
             with os.fdopen(fd, "w") as f:
                 json.dump(config, f)
                 f.flush()
@@ -280,7 +282,7 @@ class Broadcast:
             timer.join()  # no late timer may interrupt the following attempt
 
     def _attempt(self):
-        connection = response = process = None
+        connection = response = process = writer = reader = None
         try:
             connection, response, sock = self._connect()
             if self.stop_event.is_set():
@@ -295,8 +297,12 @@ class Broadcast:
                 "-f", "mp3", "-flush_packets", "1", "pipe:1"],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, bufsize=0,
                 close_fds=True)
-            os.set_blocking(process.stdin.fileno(), False)
-            os.set_blocking(process.stdout.fileno(), False)
+            if WINDOWS:
+                # select() cannot watch pipes on Windows: helper threads move the bytes instead.
+                writer, reader = PipeWriter(process.stdin), PipeReader(process.stdout)
+            else:
+                os.set_blocking(process.stdin.fileno(), False)
+                os.set_blocking(process.stdout.fileno(), False)
             pending = b""
             last_progress = time.monotonic()
             while not self.stop_event.is_set():
@@ -311,15 +317,22 @@ class Broadcast:
                         pending = self.blocks.get_nowait()
                     except queue.Empty:
                         pass
-                readable, writable, _ = select.select([process.stdout], [process.stdin] if pending else [], [], 0.1)
-                if writable:
-                    try:
-                        n = os.write(process.stdin.fileno(), pending)
-                        pending = pending[n:]
-                    except BlockingIOError:
-                        pass
-                if readable:
-                    data = os.read(process.stdout.fileno(), 65536)
+                if WINDOWS:
+                    if pending and writer.offer(pending):
+                        pending = b""
+                    data = reader.read(0.1)
+                else:
+                    data = None
+                    readable, writable, _ = select.select([process.stdout], [process.stdin] if pending else [], [], 0.1)
+                    if writable:
+                        try:
+                            n = os.write(process.stdin.fileno(), pending)
+                            pending = pending[n:]
+                        except BlockingIOError:
+                            pass
+                    if readable:
+                        data = os.read(process.stdout.fileno(), 65536)
+                if data is not None:
                     if not data:
                         raise OSError("encoder closed")
                     sock.sendall(data)
@@ -338,6 +351,10 @@ class Broadcast:
                 except subprocess.TimeoutExpired:
                     process.kill()
                     process.wait(timeout=1)
+                if writer:
+                    writer.close()
+                if reader:
+                    reader.close()
                 process.stdin.close()
                 process.stdout.close()
             if response:

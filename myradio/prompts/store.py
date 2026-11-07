@@ -20,6 +20,7 @@ import time
 from pathlib import Path
 from typing import Callable
 
+from .._platform import O_BINARY
 from .library import Preset, SongPrompt
 from .userpresets import USER_PREFIX, UserPresetRecord, digest_of
 
@@ -131,7 +132,7 @@ class PromptStore:
         if path.is_symlink():
             raise StoreError("The saved-styles file must not be a symbolic link.")
         try:
-            os.close(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600))
+            os.close(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_BINARY, 0o600))
         except FileExistsError:
             pass
         except OSError:
