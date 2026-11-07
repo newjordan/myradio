@@ -132,10 +132,11 @@ without a model in the 0.1.0 pass, and the guard is unit-tested.
 
 ## Demo video
 
-`~/myradio-promo/film/myradio-hermes-demo.mp4`, 1920x1080, 30 fps, under 90 seconds. Real footage: the terminal is a
+`~/myradio-promo/film/myradio-hermes-demo.mp4`, 1920x1080, 30 fps, 57.7 seconds. A 720p copy for upload (8.8 MB) is
+`~/myradio-promo/film/hermes-demo/renders/hermes-demo-720p.mp4`, poster `renders/hermes-demo-poster.jpg`. Real footage: the terminal is a
 frame-accurate replay of a recorded Hermes session (the bytes Hermes printed, played back in xterm.js), and the
 studio is a screen recording of the same station during that session. The model's thinking time is cut. Music is
-the station's own songs. No narration.
+a wordless lo-fi bed made with myradio. No narration.
 
 Why 1920x1080: the terminal is 104 columns wide and needs the width to stay readable, and the studio inset sits beside
 it; X plays 16:9 in the timeline without cropping. A square or portrait cut would shrink the terminal text below what
