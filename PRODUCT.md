@@ -1,6 +1,6 @@
 # myradio — Product brief
 
-> **Implementation status (0.3.2 source development preview):** The local studio now has persistent WAV playout, a browser dashboard, explicit monitoring, queues, one-shot and recurring scheduling, chat with optional tool-calling models, and an MCP adapter. Optional Icecast MP3 publishing, common-format imports, offline portable recovery and private dashboard model setup are implemented. The remaining sections describe the **target product**, not a claim that every integration ships today. Model audio generation, research agents, bundled public hosting, hour-grid editing, signed installers and cross-platform release certification remain outstanding. **Current source has a reproduced provider-deadline regression and an unintegrated transport candidate.** See [docs/HANDOFF.md](docs/HANDOFF.md) for the exact pause point, [README.md](README.md) for operating instructions, and [docs/RELEASE-STATUS.md](docs/RELEASE-STATUS.md) for historical evidence and current blockers.
+> **Original product brief,** written during 0.3 development. The released version is 0.4.0: see [README.md](README.md) and [CHANGELOG.md](CHANGELOG.md). The sections below describe the target product, not a list of what ships today.
 
 ## Product promise
 
@@ -12,8 +12,7 @@ The station should help people enjoy their own interests, discover things worth 
 
 - **Product domain:** operator-owned `myradio.garden` is the intended advertising/hosting home. Keep public product and listener pages separate from authenticated station control; domain ownership alone is not deployed hosting. Use the completed product for Knightshift later, not as a claim of present production readiness.
 
-- Build standalone for now, with a private `myradio` repository.
-- Eventually contribute to Wasserman's Imagination Studio. Inspect its actual architecture and follow its mechanics rather than inventing an incompatible parallel system.
+- Build standalone.
 - **Music:** `Frosty40/YuE2-Turbo-Radio`. **DJ/anchor speech:** `Frosty40/Drama-3-B70-Turbo-GGUF`. Drama 3 voices the DJs, news/entertainment anchors, station IDs, and spoken ads; it is not a fallback music generator. These are separate production roles, not a primary/backup model pair.
 - Turbo and Mac are equally important launch targets. The exact Turbo environment, supported hardware, and Mac requirements still need verification.
 - Provide one-click installation and an approachable, substantial web UI.

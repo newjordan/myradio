@@ -1,3 +1,6 @@
+> **Historical.** This is the development handoff from the 0.3 series, kept for contributors. The released version is
+> 0.4.0: see [README.md](../../README.md) and [CHANGELOG.md](../../CHANGELOG.md).
+
 # myradio — continuation handoff
 
 **Snapshot: 2026-11-05, approximately 23:18 UTC. Workspace: `/home/frosty40/myradio`.**
@@ -16,7 +19,6 @@
 
 The goal is a polished, professional **one-click radio station for nontechnical users**: install, describe the station, and operate it without learning a production stack. Do not shrink that goal to a prompt CLI or an imported-file player; those are implementation increments.
 
-- Standalone and private now; potential later contribution to Wasserman's Imagination Studio. Follow its local service/shared UI-and-agent API/MCP approach rather than inventing a separate agent-only control plane.
 - **Turbo and Mac are equally important launch targets.** Stage the engineering as necessary, but do not silently relegate Mac to an optional later port. Native hardware/runtime compatibility still requires actual verification.
 - **YuE2 makes music:** `Frosty40/YuE2-Turbo-Radio`.
 - **Drama 3 voices DJs and anchors:** `Frosty40/Drama-3-B70-Turbo-GGUF`, including spoken links, station IDs and spoken ads. **Drama 3 is not a fallback music generator.** This was an explicit user correction.
@@ -30,9 +32,6 @@ The goal is a polished, professional **one-click radio station for nontechnical 
 
 ### Reference sources already located
 
-- Private station: `https://github.com/newjordan/knightshiftradio`.
-- Private music runtime/release work: `https://github.com/newjordan/yue2-b70`; Drama runtime work: `https://github.com/newjordan/fish`.
-- Studio: `https://github.com/drowzeys/Imagination-Studio-by-keys-Wasserman`.
 - Model cards: `https://huggingface.co/Frosty40/YuE2-Turbo-Radio` and `https://huggingface.co/Frosty40/Drama-3-B70-Turbo-GGUF`.
 - Earlier inspection found optimized runtime/weight releases, not new fine-tunes according to their cards. Verify current revisions, redistribution/commercial rights and model capability before bundling or enabling advertising-supported use. Do not infer music support on Mac from Drama speech support there.
 - `.reference/` is ignored, partial research material, not the authoritative app source or a promise that every previously fetched reference remains present. Knightshift's live station was not modified here; no current on-air status was verified in this handoff.

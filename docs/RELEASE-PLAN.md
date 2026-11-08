@@ -47,7 +47,7 @@ clip of every song as it aired) are the raw material for the launch films.
 - [ ] **Public README:** what it is, quick start, the machines it has run on with links to the receipts, Connect your agent,
       Research: help wanted.
 - [ ] **Version 0.4.0**, CHANGELOG, a wheel, and a clean install verified on the Mac mini and on apollo.
-- [ ] **Repository tidy for public eyes:** `docs/HANDOFF.md` links to private repositories (knightshiftradio and the runtime
+- [x] **Repository tidy for public eyes:** `docs/HANDOFF.md` links to private repositories (knightshiftradio and the runtime
       repos); the internal lane notes (`docs/lanes/`) could move under `docs/dev/`; the top of `docs/RELEASE-STATUS.md`
       predates the provider-deadline fix and should be replaced by a current summary.
 - [ ] **SECURITY.md** (how to report), **CONTRIBUTING.md** (the receipts house rule from RESEARCH.md), issue templates.
