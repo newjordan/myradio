@@ -55,9 +55,6 @@ The [research paper](docs/research/benchmarks-2026-11-06/PAPER.md) has the detai
 | NVIDIA DGX Spark | 2.29× realtime, with the DJ voice running beside it |
 | Apple Mac mini (M4 Pro) | 1.03× realtime |
 
-Before release we ran a station for a full hour on the RTX 4080, the DGX Spark and the Mac mini; those runs are in
-[docs/runs](docs/runs/).
-
 ## More
 
 - [Reference](docs/REFERENCE.md): running it by hand, scheduling, the agent and HTTP interfaces, backups, broadcasting
