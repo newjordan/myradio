@@ -1,6 +1,6 @@
 # myradio
 
-**Your own radio station. New songs about your life, made on your computer.**
+**Your own radio station. New songs about anything you want, made on your computer.**
 
 Everyone gets their own bard. myradio makes songs while you game, study, throw a party or cook dinner, and plays them
 on your own station, with a DJ between songs. Hook up your favourite AI agent and it becomes the DJ.
