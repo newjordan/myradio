@@ -25,7 +25,7 @@ The dashboard automatically converts common audio formats when FFmpeg is install
 ffmpeg -i input.mp3 -ar 44100 -ac 2 -c:a pcm_s16le output.wav
 ```
 
-No wheel matching the current source is available. At handoff, `dist/` contains historical 0.2.0, 0.3.0 and 0.3.1 wheels; the previously reported 0.3.2 wheel is absent and would not contain the current redesign/reliability changes. To install the development source, `python3 -m pip install .` makes `myradio`, `myradio-mcp`, and `myradio-prompts` available. Packaging currently requires setuptools; installation may fetch it. Python 3.10+ and FFmpeg remain separate. The source launcher does not install anything.
+There is no published wheel: `curl -fsSL https://myradio.garden/install.sh | sh` installs the source from GitHub for this user with uv (see the README), and `python3 -m pip install .` makes `myradio`, `myradio-mcp`, `myradio-prompts` and `myradio-backup` available from a checkout. Packaging currently requires setuptools; installation may fetch it. Python 3.10+ and FFmpeg remain separate. The source launcher does not install anything.
 
 Options:
 
@@ -103,7 +103,7 @@ export MYRADIO_AGENT_MODEL="your-loaded-model-id"
 python3 -m myradio.server
 ```
 
-The endpoint must support OpenAI-compatible `/chat/completions` and function tool calls. Non-local endpoints require HTTPS. Requests send your station metadata, recent chat and up to 100 library entries to the endpoint; consider that provider's privacy and billing policies. Keys are not sent in station snapshots. The current HTTP path sets a 45-second socket timeout, **not a proven total request deadline**: drip-fed headers can hold the operator busy, and malformed chunked replies are not yet safely normalized. See the handoff's failing regression. There are no automatic retries; redirects are disabled.
+The endpoint must support OpenAI-compatible `/chat/completions` and function tool calls. Non-local endpoints require HTTPS. Requests send your station metadata, recent chat and up to 100 library entries to the endpoint; consider that provider's privacy and billing policies. Keys are not sent in station snapshots. The whole request, from DNS to the last body byte, is bounded by one 45-second deadline: a peer that keeps trickling bytes cannot extend it, and every transport, framing or decoding failure becomes the same safe no-mutation error. There are no automatic retries; redirects and proxies are never followed, and the response body is capped at 1 MiB.
 
 The model can inspect state and propose station operations, but **proposals do not run until you approve each action** in the chat panel. Proposals expire after two minutes and a new message invalidates outstanding proposals. This prevents a hallucinated tool call from silently changing playout. The model cannot generate audio, browse, or run programs. It can propose starting/stopping a previously configured broadcast, with the same per-action approval. Never paste source passwords into chat. It is request-driven, not an autonomous background agent.
 
@@ -221,7 +221,7 @@ python3 -m myradio.prompts list
 python3 -m myradio.prompts --help
 ```
 
-See [docs/PROMPTS.md](PROMPTS.md) for catalog and generation usage. These are text prompts, not generated or quality-evaluated audio. [PRODUCT.md](PRODUCT.md) records the larger product vision and platform/model decisions still required.
+See [docs/PROMPTS.md](PROMPTS.md) for catalog and generation usage. These are text prompts, not generated or quality-evaluated audio. [PRODUCT.md](../PRODUCT.md) records the larger product vision and platform/model decisions still required.
 
 
 ### Unavailable audio and recovery

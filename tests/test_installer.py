@@ -1,6 +1,8 @@
 """`myradio setup`: the settings it writes load cleanly, and downloads resume, verify and refuse bad files."""
+import contextlib
 import hashlib
 import http.server
+import io
 import json
 import os
 import tempfile
@@ -127,7 +129,9 @@ class InstallerTests(unittest.TestCase):
 
     def test_setup_subcommand_dispatches(self):
         from myradio import server
-        rc = server.main(["setup", "--check", "--json"])
+        # --check prints what kind of computer this really is: keep that out of the test run's output.
+        with contextlib.redirect_stdout(io.StringIO()):
+            rc = server.main(["setup", "--check", "--json"])
         self.assertIn(rc, (0, 1))
 
 

@@ -567,8 +567,8 @@ class DirectedScenarioMutants(unittest.TestCase):
         self.rejected(("rejection-expected", "rejection-changes-nothing"), "scn_delete_guards", mutant)
 
     def test_the_midplay_scenario_still_cuts_the_file_on_a_file_system_with_huge_blocks(self):
-        """A file that is open is read through a buffer as big as the file system's block size, so on a file system with megabyte blocks the track
-        must be longer for the cut to show.  The scenario sizes its track from the block size."""
+        """On a file system with megabyte blocks the track must be longer for the cut to be certain, so the scenario sizes its
+        track from the block size the file system reports."""
         with mock.patch.object(S, "file_block_size", lambda path: 1 << 20), self.library() as h:
             h.scn_midplay_truncation()
             self.assertEqual(h.failures, [])

@@ -34,6 +34,14 @@ TOP = ["schema", "myradio_version", "generated_at", "duration_ms", "overall", "s
 PY = sys.executable
 
 
+def pinned_python_specs():
+    """All the real checks, with the Python check reading a version inside the tested range, so a
+    whole report does not depend on the interpreter running the suite (a newer one would warn)."""
+    def pinned(s=None):
+        return checks.check_python(s, version=(3, 12, 3), implementation="CPython")
+    return tuple(CheckSpec("python", spec.title, pinned) if spec.id == "python" else spec for spec in CHECKS)
+
+
 class NormalizeTests(unittest.TestCase):
     def test_a_good_check_keeps_exactly_the_six_keys(self):
         raw = {"id": "x", "title": "X", "status": "warn", "detail": "d", "hint": "h", "fix": "f", "extra": "dropped"}
@@ -493,9 +501,7 @@ class StableJsonTests(unittest.TestCase):
         stack.enter_context(patch("zoneinfo.ZoneInfo", side_effect=lambda name: FakeZone()))
         stack.enter_context(patch("os.sched_getaffinity", return_value=set(range(8)), create=True))
         stack.enter_context(patch("shutil.disk_usage", return_value=Usage(320 * 1024 ** 3, 240 * 1024 ** 3, 80 * 1024 ** 3)))
-        specs = tuple(CheckSpec("python", spec.title, lambda s=None: checks.check_python(s, version=(3, 12, 3), implementation="CPython"))
-                      if spec.id == "python" else spec for spec in CHECKS)
-        return specs, Settings(data_dir=str(data), port=0, now=lambda: self.NOW, **roots)
+        return pinned_python_specs(), Settings(data_dir=str(data), port=0, now=lambda: self.NOW, **roots)
 
     def test_two_runs_of_the_same_computer_give_identical_json_apart_from_time(self):
         specs, settings = self.simulated()
@@ -532,7 +538,7 @@ class HungWorldTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, ExitStack() as stack:
             hermetic_tools(stack, temp)
             stack.enter_context(patch("shutil.disk_usage", side_effect=lambda path: gate.event.wait(30)))
-            runner = ReportRunner()
+            runner = ReportRunner(pinned_python_specs())
             self.addCleanup(runner.close)
             settings = Settings(data_dir=temp, port=0, tool_timeout=5)
             started = time.monotonic()
@@ -565,7 +571,7 @@ class HungWorldTests(unittest.TestCase):
             station = Path(temp) / "station"
             station.mkdir(mode=0o700)
             started = time.monotonic()
-            report = run_report(Settings(data_dir=str(station), port=0))  # the default time limits
+            report = run_report(Settings(data_dir=str(station), port=0), specs=pinned_python_specs())  # the default time limits
             took = time.monotonic() - started
             rows = {c["id"]: c for c in report["checks"]}
             started_pids = [int(name.split(".")[1]) for name in os.listdir(pids)]
