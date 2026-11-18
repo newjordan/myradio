@@ -75,7 +75,9 @@ HOP_OFFSETS = (-1.0, -0.25, 0.0, 0.0, 0.3, 4.0, 17.5, 33.0, 59.9, 60.0, 60.0, 60
 
 def file_block_size(path):
     """The block size the file system reports for ``path`` (4,096 on most local file systems; a network file system may report a megabyte).
-    A file that is open is read through a buffer of this size, which decides how far behind the read position a cut has a certain effect."""
+    The engine reads media through a small fixed buffer, smaller than one playout block, so a cut behind the read position bites on the
+    very next block whatever this reports. The scenarios keep sizing from it as a margin, so an engine that ever goes back to buffering
+    by file-system block is still covered."""
     return os.stat(path).st_blksize
 
 
@@ -871,8 +873,9 @@ class Harness:
         path = st.directory / "media" / (track.id + ".wav")
         playing = bool(st.current and st.current["id"] == track.id)
         if playing and mode in IN_PLACE:
-            # With the file open, only a truncation far behind the read position has a certain outcome (the reader may already hold up to
-            # a block of the file in its buffer).  When the file is too short for that, a delete is used instead, and the caller is told.
+            # With the file open, only a truncation far behind the read position has a certain outcome (the reader may already hold a
+            # little of the file in its buffer, always less than one playout block).  When the file is too short for that, a delete is
+            # used instead, and the caller is told.
             room = w.play.remaining * 4 if w.play else 0
             mode = "truncate_header" if room > 4 * max(file_block_size(path), 8192) + 2 * BLOCK_BYTES else "delete"
         self.steps += 1

@@ -3,19 +3,19 @@
 
 # myradio 0.3.2 — source development preview
 
-**Current source: 0.3.2 preview, including the Midnight studio redesign and storage-fault handling.** Earlier wheel observations below are historical, not certification of this source. No replacement wheel was built in the latest round. See [HANDOFF.md](HANDOFF.md) for the current continuation plan.
+**Current source: 0.3.2 preview, including the Midnight studio redesign and storage-fault handling.** Earlier wheel observations below are historical, not certification of this source. No replacement wheel was built in the latest round. See [HANDOFF-0.3.md](HANDOFF-0.3.md) for the current continuation plan.
 
 ## Handoff update — current source is known red
 
-On 2026-11-05, `python3 -m unittest discover -s tests -p 'test_agent_deadline.py' -v` was rerun on the handoff source: **2 tests in 2.306s; 1 failure and 1 error; exit 1**. Drip-fed headers hold the operator lock beyond the intended total deadline, and malformed chunk framing escapes as `http.client.IncompleteRead`. `myradio/model_transport.py` is an unfinished replacement candidate; `Chat._model` still uses the old urllib path. No app code was changed to hide or fix these failures during the handoff. Evidence: [current regression log](../reports/handoff-agent-deadline-current.txt).
+On 2026-11-05, `python3 -m unittest discover -s tests -p 'test_agent_deadline.py' -v` was rerun on the handoff source: **2 tests in 2.306s; 1 failure and 1 error; exit 1**. Drip-fed headers hold the operator lock beyond the intended total deadline, and malformed chunk framing escapes as `http.client.IncompleteRead`. `myradio/model_transport.py` is an unfinished replacement candidate; `Chat._model` still uses the old urllib path. No app code was changed to hide or fix these failures during the handoff. Evidence: `reports/handoff-agent-deadline-current.txt` (kept local; run logs can hold private launch codes).
 
-The 73-test green report below predates this new regression/candidate and is **not** verification of the latest tree. The 21 notified background verification services were inspected and are all stopped (SIGTERM); their startup logs are not acceptance results. `dist/` currently contains only historical 0.2.0, 0.3.0 and 0.3.1 wheels, not the previously reported 0.3.2 wheel. No current-source artifact, independent acceptance or native Mac/installer verification is claimed. [The handoff](HANDOFF.md) records the precise continuation point and source manifest.
+The 73-test green report below predates this new regression/candidate and is **not** verification of the latest tree. The 21 notified background verification services were inspected and are all stopped (SIGTERM); their startup logs are not acceptance results. `dist/` currently contains only historical 0.2.0, 0.3.0 and 0.3.1 wheels, not the previously reported 0.3.2 wheel. No current-source artifact, independent acceptance or native Mac/installer verification is claimed. [The handoff](HANDOFF-0.3.md) records the precise continuation point and source manifest.
 
 ## Previous source reliability round
 
 Fixed queue-capacity admission: when space is scarce, the earliest eligible events across recurring programs and one-shot schedules now get the remaining slots. Accepted events retain chronological playback order; stale/off-air/full-queue events are still missed. Previously reverse insertion order incorrectly also decided admission, sacrificing earlier events for later ones. Queue occupancy is read once per due batch rather than once per eligible event.
 
-Corrected an outdated import regression test to expect the storage fail-safe's `StationError`, enforce its restart requirement and verify retry after restart. The unchanged baseline ran 70 tests with one error and one skip. Final `python3 -m unittest discover -s tests -v`: **73 run, 72 passed, 1 skipped** in 22.974s on this host. The skipped test needs `MYRADIO_TEST_ICECAST` and FFmpeg; actual destination integration was not rerun. No browser, new wheel or native-OS certification is claimed for this round. Evidence: [reliability report](../reports/research-966e77beaf13afd2849ffa79c86fb72a-8.txt).
+Corrected an outdated import regression test to expect the storage fail-safe's `StationError`, enforce its restart requirement and verify retry after restart. The unchanged baseline ran 70 tests with one error and one skip. Final `python3 -m unittest discover -s tests -v`: **73 run, 72 passed, 1 skipped** in 22.974s on this host. The skipped test needs `MYRADIO_TEST_ICECAST` and FFmpeg; actual destination integration was not rerun. No browser, new wheel or native-OS certification is claimed for this round. Evidence: `reports/research-966e77beaf13afd2849ffa79c86fb72a-8.txt` (kept local).
 
 ## Recurring-program update (current source checkout)
 
@@ -65,8 +65,8 @@ Ran `tests/browser_station.py` against that installed wheel in headless Chromium
 
 Screenshots:
 
-- [Desktop](screenshots/local-station-desktop.png)
-- [Mobile](screenshots/local-station-mobile.png)
+- [Desktop](../screenshots/local-station-desktop.png)
+- [Mobile](../screenshots/local-station-mobile.png)
 
 Early browser attempts exposed verification-environment issues (Playwright expected a newer browser than installed; string predicates conflicted with the deliberate CSP) and an asynchronous test assertion. These were corrected without weakening CSP. Screenshot review also identified chat scroll loss on resize; the implementation now preserves bottom-pinning unless the user has scrolled up, and the browser test checks it.
 

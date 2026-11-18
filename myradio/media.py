@@ -6,6 +6,13 @@ import wave
 
 from ._platform import O_BINARY, O_NOFOLLOW, O_NONBLOCK
 
+# How much of an open media file the reader may hold ahead of the playhead. It must stay smaller
+# than one playout block (100 ms, 17,640 bytes): the clock reads a block at a time, and any buffered
+# audio beyond that would keep playing after the file is truncated behind the playhead, delaying the
+# quarantine. Python 3.14 buffers binary files at 128 KiB and a file system may report an even
+# larger block size, so the size is fixed here instead of being left to the interpreter.
+READ_BUFFER = 8192
+
 
 class MediaError(ValueError):
     pass
@@ -38,7 +45,7 @@ def open_media(path, duration):
         if not O_NOFOLLOW and os.path.islink(path):
             raise MediaError()
         fd = os.open(path, os.O_RDONLY | O_BINARY | O_NONBLOCK | O_NOFOLLOW)
-        source = os.fdopen(fd, 'rb')
+        source = os.fdopen(fd, 'rb', buffering=READ_BUFFER)
         size = os.fstat(source.fileno())
         if not stat.S_ISREG(size.st_mode) or not 44 <= size.st_size <= 100 * 1024 * 1024 + 4096:
             raise MediaError()
