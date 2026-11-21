@@ -10,6 +10,10 @@ the settings other voices need:
                        or {"exaggeration": 0.9} for Chatterbox
     speaker_markers    keep <|speaker:N|> markers in the text (only Drama-style models understand them; default false,
                        which removes them)
+    speaker_voices     a voice per speaker slot, for example {"3": "Thaddeus_en-announcervoice_M_1", "7": "Wyatt_en-American_M_1"},
+                       so each host keeps their own voice on one server; a slot not listed uses ``voice``
+    fade_out_ms        ask the server to fade each take out over this many milliseconds (ZONOS3 ``fade_out_ms``), for
+                       voices whose last frame can end loud enough to fail the abrupt-ending check; leave out to send nothing
     tokens_per_second  the voice's audio tokens per second, used to send max_tokens (leave out to let the model decide)
 
 Example (Jessica, the Knight Shift Radio news voice, on Qwen3-TTS CustomVoice)::
@@ -24,10 +28,11 @@ import math
 import re
 from typing import Mapping
 
-from .config import ConfigError, Env, get_bool, get_float, get_str
+from .config import ConfigError, Env, get_bool, get_float, get_int, get_str
 from .worker_drama import DramaHttpWorker
 
 SPEAKER_MARK = re.compile(r"<\|speaker:\d+\|>\s*")
+LEADING_SPEAKER = re.compile(r"\s*<\|speaker:(\d+)\|>")
 OPTION_KEY = frozenset("abcdefghijklmnopqrstuvwxyz0123456789_.")
 
 
@@ -55,7 +60,22 @@ class SpeechHttpWorker(DramaHttpWorker):
             tps = get_float(raw, "tokens_per_second", 0.0, 1.0, 200.0, where)
         if "warmup_text" not in raw:
             options["warmup_text"] = "Ready."
+        voices = raw.get("speaker_voices", {})
+        if not isinstance(voices, dict) or len(voices) > 32:
+            raise ConfigError(f"{where}: speaker_voices must be an object of up to 32 speaker slots.")
+        speaker_voices = {}
+        for slot, name in voices.items():
+            if not (isinstance(slot, str) and slot.isdigit() and 0 <= int(slot) <= 31):
+                raise ConfigError(f"{where}: speaker_voices keys are speaker slots from \"0\" to \"31\".")
+            if not isinstance(name, str) or not name.strip() or len(name) > 500:
+                raise ConfigError(f"{where}: speaker_voices.{slot} must name a voice.")
+            speaker_voices[int(slot)] = name.strip()
+        fade = raw.get("fade_out_ms")
+        if fade is not None:
+            fade = get_int(raw, "fade_out_ms", 0, 0, 1000, where)
         options.update({
+            "fade_out_ms": fade,
+            "speaker_voices": speaker_voices,
             "voice": get_str(raw, "voice", None, where, max_len=500),
             "reference_text": get_str(raw, "reference_text", None, where, max_len=2000),
             "request_options": clean,
@@ -68,20 +88,25 @@ class SpeechHttpWorker(DramaHttpWorker):
 
     def describe(self) -> dict:
         info = super().describe()
-        info.update({"voice": self.options["voice"], "options": sorted(self.options["request_options"])})
+        info.update({"voice": self.options["voice"], "options": sorted(self.options["request_options"]),
+                     "speaker_voices": len(self.options["speaker_voices"])})
         return info
 
     def _speech_body(self, text: str, seed: int, max_seconds: float) -> dict:
         o = self.options
+        lead = LEADING_SPEAKER.match(text)
+        voice = o["speaker_voices"].get(int(lead.group(1)), o["voice"]) if lead else o["voice"]
         if not o["speaker_markers"]:
             text = SPEAKER_MARK.sub("", text).strip()
         body = {"model": o["model"], "input": text, "response_format": "wav", "seed": int(seed)}
         if o["tokens_per_second"]:
             body["max_tokens"] = int(math.ceil(max_seconds * o["tokens_per_second"]))
-        if o["voice"]:
-            body["voice"] = o["voice"]
+        if voice:
+            body["voice"] = voice
         if o["reference_text"]:
             body["reference_text"] = o["reference_text"]
+        if o["fade_out_ms"]:
+            body["fade_out_ms"] = o["fade_out_ms"]
         if o["request_options"]:
             body["options"] = dict(o["request_options"])
         body.update(o["generation_options"])

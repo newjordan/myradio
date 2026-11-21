@@ -85,6 +85,31 @@ class SpeechHttpTests(unittest.TestCase):
         body = json.loads(self.server.speech_requests()[-1]["body"])
         self.assertEqual((body["voice"], body["reference_text"], body["options"]), ("/srv/voices/juno.wav", "Oh, we are live!", {"exaggeration": 0.9}))
 
+    def test_each_speaker_slot_gets_its_own_voice(self):
+        worker = self.make(smoke_test=False, model="zonos3", voice="Savannah_en-American_F_1",
+                           speaker_voices={"3": "Thaddeus_en-announcervoice_M_1", "7": "Wyatt_en-American_M_1"})
+        sent = []
+        for text in ("<|speaker:3|>Here is the news.", "<|speaker:7|>Back to the music.", "<|speaker:5|>Thanks for listening."):
+            self.say(worker, text, role="host_break")
+            sent.append(json.loads(self.server.speech_requests()[-1]["body"]))
+        self.assertEqual([b["voice"] for b in sent],
+                         ["Thaddeus_en-announcervoice_M_1", "Wyatt_en-American_M_1", "Savannah_en-American_F_1"])
+        self.assertEqual(sent[0]["input"], "Here is the news.")
+
+    def test_fade_out_is_sent_only_when_set(self):
+        worker = self.make(smoke_test=False, model="zonos3", fade_out_ms=120)
+        self.say(worker, "Back to the music.", role="host_break")
+        self.assertEqual(json.loads(self.server.speech_requests()[-1]["body"])["fade_out_ms"], 120)
+        plain = self.make(smoke_test=False, model="zonos3")
+        self.say(plain, "Back to the music.", role="host_break")
+        self.assertNotIn("fade_out_ms", json.loads(self.server.speech_requests()[-1]["body"]))
+        self.assertTrue(self.parse(model="zonos3", fade_out_ms=5000).problems)
+
+    def test_bad_speaker_voices_are_refused(self):
+        for bad in ({"32": "x"}, {"a": "x"}, {"1": ""}, {"1": 5}, ["x"]):
+            with self.subTest(bad=bad):
+                self.assertTrue(self.parse(model="zonos3", speaker_voices=bad).problems)
+
     def test_the_model_must_be_named(self):
         self.assertTrue(self.parse().problems)
 

@@ -48,9 +48,12 @@ class HostCase(unittest.TestCase):
 
 
 class OperationTests(HostCase):
-    def test_the_catalog_lists_exactly_the_six_operations_with_typed_arguments(self):
+    def test_the_catalog_lists_exactly_the_eight_operations_with_typed_arguments(self):
         catalog = {entry['name']: entry for entry in self.h.host.catalog()}
-        self.assertEqual(sorted(catalog), ['research.pause', 'research.remove', 'research.resume', 'research.review', 'research.run_now', 'research.save'])
+        self.assertEqual(sorted(catalog), ['research.claim', 'research.pause', 'research.release', 'research.remove', 'research.resume',
+                                           'research.review', 'research.run_now', 'research.save'])
+        self.assertEqual(catalog['research.claim']['required'], [])
+        self.assertEqual(catalog['research.release']['required'], ['brief_id'])
         self.assertEqual(catalog['research.save']['required'], ['researcher'])
         self.assertEqual(catalog['research.save']['arguments']['researcher']['type'], 'object')
         self.assertEqual(catalog['research.review']['arguments']['decision']['enum'], ['approved', 'rejected'])
@@ -571,6 +574,20 @@ class StationIntegrationTests(unittest.TestCase):
         self.assertEqual(everything['extensions']['research']['state'], 'running')
         self.assertEqual(everything['extensions']['research']['status']['totals']['researchers'], 1)
         json.dumps(everything)
+
+    def test_the_director_claims_an_approved_update_once_and_can_give_it_back(self):
+        rid = self.call('POST', '/api/action', {'operation': 'research.save', 'arguments': {'researcher': researcher(self.url)}})[1]['researcher']['id']
+        self.call('POST', '/api/action', {'operation': 'research.run_now', 'arguments': {'researcher_id': rid}})
+        brief_id = self.call('GET', f'/api/x/research/briefs?researcher={rid}')[1]['briefs'][0]['id']
+        status, nothing = self.call('POST', '/api/action', {'operation': 'research.claim', 'arguments': {}})
+        self.assertEqual((status, nothing['brief']), (200, None), 'pending review: nothing may air yet')
+        self.call('POST', '/api/action', {'operation': 'research.review', 'arguments': {'brief_id': brief_id, 'decision': 'approved'}})
+        status, claimed = self.call('POST', '/api/action', {'operation': 'research.claim', 'arguments': {'researcher_id': rid}})
+        self.assertEqual((status, claimed['brief']['id']), (200, brief_id))
+        self.assertIsNone(self.call('POST', '/api/action', {'operation': 'research.claim', 'arguments': {}})[1]['brief'], 'claimed once only')
+        status, released = self.call('POST', '/api/action', {'operation': 'research.release', 'arguments': {'brief_id': brief_id}})
+        self.assertEqual((status, released['released']), (200, True))
+        self.assertEqual(self.call('POST', '/api/action', {'operation': 'research.claim', 'arguments': {}})[1]['brief']['id'], brief_id)
 
     def test_bad_requests_get_plain_messages_and_do_not_leak_internals(self):
         status, body = self.call('POST', '/api/action', {'operation': 'research.save', 'arguments': {'researcher': {'name': 'No interests', 'sources': [self.url]}}})

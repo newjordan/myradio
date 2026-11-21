@@ -625,7 +625,7 @@ class ExtensionHost:
 
 
 # Subsystems that ship with myradio. Each lives in ``myradio/<name>/extension.py`` and exposes ``build()``.
-BUILTIN = ("generation", "shows", "ads", "research", "hosts", "prompts", "doctor")
+BUILTIN = ("generation", "shows", "ads", "research", "hosts", "prompts", "doctor", "director")
 
 
 class _LoadFailure(Extension):
