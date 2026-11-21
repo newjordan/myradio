@@ -282,7 +282,7 @@ class RunningJobsTests(EngineCase):
                 fakes.reset_controls()
                 clock = fakes.FakeClock()
                 h = self.harness([fakes.worker_cfg("music", roles=["song"]), fakes.worker_cfg("voice", roles=["host_break"])], clock=clock,
-                                 config={"resources": {"gpu0": {"max_concurrent": 1, "switch_after_s": 120}}})
+                                 config={"resources": {"gpu0": {"max_concurrent": 1, "switch_after_s": 120, "music_first": False}}})
                 for wid in ("music", "voice"):
                     self.control(wid).gate.clear()
                 a1 = h.enqueue("song", {"title": "A1"})
@@ -301,6 +301,91 @@ class RunningJobsTests(EngineCase):
                 expected = [a1["id"], b1["id"], a2["id"], a3["id"]] if overdue else [a1["id"], a2["id"], a3["id"], b1["id"]]
                 self.assertEqual(order, expected)
                 h.close()
+
+    def _one_gpu(self, music_first=None, *, voice_resource="gpu0"):
+        fakes.reset_controls()
+        clock = fakes.FakeClock()
+        gpu = {"max_concurrent": 1, "switch_after_s": 120}
+        if music_first is not None:
+            gpu["music_first"] = music_first
+        resources = {"gpu0": gpu, "gpu1": {"max_concurrent": 1}}
+        h = self.harness([fakes.worker_cfg("music", roles=["song"]), fakes.worker_cfg("voice", roles=["host_break"], resource=voice_resource)],
+                         clock=clock, config={"resources": resources, "buffer": {"song": {"low": 1, "high": 5}}})
+        self.control("music").seconds = 2.0
+        return h, clock
+
+    def _start_overdue(self, h, clock, songs=5, voices=2):
+        """One song on the machine, then speech and more songs waiting; the speech has waited past switch_after_s."""
+        for wid in ("music", "voice"):
+            self.control(wid).gate.clear()
+        first = h.enqueue("song", {"title": "S1", "duration_s": 5})
+        self.assertTrue(wait_for(self.control("music").entered.is_set))
+        v = [h.enqueue("host_break", {"text": f"Voice break number {n} waiting for the machine."}) for n in range(voices)]
+        s = [first] + [h.enqueue("song", {"title": f"S{n + 2}", "duration_s": 5}) for n in range(songs - 1)]
+        clock.advance(200)
+        for wid in ("music", "voice"):
+            self.control(wid).gate.set()
+        h.engine.poke()
+        return s, v
+
+    def test_one_gpu_makes_music_ahead_then_a_batch_of_speech_then_catches_up(self):
+        h, clock = self._one_gpu()
+        self.assertTrue(h.status()["resources"]["gpu0"]["music_first"])
+        s, v = self._start_overdue(h, clock)
+        for job in s[:3] + v:
+            self.assertEqual(self.done(h, job)["state"], "succeeded")
+        order = [job_id for _, job_id in fakes.GLOBAL.order]
+        # music until 6 s are ready (high mark 5), then both voice breaks, though they had waited past switch_after_s
+        self.assertEqual(order, [s[0]["id"], s[1]["id"], s[2]["id"], v[0]["id"], v[1]["id"]])
+        self.assertEqual(h.status()["resources"]["gpu0"]["phase"], "voices")
+        time.sleep(0.3)
+        self.assertEqual(h.job(s[3]["id"])["state"], "queued", "music is ahead: no more songs until it airs")
+        # the music airs and drops below the low mark: music takes the machine back, and new speech waits again
+        for track in [t for t in h.station.imports if t["kind"] == "music"]:
+            h.emit("track_started", track["id"])
+        self.assertTrue(wait_for(lambda: h.route("GET", "/buffer").body["roles"]["song"]["ready"] < 1))
+        late = h.enqueue("host_break", {"text": "A voice break that arrives while music catches up."})
+        clock.advance(200)
+        h.engine.poke()
+        for job in (s[3], s[4], late):
+            self.assertEqual(self.done(h, job)["state"], "succeeded")
+        order = [job_id for _, job_id in fakes.GLOBAL.order]
+        self.assertEqual(order[5:], [s[3]["id"], s[4]["id"], late["id"]])
+
+    def test_music_first_holds_speech_only_while_songs_are_waiting(self):
+        h, clock = self._one_gpu()
+        only = h.enqueue("host_break", {"text": "A station with no song work still gets its voice."})
+        self.assertEqual(self.done(h, only)["state"], "succeeded")
+
+    def test_urgent_speech_is_not_held_for_music(self):
+        h, clock = self._one_gpu()
+        self.control("music").gate.clear()
+        first = h.enqueue("song", {"title": "S1", "duration_s": 5})
+        self.assertTrue(wait_for(self.control("music").entered.is_set))
+        songs = [h.enqueue("song", {"title": f"S{n}", "duration_s": 5}) for n in (2, 3, 4)]
+        urgent = h.enqueue("host_break", {"text": "Breaking news that cannot wait for the music."}, priority=90)
+        self.control("music").gate.set()
+        h.engine.poke()
+        for job in [first, urgent] + songs[:2]:
+            self.assertEqual(self.done(h, job)["state"], "succeeded")
+        order = [job_id for _, job_id in fakes.GLOBAL.order]
+        self.assertEqual(order[:2], [first["id"], urgent["id"]])
+
+    def test_music_first_is_off_when_switched_off_or_on_separate_machines(self):
+        for case in ("off", "separate"):
+            with self.subTest(case=case):
+                h, clock = self._one_gpu(False) if case == "off" else self._one_gpu(voice_resource="gpu1")
+                self.assertFalse(h.status()["resources"]["gpu0"]["music_first"])
+                s, v = self._start_overdue(h, clock)
+                self.assertEqual(self.done(h, v[0])["state"], "succeeded")
+                if case == "off":   # the overdue voice job takes the machine straight after the first song, as before
+                    order = [job_id for _, job_id in fakes.GLOBAL.order]
+                    self.assertEqual(order[:2], [s[0]["id"], v[0]["id"]])
+                h.close()
+
+    def test_music_first_setting_is_checked(self):
+        h = self.harness(config={"resources": {"gpu0": {"music_first": "sometimes"}}})
+        self.assertTrue(any("music_first" in p for p in h.status()["config"]["problems"]))
 
     def test_jobs_follow_the_current_worker_for_their_kind(self):
         h = self.harness()

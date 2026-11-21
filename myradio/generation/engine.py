@@ -437,6 +437,20 @@ class Engine:
         spec = self.cfg.worker_for(role)
         return self.store.ready_level(role, include_fixture=bool(spec is not None and spec.fixture))
 
+    def _music_first(self, resource: str, roles: Optional[list] = None) -> bool:
+        """Whether speech on this group waits for the music buffer (see ResourceSpec.music_first)."""
+        roles = roles if roles is not None else list(dict.fromkeys(self._roles_of(resource)))
+        shared = "song" in roles and any(role != "song" for role in roles)
+        spec = self.cfg.resources.get(resource)
+        setting = spec.music_first if spec is not None else None
+        return shared and (setting is None or setting)
+
+    def _phase(self, resource: str) -> Optional[str]:
+        """On a music-first group: "music" while the song buffer fills, "voices" once music is ahead."""
+        if not self._music_first(resource):
+            return None
+        return "music" if self.policy.filling("song") is not False else "voices"
+
     def _pick_job(self, resource: str, now: float) -> Optional[dict]:
         roles = list(dict.fromkeys(self._roles_of(resource)))
         if not roles:
@@ -444,6 +458,14 @@ class Engine:
         # Decide which kinds may run *first*, and ask the queue only for those (and for urgent jobs). If the queue were read
         # first, a long line of waiting jobs that the buffer will not run could fill the whole window and hide one it would run.
         filling = {role: self.policy.update(role, level_value(role, self._ready_level(role))) for role in roles}
+        # One machine making both songs and speech swings between them: while the song buffer is filling, speech waits;
+        # once music is ahead (the high mark), speech runs as a batch; below the low mark, music takes the machine back.
+        # Urgent jobs still go first either way.
+        # Speech waits only while there is song work that could use the machine, so a station that asks for no songs
+        # never starves its voices.
+        if filling.get("song") and self._music_first(resource, roles) and \
+                self.store.candidates(["song"], now, 1, allowed=["song"]):
+            filling = {role: (value if role == "song" else False) for role, value in filling.items()}
         candidates = self.store.candidates(roles, now, allowed=[role for role in roles if filling[role]], urgent_priority=self.cfg.urgent_priority)
         if not candidates:
             return None
@@ -1043,7 +1065,8 @@ class Engine:
             "fixture_active": bool(fixture_roles), "fixture_roles": sorted(set(fixture_roles)),
             "workers": workers,
             "resources": {name: {"max_concurrent": r.max_concurrent, "running": self._resource_running.get(name, 0),
-                                 "loaded_worker": self._resource_loaded.get(name)} for name, r in self.cfg.resources.items()},
+                                 "loaded_worker": self._resource_loaded.get(name), "music_first": self._music_first(name),
+                                 "phase": self._phase(name)} for name, r in self.cfg.resources.items()},
             "buffer": {role: {k: v[k] for k in ("unit", "ready", "low", "high", "filling", "queued", "running", "wanted")}
                        for role, v in buffer["roles"].items()},
             "jobs": {"queued": counts["queued"], "running": counts["running"], "succeeded": counts["succeeded"], "failed": counts["failed"],

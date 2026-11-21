@@ -84,6 +84,9 @@ class ResourceSpec:
     name: str
     max_concurrent: int = 1
     switch_after_s: float = 120.0
+    # Music first: on a group that makes both songs and speech, speech waits while the song buffer is filling and runs
+    # in a batch once music is ahead. None means automatic: on when the group has both kinds of maker.
+    music_first: Optional[bool] = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -425,8 +428,12 @@ def _resources(raw: Any, problems: list) -> dict:
             entry = {} if entry is None else entry
             if not isinstance(entry, dict):
                 raise ConfigError(f"{where}: settings must be an object.")
+            music_first = entry.get("music_first", "auto")
+            if music_first not in (True, False, "auto"):
+                raise ConfigError(f"{where}: music_first must be true, false or \"auto\".")
             out[name] = ResourceSpec(name, get_int(entry, "max_concurrent", 1, 1, 4, where),
-                                     get_float(entry, "switch_after_s", 120.0, 5.0, 3600.0, where, " seconds"))
+                                     get_float(entry, "switch_after_s", 120.0, 5.0, 3600.0, where, " seconds"),
+                                     None if music_first == "auto" else music_first)
         except ConfigError as exc:
             problems.append(str(exc))
     return out or default

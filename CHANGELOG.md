@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+### Autopilot DJ and news on request
+
+- New director extension, the autopilot DJ. While it is on, every few queued songs get an intro from a host, a station
+  ID goes out on a schedule, and approved research updates are read as news. Each clip is placed in front of the song
+  it belongs to; an intro whose song already played is deleted instead of aired late. Off by default: turn it on with
+  `director.configure` or `"enabled": true` in `ext/director/config.json`.
+- `director.news_now` looks a topic up on request: a dedicated researcher reads a Google News search for it, the chosen
+  host reads the sourced headlines, naming each publisher, and the update plays next.
+- Research gains `research.claim` and `research.release`, so a director can air an approved update exactly once and
+  give it back if its speech fails.
+
+### One graphics card for music and voices
+
+- A resource group that makes both songs and speech now puts music first: speech waits while the song buffer is
+  filling, runs as a batch once music is ahead, and gives the card back when music runs low. Urgent requests are never
+  held. Automatic when one group has both kinds of maker; set `"music_first": false` on the group to turn it off.
+
+### Voices
+
+- `speech_http` voices take `speaker_voices`, a voice per speaker slot, so every host keeps their own voice on one
+  server (for example ZONOS3-Mini's built-in voices).
+- `speech_http` voices take `fade_out_ms`, sent to servers that support it, for voices whose last frame can end loud
+  enough to fail the abrupt-ending check.
+
 ### Hermes plugin 0.2.0
 
 - `/radio` shows a now-playing card: what is on air, time left, up next, the stream and the makers.

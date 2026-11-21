@@ -129,7 +129,20 @@ class ResearchExtension(Extension):
             Operation("review", "Approve or reject a researcher's ready update before it can air.",
                       {"brief_id": Arg("string", "The update's id", max_length=32),
                        "decision": Arg("string", "approved or rejected", enum=("approved", "rejected"))}, self._op_review),
+            Operation("claim", "Take the oldest update that may air now (approved or automatic, not aired, still fresh) and mark it "
+                               "aired, so no one else airs it too. Returns {brief: null} when there is nothing to air.",
+                      {"researcher_id": Arg("string", "Only this researcher's updates", required=False, max_length=32)},
+                      self._op_claim),
+            Operation("release", "Give back a claimed update that never reached the air (its speech failed), so it can air later.",
+                      {"brief_id": Arg("string", "The update's id", max_length=32)}, self._op_release),
         ]
+
+    def _op_claim(self, ctx, args):
+        rid = self._id(args, "researcher_id") if args.get("researcher_id") else None
+        return {"brief": self._service().claim_airable(rid)}
+
+    def _op_release(self, ctx, args):
+        return {"released": self._service().release_brief(self._id(args, "brief_id"))}
 
     @staticmethod
     def _id(args: dict, key: str) -> str:
