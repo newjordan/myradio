@@ -1,7 +1,15 @@
 'use strict';
 const $ = id => document.getElementById(id);
-// The launch code is held only until it is traded for a session cookie (see establish), then forgotten.
+// The launch code is held only until it is traded for a session (see establish), then forgotten. The session is
+// not a cookie: cookies for 127.0.0.1 reach every port on the host. It lives in sessionStorage, which is scoped to
+// this origin (port included), and goes out as the X-Myradio-Session header.
 let token = '';
+let session = '';
+try { session = sessionStorage.getItem('myradio-session') || ''; } catch (error) {}
+function keepSession(value) {
+  session = value || '';
+  try { if (session) sessionStorage.setItem('myradio-session', session); else sessionStorage.removeItem('myradio-session'); } catch (error) {}
+}
 let ticket = '';   // a one-time login ticket from a launcher such as the Omarchy plugin
 try { sessionStorage.removeItem('myradio-token'); } catch (error) {}
 let broadcastDestination = '';
@@ -50,8 +58,9 @@ function requireUnlock() {
 async function api(path, data, raw = false) {
   const headers = {};
   if (token) headers['X-Myradio-Token'] = token;
+  if (session) headers['X-Myradio-Session'] = session;
   if (ticket && path === '/api/session') headers['X-Myradio-Ticket'] = ticket;
-  const options = {headers, credentials: 'same-origin'};
+  const options = {headers, credentials: 'omit'};
   if (data !== undefined) {
     options.method = 'POST';
     if (!raw) headers['Content-Type'] = 'application/json';
@@ -63,7 +72,7 @@ async function api(path, data, raw = false) {
     const response = await fetch(path, options);
     const result = await response.json();
     if (!response.ok) {
-      if (response.status === 401) requireUnlock();
+      if (response.status === 401) { keepSession(''); requireUnlock(); }
       throw new Error(result.error || `Station returned ${response.status}`);
     }
     return result;
@@ -75,15 +84,17 @@ async function api(path, data, raw = false) {
 async function establish() {
   const tried = Boolean(token || ticket);
   try {
-    try { await api('/api/session', {}); } finally { ticket = ''; }   // a ticket works once either way
-    // The HttpOnly session cookie carries the unlock from here on. The launch code is not kept or sent again,
+    let reply;
+    try { reply = await api('/api/session', {}); } finally { ticket = ''; }   // a ticket works once either way
+    if (reply && reply.session) keepSession(reply.session);
+    // The session carries the unlock from here on. The launch code is not kept or sent again,
     // so if the studio goes away, whatever answers in its place never sees it.
     token = '';
     unlocked = true; $('unlock').close(); $('unlock-error').textContent = ''; notice('');
     broadcastDestination=(await api('/api/broadcast')).url||'';
     await loadAgentSettings();
     await refresh();
-  } catch (error) { token = ''; requireUnlock(); $('unlock-error').textContent = tried ? error.message : ''; }
+  } catch (error) { token = ''; keepSession(''); requireUnlock(); $('unlock-error').textContent = tried ? error.message : ''; }
 }
 $('unlock').addEventListener('cancel', event => event.preventDefault());
 $('unlock-form').addEventListener('submit', async event => {
@@ -97,7 +108,7 @@ function disconnect() {
 $('lock').addEventListener('click', async () => {
   $('menu').close(); disconnect(); $('agent-key').value=''; $('broadcast-password').value='';
   try { await api('/api/logout', {}); } catch (error) { notice(error.message); }
-  token = ''; requireUnlock();
+  token = ''; keepSession(''); requireUnlock();
 });
 function duration(value) {
   const seconds = Math.max(0, Math.floor(value || 0));
@@ -181,8 +192,8 @@ $('broadcast-stop').addEventListener('click', () => action('broadcast.stop'));
 $('listen').addEventListener('click', async () => {
   try {
     const graph = ensureGraph(); if (graph) await graph.ctx.resume();
-    await api('/api/session', {});
-    $('audio').src = '/stream.wav';
+    const monitor = await api('/api/stream-ticket', {});   // <audio> cannot send the session header
+    $('audio').src = '/stream.wav?ticket=' + encodeURIComponent(monitor.ticket);
     $('listen').hidden = true; $('disconnect').hidden = false; $('disconnect').focus();
     await $('audio').play(); monitorOn = true; startMeters(); if (state) renderConsole(state);
   } catch (error) { notice(`Monitor: ${error.message}`); }
@@ -910,4 +921,4 @@ $('motion').addEventListener('click', () => {
 });
 reducedMotion.addEventListener('change', applyMotion); applyMotion();
 setInterval(()=>{if(unlocked&&!document.hidden)refresh();},2000);
-establish();   // a launch code from the address, or a session cookie from earlier; otherwise the unlock screen
+establish();   // a launch code or ticket from the address, or this tab's session; otherwise the unlock screen

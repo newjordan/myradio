@@ -5,7 +5,6 @@ import argparse
 from collections import OrderedDict
 import hashlib
 import hmac
-from http import cookies
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
@@ -45,7 +44,15 @@ CSP = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'sel
 #             (for the live stream the body hash is the word "stream")
 # Login tickets let a client that holds the token open the dashboard without handing the token to the browser:
 # POST /api/login-ticket (authorized) returns a ticket that POST /api/session trades once, within 60 seconds,
-# for a session cookie (header X-Myradio-Ticket).
+# for a dashboard session (header X-Myradio-Ticket).
+#
+# Dashboard sessions are not cookies. Browsers send a cookie for 127.0.0.1 to every port on the host, so another
+# local service the same browser visits would receive it. The session goes back in the /api/session reply, the page
+# keeps it in sessionStorage (scoped to this origin, port included) and sends it as X-Myradio-Session. The <audio>
+# monitor cannot send headers, so POST /api/stream-ticket gives a ticket that GET /stream.wav?ticket= accepts for
+# STREAM_TICKET_TTL seconds.
+STREAM_TICKET_TTL = 30
+CLEAR_OLD_COOKIE = {"Set-Cookie": "myradio_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0"}  # from 0.5.1 and older
 TICKET_TTL = 60
 TICKET_LIMIT = 16
 TICKET_FORMAT = re.compile(r"[A-Za-z0-9_-]{43}")
@@ -75,6 +82,7 @@ class Server(ThreadingHTTPServer):
         self.sessions = set()
         self.session_lock = threading.Lock()
         self.tickets = OrderedDict()      # login ticket -> monotonic expiry, oldest first
+        self.stream_tickets = OrderedDict()  # monitor ticket -> monotonic expiry, oldest first
         self.challenges = OrderedDict()   # challenge -> monotonic expiry, oldest first
         self.challenge_lock = threading.Lock()
         self.slots = threading.BoundedSemaphore(32)
@@ -113,6 +121,25 @@ class Server(ThreadingHTTPServer):
             match = next((t for t in self.tickets if hmac.compare_digest(t, ticket)), None)
             until = self.tickets.pop(match, None) if match else None
         return until is not None and until > time.monotonic()
+
+    def issue_stream_ticket(self):
+        now = time.monotonic()
+        with self.challenge_lock:
+            while self.stream_tickets and next(iter(self.stream_tickets.values())) <= now:
+                self.stream_tickets.popitem(last=False)
+            while len(self.stream_tickets) >= TICKET_LIMIT:
+                self.stream_tickets.popitem(last=False)
+            ticket = secrets.token_urlsafe(32)
+            self.stream_tickets[ticket] = now + STREAM_TICKET_TTL
+            return ticket
+
+    def stream_ticket_valid(self, ticket):
+        """A monitor ticket works until it expires, so the browser's media player may retry its first connection."""
+        if not TICKET_FORMAT.fullmatch(ticket or ""):
+            return False
+        with self.challenge_lock:
+            match = next((t for t in self.stream_tickets if hmac.compare_digest(t, ticket)), None)
+            return bool(match) and self.stream_tickets[match] > time.monotonic()
 
     def redeem_challenge(self, challenge):
         with self.challenge_lock:
@@ -226,13 +253,7 @@ class Handler(BaseHTTPRequestHandler):
         token = self.headers.get("X-Myradio-Token", "")
         if token and token.isascii() and hmac.compare_digest(token, self.server.token):
             return True
-        try:
-            cookie = cookies.SimpleCookie(self.headers.get("Cookie", ""))
-            session = cookie["myradio_session"].value if "myradio_session" in cookie else ""
-        except cookies.CookieError:
-            return False
-        with self.server.session_lock:
-            return session in self.server.sessions
+        return self.has_session()   # never a cookie: see STREAM_TICKET_TTL above
 
     def read_body(self, maximum):
         if self.headers.get("Transfer-Encoding"):
@@ -286,6 +307,8 @@ class Handler(BaseHTTPRequestHandler):
             asset = re.fullmatch(r"/panels/([a-z0-9_-]{1,40}\.(?:js|css))", path)
             if asset:
                 return self.panel_asset(asset.group(1))
+            if path == "/stream.wav" and self.server.stream_ticket_valid(parse_qs(urlsplit(self.path).query).get("ticket", [""])[0]):
+                return self.stream()
             if not self.authorized():
                 return self.respond(401, {"error": "Unlock with the launch code from your launcher."})
             if self.agent_client():
@@ -321,8 +344,10 @@ class Handler(BaseHTTPRequestHandler):
             ticket = self.headers.get("X-Myradio-Ticket")
             if path == "/api/session" and ticket is not None:
                 self.json_body()
-                if self.server.redeem_ticket(ticket) or self.has_session():
-                    return self.new_session() if not self.has_session() else self.respond(200, {"ok": True})
+                if self.has_session():
+                    return self.respond(200, {"ok": True})
+                if self.server.redeem_ticket(ticket):
+                    return self.new_session()
                 self.close_connection = True
                 return self.respond(401, {"error": "That link has expired. Open the studio again."})
             if not self.authorized():
@@ -340,6 +365,9 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/login-ticket":
                 self.json_body()
                 return self.respond(200, {"ticket": self.server.issue_ticket(), "expires_in": TICKET_TTL})
+            if path == "/api/stream-ticket":
+                self.json_body()
+                return self.respond(200, {"ticket": self.server.issue_stream_ticket(), "expires_in": STREAM_TICKET_TTL})
             if path == "/api/session":
                 self.json_body()
                 if self.has_session():
@@ -347,11 +375,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self.new_session()
             if path == "/api/logout":
                 self.json_body()
-                cookie = cookies.SimpleCookie(self.headers.get("Cookie", ""))
-                if "myradio_session" in cookie:
-                    with self.server.session_lock:
-                        self.server.sessions.discard(cookie["myradio_session"].value)
-                return self.respond(200, {"ok": True}, extra={"Set-Cookie": "myradio_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0"})
+                with self.server.session_lock:
+                    self.server.sessions.discard(self.headers.get("X-Myradio-Session", ""))
+                return self.respond(200, {"ok": True}, extra=CLEAR_OLD_COOKIE)
             if path == "/api/upload":
                 if not self.server.upload_slot.acquire(blocking=False):
                     raise StationError("Another audio import is in progress. Try again shortly.")
@@ -394,13 +420,11 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(500, {"error": "The station could not complete that request. No retry was performed; inspect status before retrying."})
 
     def has_session(self):
-        try:
-            cookie = cookies.SimpleCookie(self.headers.get("Cookie", ""))
-        except cookies.CookieError:
+        session = self.headers.get("X-Myradio-Session", "")
+        if not TICKET_FORMAT.fullmatch(session):
             return False
-        existing = cookie["myradio_session"].value if "myradio_session" in cookie else ""
         with self.server.session_lock:
-            return bool(existing) and existing in self.server.sessions
+            return any(hmac.compare_digest(session, known) for known in self.server.sessions)
 
     def new_session(self):
         session = secrets.token_urlsafe(32)
@@ -408,7 +432,7 @@ class Handler(BaseHTTPRequestHandler):
             if len(self.server.sessions) >= 32:
                 raise StationError("Too many sessions. Restart the station service to revoke all sessions.")
             self.server.sessions.add(session)
-        return self.respond(200, {"ok": True}, extra={"Set-Cookie": f"myradio_session={session}; Path=/; HttpOnly; SameSite=Strict"})
+        return self.respond(200, {"ok": True, "session": session}, extra=CLEAR_OLD_COOKIE)
 
     def agent_client(self):
         return self.headers.get("X-Myradio-Client", "") in ("mcp", "connect")

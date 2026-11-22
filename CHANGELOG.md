@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.2 (2026-11-22)
+
+- Dashboard sessions are no longer cookies. A browser sends a cookie for 127.0.0.1 to every port on the host, so a
+  service run by someone else on the same computer could receive a dashboard session and reuse it. `/api/session` now
+  returns the session in its reply; the dashboard keeps it in `sessionStorage` (scoped to its own origin, port
+  included) and sends it as `X-Myradio-Session`. Cookies are never accepted, and one left by an older version is
+  cleared. The live monitor uses a stream ticket (`POST /api/stream-ticket`, then `/stream.wav?ticket=`), valid for 30
+  seconds, because an audio element cannot send headers. A reload keeps the session; a new tab unlocks again.
+
 ## 0.5.1 (2026-11-22)
 
 - `POST /api/shutdown` (authorized) shuts the studio down as Ctrl+C does, so a launcher can take the station off air

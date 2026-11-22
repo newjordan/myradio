@@ -403,12 +403,12 @@ class HTTPTests(unittest.TestCase):
         self.assertNotEqual(ticket, self.token)
         session_headers = {"X-Myradio-Ticket": ticket, "Content-Type": "application/json"}
         with self.request("/api/session", b"{}", session_headers) as r:
-            cookie = r.headers["Set-Cookie"].split(";")[0]
-        with self.request("/api/status", headers={"Cookie": cookie}) as r:
+            session = json.loads(r.read())["session"]
+        with self.request("/api/status", headers={"X-Myradio-Session": session}) as r:
             self.assertEqual(r.status, 200)
         self.refused("/api/session", session_headers, b"{}")                              # single use
-        # A bad or used ticket does not lock out a browser that already has a session.
-        with self.request("/api/session", b"{}", {**session_headers, "Cookie": cookie}) as r:
+        # A bad or used ticket does not lock out a page that already has a session.
+        with self.request("/api/session", b"{}", {**session_headers, "X-Myradio-Session": session}) as r:
             self.assertEqual(r.status, 200)
         self.refused("/api/session", {**session_headers, "X-Myradio-Ticket": "not-a-ticket"}, b"{}")
         expired = self.server.issue_ticket()
@@ -464,6 +464,41 @@ class HTTPTests(unittest.TestCase):
         self.assertFalse(self.server.redeem_ticket(issued[0]))
         self.assertTrue(self.server.redeem_ticket(issued[2]))
 
+    def test_dashboard_sessions_are_headers_never_cookies(self):
+        # Cookies for 127.0.0.1 reach every port on the host, so a session must never be accepted from one.
+        with self.request("/api/session", b"{}", {"X-Myradio-Token": self.token, "Content-Type": "application/json"}) as r:
+            body = json.loads(r.read())
+            self.assertIn("Max-Age=0", r.headers.get("Set-Cookie", ""))       # clears a cookie left by 0.5.1 or older
+        session = body["session"]
+        self.assertRegex(session, r"^[A-Za-z0-9_-]{43}$")
+        with self.request("/api/status", headers={"X-Myradio-Session": session}) as r:
+            self.assertEqual(r.status, 200)
+        self.refused("/api/status", {"Cookie": f"myradio_session={session}"})
+        self.refused("/api/status", {"X-Myradio-Session": "x" * 43})
+        self.refused("/api/status", {"X-Myradio-Session": session + "x"})
+        # The monitor: a stream ticket instead of a header, only from an authorized request, and only until it expires.
+        self.refused("/api/stream-ticket", {"Content-Type": "application/json"}, b"{}")
+        self.refused("/stream.wav?ticket=" + "x" * 43, {})
+        self.refused("/stream.wav", {"Cookie": f"myradio_session={session}"})
+        with self.request("/api/stream-ticket", b"{}", {"X-Myradio-Session": session, "Content-Type": "application/json"}) as r:
+            monitor = json.loads(r.read())["ticket"]
+        with self.request("/stream.wav?ticket=" + monitor) as r:
+            self.assertEqual(r.read(4), b"RIFF")
+        self.server.stream_tickets[monitor] = 0
+        self.refused("/stream.wav?ticket=" + monitor, {})
+        self.refused("/api/status?ticket=" + monitor, {})                       # a monitor ticket opens nothing else
+        # Logout ends the session.
+        with self.request("/api/logout", b"{}", {"X-Myradio-Session": session, "Content-Type": "application/json"}) as r:
+            self.assertEqual(r.status, 200)
+        self.refused("/api/status", {"X-Myradio-Session": session})
+
+    def test_stream_tickets_are_bounded(self):
+        from myradio import server as srv
+        with patch.object(srv, "TICKET_LIMIT", 2):
+            issued = [self.server.issue_stream_ticket() for _ in range(3)]
+        self.assertFalse(self.server.stream_ticket_valid(issued[0]))
+        self.assertTrue(self.server.stream_ticket_valid(issued[2]))
+
     def test_auth_origin_session_and_real_audio_stream(self):
         token_path=self.station.directory/'control.token'
         token_path.write_text('invalid token '+('x'*32))
@@ -474,10 +509,10 @@ class HTTPTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as e:self.request('/api/status',headers={'X-Myradio-Token':self.token,'Origin':'https://evil.example'})
         self.assertEqual(e.exception.code,403)
         with self.request('/api/session',b'{}',{'X-Myradio-Token':self.token,'Content-Type':'application/json'}) as response:
-            cookie=response.headers['Set-Cookie'].split(';')[0]
-        headers={'Cookie':cookie}
+            session=json.load(response)['session']
+        headers={'X-Myradio-Session':session}
         with self.request('/api/session',b'{}',dict(headers,**{'Content-Type':'application/json'})) as response:
-            self.assertIsNone(response.headers.get('Set-Cookie'))
+            self.assertNotIn('session',json.load(response))
         self.assertEqual(len(self.server.sessions),1)
         with self.assertRaises(urllib.error.HTTPError) as e:
             self.request('/api/status',headers={'X-Myradio-Token':'\u00e9'})
@@ -487,12 +522,14 @@ class HTTPTests(unittest.TestCase):
             track=json.load(response)
         self.client.request('/api/action',{'operation':'transport.start'})
         time.sleep(.15)
-        with self.request('/stream.wav',headers=headers) as response:
+        with self.request('/api/stream-ticket',b'{}',dict(headers,**{'Content-Type':'application/json'})) as response:
+            monitor=json.load(response)['ticket']
+        with self.request('/stream.wav?ticket='+monitor) as response:
             data=response.read(44+len(SILENCE))
         self.assertEqual(data[:4],b'RIFF')
         self.assertEqual(data[44:],struct.pack('<hh',2222,2222)*FRAMES)
         self.assertEqual(self.client.request('/api/status')['current']['id'],track['id'])
-        with self.request('/api/logout',b'{}',{'Cookie':cookie,'Content-Type':'application/json'}):pass
+        with self.request('/api/logout',b'{}',dict(headers,**{'Content-Type':'application/json'})):pass
         with self.assertRaises(urllib.error.HTTPError):self.request('/api/status',headers=headers)
 
     def test_explicit_private_proxy_origin_keeps_auth_and_exact_origin_checks(self):
