@@ -1,6 +1,21 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 (2026-11-22)
+
+### Signed requests
+
+- A client can sign each request with the control token instead of sending it. It asks for a one-time challenge
+  (`GET /api/challenge`, no token needed) and sends `X-Myradio-Auth: v1 <challenge> <HMAC-SHA256>` over the method,
+  path, Host, challenge and the body's SHA-256 (`X-Myradio-Body-SHA256`). Each challenge works once, within 30 seconds,
+  and only at the studio that issued it, so a captured request cannot be replayed. The studio checks that the body
+  matches its hash before using it, and signs its reply (`X-Myradio-Response-Auth`). A listener that is not the studio,
+  such as another account holding the port or the far end of an SSH tunnel while the studio is down, never learns the
+  token. The `X-Myradio-Token` header and dashboard sessions work as before.
+- `POST /api/login-ticket` (authorized) returns a login ticket that `POST /api/session` trades once, within 60 seconds,
+  for a dashboard session (`X-Myradio-Ticket`). A launcher can open the dashboard at `/#ticket=<ticket>` without giving
+  the browser the launch code.
+- The dashboard keeps the launch code only until it has a session cookie, and no longer stores it in session storage or
+  sends it with later requests.
 
 ### Autopilot DJ and news on request
 

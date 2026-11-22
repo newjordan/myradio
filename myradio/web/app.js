@@ -1,11 +1,14 @@
 'use strict';
 const $ = id => document.getElementById(id);
-let token = sessionStorage.getItem('myradio-token') || '';
+// The launch code is held only until it is traded for a session cookie (see establish), then forgotten.
+let token = '';
+let ticket = '';   // a one-time login ticket from a launcher such as the Omarchy plugin
+try { sessionStorage.removeItem('myradio-token'); } catch (error) {}
 let broadcastDestination = '';
 let state = null, polling = false, identityDirty = false, lastStructure = '', unlocked = false;
 const fragment = new URLSearchParams(location.hash.slice(1));
-if (fragment.has('token')) {
-  token = fragment.get('token'); sessionStorage.setItem('myradio-token', token);
+if (fragment.has('token') || fragment.has('ticket')) {
+  token = fragment.get('token') || ''; ticket = fragment.get('ticket') || '';
   history.replaceState(null, '', location.pathname + location.search);
 }
 // One page: the studio is always there. Every other section opens as a sheet over it; forms stay mounted, so drafts survive.
@@ -47,6 +50,7 @@ function requireUnlock() {
 async function api(path, data, raw = false) {
   const headers = {};
   if (token) headers['X-Myradio-Token'] = token;
+  if (ticket && path === '/api/session') headers['X-Myradio-Ticket'] = ticket;
   const options = {headers, credentials: 'same-origin'};
   if (data !== undefined) {
     options.method = 'POST';
@@ -69,18 +73,21 @@ async function api(path, data, raw = false) {
   } finally { clearTimeout(timer); }
 }
 async function establish() {
+  const tried = Boolean(token || ticket);
   try {
-    await api('/api/session', {});
+    try { await api('/api/session', {}); } finally { ticket = ''; }   // a ticket works once either way
+    // The HttpOnly session cookie carries the unlock from here on. The launch code is not kept or sent again,
+    // so if the studio goes away, whatever answers in its place never sees it.
+    token = '';
     unlocked = true; $('unlock').close(); $('unlock-error').textContent = ''; notice('');
     broadcastDestination=(await api('/api/broadcast')).url||'';
     await loadAgentSettings();
     await refresh();
-  } catch (error) { requireUnlock(); $('unlock-error').textContent = error.message; }
+  } catch (error) { token = ''; requireUnlock(); $('unlock-error').textContent = tried ? error.message : ''; }
 }
 $('unlock').addEventListener('cancel', event => event.preventDefault());
 $('unlock-form').addEventListener('submit', async event => {
-  event.preventDefault(); token = $('token-input').value.trim();
-  sessionStorage.setItem('myradio-token', token); $('token-input').value = '';
+  event.preventDefault(); token = $('token-input').value.trim(); $('token-input').value = '';
   await establish();
 });
 function disconnect() {
@@ -90,7 +97,7 @@ function disconnect() {
 $('lock').addEventListener('click', async () => {
   $('menu').close(); disconnect(); $('agent-key').value=''; $('broadcast-password').value='';
   try { await api('/api/logout', {}); } catch (error) { notice(error.message); }
-  token = ''; sessionStorage.removeItem('myradio-token'); requireUnlock();
+  token = ''; requireUnlock();
 });
 function duration(value) {
   const seconds = Math.max(0, Math.floor(value || 0));
@@ -903,4 +910,4 @@ $('motion').addEventListener('click', () => {
 });
 reducedMotion.addEventListener('change', applyMotion); applyMotion();
 setInterval(()=>{if(unlocked&&!document.hidden)refresh();},2000);
-if(token)establish();else requireUnlock();
+establish();   // a launch code from the address, or a session cookie from earlier; otherwise the unlock screen
