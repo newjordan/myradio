@@ -16,6 +16,7 @@ import secrets
 import socket
 import struct
 import sys
+import tempfile
 import threading
 import time
 from urllib.parse import parse_qs, urlsplit
@@ -327,6 +328,15 @@ class Handler(BaseHTTPRequestHandler):
             if not self.authorized():
                 self.close_connection = True
                 return self.respond(401, {"error": "Unlock with the launch code from your launcher."})
+            if path == "/api/shutdown":
+                self.json_body()
+                self.close_connection = True
+                self.respond(200, {"ok": True, "message": "The studio is shutting down."})
+                self.wfile.flush()
+                # serve_forever returns and main() closes the station, as Ctrl+C does. Playout and broadcast stop with
+                # it; a client that wants the station to stay off on the next start sends transport.stop first.
+                threading.Thread(target=self.server.shutdown, daemon=True).start()
+                return
             if path == "/api/login-ticket":
                 self.json_body()
                 return self.respond(200, {"ticket": self.server.issue_ticket(), "expires_in": TICKET_TTL})
@@ -512,6 +522,21 @@ def load_token(directory):
     return token
 
 
+def open_dashboard(url, ticket, directory, opener=webbrowser.open):
+    """Open the dashboard with a one-time login ticket. The browser is given a private page that redirects to
+    `url#ticket=…`, so neither the launch code nor the ticket is on a command line. The page is removed after
+    a minute; the ticket expires then anyway."""
+    fd, path = tempfile.mkstemp(prefix="open-", suffix=".html", dir=directory)
+    with os.fdopen(fd, "w") as page:
+        page.write('<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>myradio</title>'
+                   f'<script>location.replace({json.dumps(url + "#ticket=" + ticket)})</script>\n')
+    timer = threading.Timer(TICKET_TTL, lambda: Path(path).unlink(missing_ok=True))
+    timer.daemon = True
+    timer.start()
+    opener(Path(path).as_uri())
+    return path
+
+
 def main(argv=None):
     args_in = sys.argv[1:] if argv is None else list(argv)
     if args_in[:1] == ["setup"]:
@@ -542,7 +567,7 @@ def main(argv=None):
         url = f"http://127.0.0.1:{server.server_address[1]}/"
         print(f"myradio local station: {url}\nLaunch code: {token}\nData: {station.directory}\nCtrl+C stops the service. External broadcasting requires saved Icecast settings and explicit Go live.", flush=True)
         if not args.no_browser:
-            webbrowser.open(url + "#token=" + token)
+            open_dashboard(url, server.issue_ticket(), station.directory)
         server.serve_forever(poll_interval=0.2)
     except (OSError, StationError) as exc:
         parser.exit(1, f"myradio: {exc}\n")
