@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1 (2026-11-22)
+
+- `POST /api/shutdown` (authorized) shuts the studio down as Ctrl+C does, so a launcher can take the station off air
+  and close it. Send `transport.stop` first if the station should not resume playing on its next start.
+- The launcher opens the dashboard through a private page with a one-time login ticket instead of putting the launch
+  code in the browser's command line.
+
 ## 0.5.0 (2026-11-22)
 
 ### Signed requests

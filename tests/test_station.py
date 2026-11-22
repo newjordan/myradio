@@ -432,6 +432,31 @@ class HTTPTests(unittest.TestCase):
         headers = {**nav, "X-Myradio-Ticket": self.server.issue_ticket(), "Content-Type": "application/json"}
         self.refused("/api/session", headers, b"{}", code=403)        # API calls stay same-origin only
 
+    def test_shutdown_needs_authorization_and_stops_the_service(self):
+        self.refused("/api/shutdown", {"Content-Type": "application/json"}, b"{}")
+        self.refused("/api/shutdown", {"Content-Type": "application/json", "X-Myradio-Token": self.token,
+                                       "Sec-Fetch-Site": "cross-site"}, b"{}", code=403)
+        self.assertTrue(self.thread.is_alive())
+        headers, challenge = self.signed("POST", "/api/shutdown", b"{}")
+        with self.request("/api/shutdown", b"{}", {**headers, "Content-Type": "application/json"}) as r:
+            data = r.read()
+            self.assertTrue(self.reply_ok(r, challenge, data))
+            self.assertTrue(json.loads(data)["ok"])
+        self.thread.join(timeout=5)
+        self.assertFalse(self.thread.is_alive())
+
+    def test_launcher_opens_the_dashboard_through_a_private_page(self):
+        import os, stat
+        from myradio.server import open_dashboard
+        opened = []
+        ticket = self.server.issue_ticket()
+        path = open_dashboard("http://127.0.0.1:8765/", ticket, self.temp.name, opener=opened.append)
+        self.assertEqual(stat.S_IMODE(os.stat(path).st_mode), 0o600)
+        self.assertEqual(opened, [Path(path).as_uri()])
+        self.assertNotIn(ticket, opened[0])
+        self.assertNotIn(self.token, Path(path).read_text())
+        self.assertIn(f'"http://127.0.0.1:8765/#ticket={ticket}"', Path(path).read_text())
+
     def test_login_tickets_are_bounded(self):
         from myradio import server as srv
         with patch.object(srv, "TICKET_LIMIT", 2):
