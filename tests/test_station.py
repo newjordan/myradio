@@ -288,6 +288,157 @@ class HTTPTests(unittest.TestCase):
     def request(self,path,body=None,headers=None):
         return self.http.open(urllib.request.Request(f'http://127.0.0.1:{self.port}'+path,body,headers or {}),timeout=3)
 
+    def challenge(self):
+        with self.request("/api/challenge") as r:
+            return json.loads(r.read())["challenge"]
+
+    def signed(self, method, path, body=b"", *, token=None, challenge=None, host=None, sign_path=None, sign_body=None):
+        import hashlib, hmac
+        token = token or self.token
+        challenge = challenge or self.challenge()
+        host = host or f"127.0.0.1:{self.port}"
+        body_hash = hashlib.sha256(body if sign_body is None else sign_body).hexdigest()
+        message = "\n".join(["myradio-v1", method, sign_path or path, host, challenge, body_hash])
+        sig = hmac.new(token.encode(), message.encode(), hashlib.sha256).hexdigest()
+        headers = {"X-Myradio-Auth": f"v1 {challenge} {sig}", "X-Myradio-Body-SHA256": body_hash}
+        return headers, challenge
+
+    def reply_ok(self, response, challenge, data):
+        import hashlib, hmac
+        body_hash = data if data == "stream" else hashlib.sha256(data).hexdigest()
+        message = "\n".join(["myradio-v1-response", challenge, str(response.status), body_hash])
+        expected = "v1 " + hmac.new(self.token.encode(), message.encode(), hashlib.sha256).hexdigest()
+        return response.headers.get("X-Myradio-Response-Auth") == expected
+
+    def refused(self, path, headers, body=None, code=401):
+        with self.assertRaises(urllib.error.HTTPError) as e:
+            self.request(path, body, headers)
+        self.assertEqual(e.exception.code, code)
+        self.assertIsNone(e.exception.headers.get("X-Myradio-Response-Auth"))
+
+    def test_challenge_needs_no_token_and_is_fresh_each_time(self):
+        a, b = self.challenge(), self.challenge()
+        self.assertRegex(a, r"^[0-9a-f]{32}$")
+        self.assertNotEqual(a, b)
+        with self.assertRaises(urllib.error.HTTPError) as e:   # still same-origin loopback only
+            self.request("/api/challenge", headers={"Origin": "https://evil.example"})
+        self.assertEqual(e.exception.code, 403)
+
+    def test_signed_requests_never_need_the_token_and_are_answered_with_a_signature(self):
+        headers, challenge = self.signed("GET", "/api/status")
+        with self.request("/api/status", headers=headers) as r:
+            data = r.read()
+            self.assertEqual(r.status, 200)
+            self.assertTrue(self.reply_ok(r, challenge, data))
+            self.assertIn("station", json.loads(data))
+        # The same signed request again is a replay: its challenge is used up.
+        self.refused("/api/status", headers)
+        # A challenge this studio never issued, an expired one, the wrong key, another path, another Host, malformed.
+        unissued, _ = self.signed("GET", "/api/status", challenge="0" * 32)
+        self.refused("/api/status", unissued)
+        expired, challenge = self.signed("GET", "/api/status")
+        self.server.challenges[challenge] = 0
+        self.refused("/api/status", expired)
+        for headers in [self.signed("GET", "/api/status", token="x" * 43)[0],
+                        self.signed("GET", "/api/status", sign_path="/api/operations")[0],
+                        self.signed("GET", "/api/status", host=f"localhost:{self.port}")[0],
+                        {"X-Myradio-Auth": "v1 1 2", "X-Myradio-Body-SHA256": "0" * 64},
+                        {"X-Myradio-Auth": "", "X-Myradio-Token": self.token}]:
+            with self.subTest(headers=headers):
+                self.refused("/api/status", headers)
+        # A Host the signature does not cover is refused even when that Host is otherwise allowed.
+        headers, _ = self.signed("GET", "/api/status")
+        self.refused("/api/status", {**headers, "Host": f"localhost:{self.port}"})
+        # A bad signature does not use up the challenge, so nobody without the token can burn others' challenges.
+        challenge = self.challenge()
+        self.refused("/api/status", self.signed("GET", "/api/status", token="y" * 43, challenge=challenge)[0])
+        good, _ = self.signed("GET", "/api/status", challenge=challenge)
+        with self.request("/api/status", headers=good) as r:
+            self.assertEqual(r.status, 200)
+        # Unsigned requests get unsigned replies; the token header still works for existing clients.
+        with self.request("/api/status", headers={"X-Myradio-Token": self.token}) as r:
+            self.assertIsNone(r.headers.get("X-Myradio-Response-Auth"))
+
+    def test_signed_action_body_is_bound_to_its_signature(self):
+        body = json.dumps({"operation": "station.update", "arguments": {"name": "Signed"}}).encode()
+        headers, challenge = self.signed("POST", "/api/action", body)
+        with self.request("/api/action", body, {**headers, "Content-Type": "application/json"}) as r:
+            self.assertTrue(self.reply_ok(r, challenge, r.read()))
+        self.assertEqual(self.station.status()["station"]["name"], "Signed")
+        evil = json.dumps({"operation": "station.update", "arguments": {"name": "Swapped"}}).encode()
+        headers, _ = self.signed("POST", "/api/action", evil, sign_body=body)
+        with self.assertRaises(urllib.error.HTTPError) as e:
+            self.request("/api/action", evil, {**headers, "Content-Type": "application/json"})
+        self.assertEqual(e.exception.code, 400)
+        self.assertIn("does not match its signature", e.exception.read().decode())
+        self.assertEqual(self.station.status()["station"]["name"], "Signed")
+
+    def test_signed_stream_reply_is_signed(self):
+        import http.client
+        headers, challenge = self.signed("GET", "/stream.wav")
+        connection = http.client.HTTPConnection("127.0.0.1", self.port, timeout=3)
+        connection.request("GET", "/stream.wav", headers=headers)
+        response = connection.getresponse()
+        self.assertEqual(response.status, 200)
+        self.assertTrue(self.reply_ok(response, challenge, "stream"))
+        self.assertEqual(response.read(4), b"RIFF")
+        connection.close()
+
+    def test_challenge_store_is_bounded(self):
+        from myradio import server as srv
+        with patch.object(srv, "CHALLENGE_LIMIT", 3):
+            issued = [self.server.issue_challenge() for _ in range(4)]
+        self.assertEqual(len(self.server.challenges), 3)
+        self.assertFalse(self.server.redeem_challenge(issued[0]))      # the oldest was dropped
+        self.assertTrue(self.server.redeem_challenge(issued[3]))
+        self.assertFalse(self.server.redeem_challenge(issued[3]))      # single use
+
+    def test_login_ticket_opens_the_dashboard_once_without_the_token(self):
+        self.refused("/api/login-ticket", {"Content-Type": "application/json"}, b"{}")       # needs authorization
+        headers, challenge = self.signed("POST", "/api/login-ticket", b"{}")
+        with self.request("/api/login-ticket", b"{}", {**headers, "Content-Type": "application/json"}) as r:
+            data = r.read()
+            self.assertTrue(self.reply_ok(r, challenge, data))
+        ticket = json.loads(data)["ticket"]
+        self.assertNotEqual(ticket, self.token)
+        session_headers = {"X-Myradio-Ticket": ticket, "Content-Type": "application/json"}
+        with self.request("/api/session", b"{}", session_headers) as r:
+            cookie = r.headers["Set-Cookie"].split(";")[0]
+        with self.request("/api/status", headers={"Cookie": cookie}) as r:
+            self.assertEqual(r.status, 200)
+        self.refused("/api/session", session_headers, b"{}")                              # single use
+        # A bad or used ticket does not lock out a browser that already has a session.
+        with self.request("/api/session", b"{}", {**session_headers, "Cookie": cookie}) as r:
+            self.assertEqual(r.status, 200)
+        self.refused("/api/session", {**session_headers, "X-Myradio-Ticket": "not-a-ticket"}, b"{}")
+        expired = self.server.issue_ticket()
+        self.server.tickets[expired] = 0
+        self.refused("/api/session", {**session_headers, "X-Myradio-Ticket": expired}, b"{}")
+        cross = self.server.issue_ticket()
+        self.refused("/api/session", {**session_headers, "X-Myradio-Ticket": cross, "Sec-Fetch-Site": "cross-site"}, b"{}", code=403)
+
+    def test_cross_site_navigation_may_load_only_the_dashboard_page(self):
+        nav = {"Sec-Fetch-Site": "cross-site", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Dest": "document"}
+        with self.request("/", headers=nav) as r:
+            self.assertEqual(r.status, 200)
+            self.assertIn("frame-ancestors 'none'", r.headers["Content-Security-Policy"])
+        for path, headers in [("/", {**nav, "Sec-Fetch-Mode": "cors"}), ("/", {**nav, "Sec-Fetch-Dest": "iframe"}),
+                              ("/app.js", nav), ("/api/status", {**nav, "X-Myradio-Token": self.token}),
+                              ("/", {**nav, "Host": "evil.example:80"})]:
+            with self.subTest(path=path, headers=headers):
+                with self.assertRaises(urllib.error.HTTPError) as e:
+                    self.request(path, headers=headers)
+                self.assertEqual(e.exception.code, 403)
+        headers = {**nav, "X-Myradio-Ticket": self.server.issue_ticket(), "Content-Type": "application/json"}
+        self.refused("/api/session", headers, b"{}", code=403)        # API calls stay same-origin only
+
+    def test_login_tickets_are_bounded(self):
+        from myradio import server as srv
+        with patch.object(srv, "TICKET_LIMIT", 2):
+            issued = [self.server.issue_ticket() for _ in range(3)]
+        self.assertFalse(self.server.redeem_ticket(issued[0]))
+        self.assertTrue(self.server.redeem_ticket(issued[2]))
+
     def test_auth_origin_session_and_real_audio_stream(self):
         token_path=self.station.directory/'control.token'
         token_path.write_text('invalid token '+('x'*32))

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import argparse
+from collections import OrderedDict
+import hashlib
 import hmac
 from http import cookies
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -29,6 +31,33 @@ WEB = Path(__file__).with_name("web")
 CSP = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; media-src 'self' blob:; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 
 
+# Signed requests: a client that holds the control token signs each request with it instead of sending it, so a
+# listener that is not this studio (another account holding the port, or the far end of a tunnel while the studio
+# is down) never learns the token. Each signature covers a one-time challenge that this studio issued, so a captured
+# request cannot be replayed here or anywhere else. The studio signs its reply to a signed request, so the client
+# can also tell that it reached this studio.
+#   GET /api/challenge          -> {"challenge": "<32 hex>", "expires_in": 30}   (no token needed; single use)
+#   X-Myradio-Auth: v1 <challenge> <64 hex HMAC-SHA256>
+#   X-Myradio-Body-SHA256: <64 hex SHA-256 of the request body (of b"" when there is none)>
+#   signed:   "myradio-v1\n{method}\n{path and query}\n{Host}\n{challenge}\n{body sha256}"
+#   reply:    X-Myradio-Response-Auth: v1 <HMAC-SHA256 of "myradio-v1-response\n{challenge}\n{status}\n{body sha256}">
+#             (for the live stream the body hash is the word "stream")
+# Login tickets let a client that holds the token open the dashboard without handing the token to the browser:
+# POST /api/login-ticket (authorized) returns a ticket that POST /api/session trades once, within 60 seconds,
+# for a session cookie (header X-Myradio-Ticket).
+TICKET_TTL = 60
+TICKET_LIMIT = 16
+TICKET_FORMAT = re.compile(r"[A-Za-z0-9_-]{43}")
+CHALLENGE_TTL = 30
+CHALLENGE_LIMIT = 1024
+SIGNED_AUTH = re.compile(r"v1 ([0-9a-f]{32}) ([0-9a-f]{64})")
+SHA256_HEX = re.compile(r"[0-9a-f]{64}")
+
+
+def sign(token, *parts):
+    return hmac.new(token.encode(), "\n".join(parts).encode("latin-1"), hashlib.sha256).hexdigest()
+
+
 class Server(ThreadingHTTPServer):
     daemon_threads = True
     # On Windows SO_REUSEADDR lets a second program bind the same port and steal requests, so it stays off there.
@@ -44,11 +73,50 @@ class Server(ThreadingHTTPServer):
         self.token = token
         self.sessions = set()
         self.session_lock = threading.Lock()
+        self.tickets = OrderedDict()      # login ticket -> monotonic expiry, oldest first
+        self.challenges = OrderedDict()   # challenge -> monotonic expiry, oldest first
+        self.challenge_lock = threading.Lock()
         self.slots = threading.BoundedSemaphore(32)
         self.upload_slot = threading.BoundedSemaphore(1)
         self.agent_lock = threading.Lock()
         self.agent_seen = {"seen_at": None, "last": None}
         super().__init__(address, Handler)
+
+    def issue_challenge(self):
+        """A fresh single-use challenge for one signed request. The oldest are dropped when the store is full."""
+        now = time.monotonic()
+        with self.challenge_lock:
+            while self.challenges and next(iter(self.challenges.values())) <= now:
+                self.challenges.popitem(last=False)
+            while len(self.challenges) >= CHALLENGE_LIMIT:
+                self.challenges.popitem(last=False)
+            challenge = secrets.token_hex(16)
+            self.challenges[challenge] = now + CHALLENGE_TTL
+            return challenge
+
+    def issue_ticket(self):
+        now = time.monotonic()
+        with self.challenge_lock:
+            while self.tickets and next(iter(self.tickets.values())) <= now:
+                self.tickets.popitem(last=False)
+            while len(self.tickets) >= TICKET_LIMIT:
+                self.tickets.popitem(last=False)
+            ticket = secrets.token_urlsafe(32)
+            self.tickets[ticket] = now + TICKET_TTL
+            return ticket
+
+    def redeem_ticket(self, ticket):
+        if not TICKET_FORMAT.fullmatch(ticket or ""):
+            return False
+        with self.challenge_lock:
+            match = next((t for t in self.tickets if hmac.compare_digest(t, ticket)), None)
+            until = self.tickets.pop(match, None) if match else None
+        return until is not None and until > time.monotonic()
+
+    def redeem_challenge(self, challenge):
+        with self.challenge_lock:
+            until = self.challenges.pop(challenge, None)
+        return until is not None and until > time.monotonic()
 
     def note_agent(self, what):
         """Remember when an external agent (the MCP adapter or the connect command) last used the station, and for what."""
@@ -86,6 +154,10 @@ class Handler(BaseHTTPRequestHandler):
         super().setup()
         self.connection.settimeout(15)
 
+    def parse_request(self):
+        self.signed = None   # (challenge, body sha256) once this request's signature checks out
+        return super().parse_request()
+
     def log_message(self, fmt, *args):
         # Paths, chat text and launch tokens do not belong in logs.
         pass
@@ -103,13 +175,18 @@ class Handler(BaseHTTPRequestHandler):
         self.headers_base()
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
+        self.sign_reply(status, hashlib.sha256(data).hexdigest())
         if extra:
             for k, v in extra.items():
                 self.send_header(k, v)
         self.end_headers()
         self.wfile.write(data)
 
-    def safe_origin(self):
+    def safe_origin(self, navigation=False):
+        """Host (and Origin, when sent) must be this studio's. Cross-site requests are refused, except a top-level
+        navigation to the dashboard page itself (`navigation`), which holds no secrets and cannot be framed; a
+        launcher opens it from a local file. Every API request stays same-origin only."""
+        cross_site = self.headers.get("Sec-Fetch-Site") == "cross-site" and not navigation
         port = self.server.server_address[1]
         allowed = {f"127.0.0.1:{port}", f"localhost:{port}"}
         host = self.headers.get("Host", "")
@@ -119,11 +196,32 @@ class Handler(BaseHTTPRequestHandler):
         if self.server.public_origin:
             remote = urlsplit(self.server.public_origin)
             if host == remote.netloc:
-                return (not origin or origin == self.server.public_origin) and self.headers.get("Sec-Fetch-Site") != "cross-site"
+                return (not origin or origin == self.server.public_origin) and not cross_site
         # Host restriction also blocks browser DNS-rebinding attacks.
-        return host in allowed and (not origin or origin in {f"http://{a}" for a in allowed}) and self.headers.get("Sec-Fetch-Site") != "cross-site"
+        return host in allowed and (not origin or origin in {f"http://{a}" for a in allowed}) and not cross_site
+
+    def sign_reply(self, status, body_hash):
+        if self.signed:
+            self.send_header("X-Myradio-Response-Auth",
+                             "v1 " + sign(self.server.token, "myradio-v1-response", self.signed[0], str(status), body_hash))
+
+    def signed_request(self):
+        match = SIGNED_AUTH.fullmatch(self.headers.get("X-Myradio-Auth", ""))
+        body_hash = self.headers.get("X-Myradio-Body-SHA256", "")
+        if not match or not SHA256_HEX.fullmatch(body_hash):
+            return False
+        challenge, signature = match.groups()
+        expected = sign(self.server.token, "myradio-v1", self.command, self.path, self.headers.get("Host", ""),
+                        challenge, body_hash)
+        # Redeem only after the signature checks out, so nobody without the token can use up others' challenges.
+        if not hmac.compare_digest(expected, signature) or not self.server.redeem_challenge(challenge):
+            return False
+        self.signed = (challenge, body_hash)
+        return True
 
     def authorized(self):
+        if self.headers.get("X-Myradio-Auth") is not None:
+            return self.signed_request()   # a signed request stands or falls by its signature alone
         token = self.headers.get("X-Myradio-Token", "")
         if token and token.isascii() and hmac.compare_digest(token, self.server.token):
             return True
@@ -147,13 +245,17 @@ class Handler(BaseHTTPRequestHandler):
         data = self.rfile.read(size)
         if len(data) != size:
             raise StationError("Incomplete request body.")
+        if self.signed and not hmac.compare_digest(hashlib.sha256(data).hexdigest(), self.signed[1]):
+            self.close_connection = True
+            raise StationError("The request body does not match its signature.")
         return data
 
     def json_body(self):
         if self.headers.get_content_type() != "application/json":
             raise StationError("Send application/json.")
+        data = self.read_body(32768)
         try:
-            body = json.loads(self.read_body(32768))
+            body = json.loads(data)
         except (ValueError, UnicodeError):
             raise StationError("Invalid JSON body.") from None
         if not isinstance(body, dict):
@@ -162,9 +264,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            if not self.safe_origin():
-                return self.respond(403, {"error": "Only same-origin loopback requests are allowed."})
             path = urlsplit(self.path).path
+            navigation = (path == "/" and self.headers.get("Sec-Fetch-Mode") == "navigate"
+                          and self.headers.get("Sec-Fetch-Dest") == "document")
+            if not self.safe_origin(navigation):
+                return self.respond(403, {"error": "Only same-origin loopback requests are allowed."})
             if path in ("/", "/app.js", "/style.css"):
                 name = "index.html" if path == "/" else path[1:]
                 mime = {"index.html": "text/html; charset=utf-8", "app.js": "text/javascript; charset=utf-8", "style.css": "text/css; charset=utf-8"}[name]
@@ -176,6 +280,8 @@ class Handler(BaseHTTPRequestHandler):
                     return self.respond(404, {"error": "Not found."})
                 return self.respond(200, file.read_bytes(), content_type="image/" + art.group(2),
                                     extra={"Cache-Control": "max-age=86400"})
+            if path == "/api/challenge":
+                return self.respond(200, {"challenge": self.server.issue_challenge(), "expires_in": CHALLENGE_TTL})
             asset = re.fullmatch(r"/panels/([a-z0-9_-]{1,40}\.(?:js|css))", path)
             if asset:
                 return self.panel_asset(asset.group(1))
@@ -211,22 +317,24 @@ class Handler(BaseHTTPRequestHandler):
                 self.close_connection = True
                 return self.respond(403, {"error": "Only same-origin loopback requests are allowed."})
             path = urlsplit(self.path).path
+            ticket = self.headers.get("X-Myradio-Ticket")
+            if path == "/api/session" and ticket is not None:
+                self.json_body()
+                if self.server.redeem_ticket(ticket) or self.has_session():
+                    return self.new_session() if not self.has_session() else self.respond(200, {"ok": True})
+                self.close_connection = True
+                return self.respond(401, {"error": "That link has expired. Open the studio again."})
             if not self.authorized():
                 self.close_connection = True
                 return self.respond(401, {"error": "Unlock with the launch code from your launcher."})
+            if path == "/api/login-ticket":
+                self.json_body()
+                return self.respond(200, {"ticket": self.server.issue_ticket(), "expires_in": TICKET_TTL})
             if path == "/api/session":
                 self.json_body()
-                cookie = cookies.SimpleCookie(self.headers.get("Cookie", ""))
-                existing = cookie["myradio_session"].value if "myradio_session" in cookie else ""
-                with self.server.session_lock:
-                    if existing in self.server.sessions:
-                        return self.respond(200, {"ok": True})
-                session = secrets.token_urlsafe(32)
-                with self.server.session_lock:
-                    if len(self.server.sessions) >= 32:
-                        raise StationError("Too many sessions. Restart the station service to revoke all sessions.")
-                    self.server.sessions.add(session)
-                return self.respond(200, {"ok": True}, extra={"Set-Cookie": f"myradio_session={session}; Path=/; HttpOnly; SameSite=Strict"})
+                if self.has_session():
+                    return self.respond(200, {"ok": True})
+                return self.new_session()
             if path == "/api/logout":
                 self.json_body()
                 cookie = cookies.SimpleCookie(self.headers.get("Cookie", ""))
@@ -274,6 +382,23 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             self.close_connection = True
             self.respond(500, {"error": "The station could not complete that request. No retry was performed; inspect status before retrying."})
+
+    def has_session(self):
+        try:
+            cookie = cookies.SimpleCookie(self.headers.get("Cookie", ""))
+        except cookies.CookieError:
+            return False
+        existing = cookie["myradio_session"].value if "myradio_session" in cookie else ""
+        with self.server.session_lock:
+            return bool(existing) and existing in self.server.sessions
+
+    def new_session(self):
+        session = secrets.token_urlsafe(32)
+        with self.server.session_lock:
+            if len(self.server.sessions) >= 32:
+                raise StationError("Too many sessions. Restart the station service to revoke all sessions.")
+            self.server.sessions.add(session)
+        return self.respond(200, {"ok": True}, extra={"Set-Cookie": f"myradio_session={session}; Path=/; HttpOnly; SameSite=Strict"})
 
     def agent_client(self):
         return self.headers.get("X-Myradio-Client", "") in ("mcp", "connect")
@@ -351,6 +476,7 @@ class Handler(BaseHTTPRequestHandler):
             self.headers_base()
             self.send_header("Content-Type", "audio/wav")
             self.send_header("Connection", "close")
+            self.sign_reply(200, "stream")
             self.end_headers()
             self.close_connection = True
             self.wfile.write(header)
