@@ -340,12 +340,23 @@ class RunningJobsTests(EngineCase):
         self.assertEqual(h.status()["resources"]["gpu0"]["phase"], "voices")
         time.sleep(0.3)
         self.assertEqual(h.job(s[3]["id"])["state"], "queued", "music is ahead: no more songs until it airs")
-        # the music airs and drops below the low mark: music takes the machine back, and new speech waits again
+        # The library row and the buffer row land on different threads. Air the songs only once both can see them.
+        # Hold the music worker so the catch-up song is on the machine, and still there, when the new break arrives:
+        # a free worker refills the buffer before a later read can see it drop.
+        def songs_are_ready():
+            buffered = h.route("GET", "/buffer").body["roles"]["song"]["ready_items"]
+            imported = sum(t["kind"] == "music" for t in h.station.imports)
+            return buffered >= 3 and imported >= 3
+        self.assertTrue(wait_for(songs_are_ready))
+        music = self.control("music")
+        music.entered.clear()
+        music.gate.clear()
         for track in [t for t in h.station.imports if t["kind"] == "music"]:
             h.emit("track_started", track["id"])
-        self.assertTrue(wait_for(lambda: h.route("GET", "/buffer").body["roles"]["song"]["ready"] < 1))
+        self.assertTrue(wait_for(music.entered.is_set))
         late = h.enqueue("host_break", {"text": "A voice break that arrives while music catches up."})
         clock.advance(200)
+        music.gate.set()
         h.engine.poke()
         for job in (s[3], s[4], late):
             self.assertEqual(self.done(h, job)["state"], "succeeded")
@@ -732,11 +743,20 @@ class QueueRulesTests(EngineCase):
         control.errors = [WorkerError("bad_output", "Not usable.")] * 2
         h = self.harness(clock=clock, config={"retry": {"max_attempts": 3, "base_s": 10, "cap_s": 10}})
         free = h.enqueue("host_break", {"text": "A script whose seed may vary between tries."})
+
+        def requeued(job_id, previous):
+            # One read. Two reads can straddle the start of an attempt: the first still says queued,
+            # the second already shows the new attempt, and the clock then jumps before the backoff is recorded.
+            job = h.job(job_id)
+            return job if job["state"] == "queued" and job["attempts"] > previous else None
+
+        seen = 0
         for _ in range(2):
-            self.assertTrue(wait_for(lambda: h.job(free["id"])["state"] == "queued" and h.job(free["id"])["attempts"] >= 1))
+            job = wait_for(lambda s=seen: requeued(free["id"], s))
+            self.assertTrue(job)
+            seen = job["attempts"]
             clock.advance(11)
             h.engine.poke()
-            time.sleep(0.15)
         self.assertEqual(self.done(h, free)["state"], "succeeded")
         seeds = [c["seed"] for c in control.calls]
         self.assertEqual(len(seeds), 3)
@@ -745,7 +765,7 @@ class QueueRulesTests(EngineCase):
         control.calls.clear()
         control.errors = [WorkerError("bad_output", "Not usable.")]
         pinned = h.enqueue("host_break", {"text": "A script whose seed is pinned by the producer.", "seed": 99})
-        self.assertTrue(wait_for(lambda: h.job(pinned["id"])["state"] == "queued" and h.job(pinned["id"])["attempts"] == 1))
+        self.assertTrue(wait_for(lambda: requeued(pinned["id"], 0)))
         clock.advance(11)
         h.engine.poke()
         self.assertEqual(self.done(h, pinned)["state"], "succeeded")

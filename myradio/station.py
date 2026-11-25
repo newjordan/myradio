@@ -41,7 +41,21 @@ class StationError(ValueError):
 def text(value, name, limit=200):
     if not isinstance(value, str) or not value.strip() or len(value) > limit:
         raise StationError(f"{name} must be 1–{limit} characters.")
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        raise StationError(f"{name} must be ordinary text.") from None
     return value.strip()
+
+
+def ordinary(value, name):
+    """Refuse a lone surrogate. SQLite and JSON will not round-trip one, and a stored one makes /api/status fail."""
+    if isinstance(value, str):
+        try:
+            value.encode("utf-8")
+        except UnicodeEncodeError:
+            raise StationError(f"{name} must be ordinary text.") from None
+    return value
 
 
 def utcnow():
@@ -93,6 +107,7 @@ def required_arguments(name):
 # The queue plays in ``pos`` order. Front inserts (a stopped track, due schedules, a recovered track) take the lowest
 # position and the lowest id; appends take the highest of both, so until something is moved by hand play order and id
 # order agree, as they always did before positions existed. Ids never change: they are the handle clients hold.
+QUEUE_LIMIT = 1000
 QUEUE_FRONT = "INSERT INTO queue(id,track_id,pos) VALUES ((SELECT COALESCE(MIN(id),1)-1 FROM queue),?,(SELECT COALESCE(MIN(pos),1)-1 FROM queue))"
 QUEUE_APPEND = "INSERT INTO queue(track_id,pos) VALUES (?,(SELECT COALESCE(MAX(pos),0)+1 FROM queue))"
 
@@ -159,6 +174,7 @@ class Station:
         defaults = {"name": "My radio", "tagline": "Your station. Your frequency.", "auto_fill": True}
         for key, value in defaults.items():
             self.db.execute("INSERT OR IGNORE INTO settings VALUES (?,?)", (key, json.dumps(value)))
+        self._sweep_orphan_media()
         self.db.commit()
         self.running = False  # Restarts never silently start transmitting.
         self.current = None
@@ -186,7 +202,7 @@ class Station:
         if recovered and json.loads(recovered[0]):
             track_id = json.loads(recovered[0])
             if self.db.execute("SELECT 1 FROM tracks WHERE id=?", (track_id,)).fetchone():
-                self.db.execute(QUEUE_FRONT, (track_id,))
+                self._queue_front(track_id)
         self._setting("playing", None)
         self.db.commit()
         if start_worker:
@@ -249,6 +265,69 @@ class Station:
 
     def _setting(self, key, value):
         self.db.execute("INSERT OR REPLACE INTO settings VALUES (?,?)", (key, json.dumps(value)))
+
+    def _sweep_orphan_media(self):
+        """Drop audio left behind when a delete or import was interrupted. A file with no library row cannot be played."""
+        try:
+            referenced = {row[0] for row in self.db.execute("SELECT filename FROM tracks")}
+            names = list(os.listdir(self.media))
+        except (OSError, sqlite3.Error):
+            return
+        for name in names:
+            if name in referenced:
+                continue
+            path = self.media / name
+            try:
+                if path.is_symlink() or path.is_file():
+                    path.unlink()
+            except OSError:
+                pass
+
+    def _queue_front(self, track_id):
+        """Put a track at the head of the queue without ever exceeding QUEUE_LIMIT.
+
+        Stop and restart put the interrupted track back. If the wall is already full, the last cart
+        is dropped so the track that was on air is the one that returns.
+        """
+        if self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= QUEUE_LIMIT:
+            last = self.db.execute("SELECT id FROM queue ORDER BY pos DESC, id DESC LIMIT 1").fetchone()
+            if last:
+                self.db.execute("DELETE FROM queue WHERE id=?", (last[0],))
+        self.db.execute(QUEUE_FRONT, (track_id,))
+
+    def _prune_schedules(self):
+        self.db.execute(
+            "DELETE FROM schedules WHERE status!='pending' AND id NOT IN "
+            "(SELECT id FROM schedules WHERE status!='pending' ORDER BY due DESC LIMIT 1000)")
+
+    def _schedule_view(self):
+        """Pending events soonest-first (so the next one can be seen and cancelled), then recent finished ones."""
+        pending = self.db.execute(
+            "SELECT s.id,s.track_id,t.title,s.at,s.status FROM schedules s JOIN tracks t ON t.id=s.track_id "
+            "WHERE s.status='pending' ORDER BY s.due ASC, s.id ASC LIMIT 1000")
+        finished = self.db.execute(
+            "SELECT s.id,s.track_id,t.title,s.at,s.status FROM schedules s JOIN tracks t ON t.id=s.track_id "
+            "WHERE s.status!='pending' ORDER BY s.due DESC, s.id DESC LIMIT 100")
+        return [dict(row) for row in list(pending) + list(finished)]
+
+    def _track_durable(self, track_id):
+        """True when some other connection can see the library row.
+
+        The station's own connection can still see an insert that has not been committed. A second
+        connection sees only a commit that finished. If that read itself fails, the file is kept:
+        startup drops a file that no row names, and deleting one that might belong to a saved row
+        is the worse outcome.
+        """
+        other = None
+        try:
+            other = sqlite3.connect(self.directory / "station.sqlite3", timeout=1.0)
+            other.execute("PRAGMA query_only=ON")
+            return other.execute("SELECT 1 FROM tracks WHERE id=?", (track_id,)).fetchone() is not None
+        except sqlite3.Error:
+            return True
+        finally:
+            if other is not None:
+                other.close()
 
     def _event(self, title, event):
         self.db.execute("INSERT INTO history(title,at,event) VALUES (?,?,?)", (title, utcnow(), event))
@@ -323,7 +402,7 @@ class Station:
                 "elapsed": round(self.elapsed, 2), "error": self.error,
                 "queue": [dict(r) for r in self.db.execute("SELECT q.id,t.id AS track_id,t.title,t.artist,t.duration,t.kind FROM queue q JOIN tracks t ON t.id=q.track_id ORDER BY q.pos,q.id")],
                 "library": [self.public(dict(r)) for r in self.db.execute("SELECT t.*, (f.track_id IS NULL) AS available, f.message AS playback_error FROM tracks t LEFT JOIN media_failures f ON f.track_id=t.id ORDER BY t.title,t.id")],
-                "schedules": [dict(r) for r in self.db.execute("SELECT s.id,s.track_id,t.title,s.at,s.status FROM schedules s JOIN tracks t ON t.id=s.track_id ORDER BY s.due DESC LIMIT 100")],
+                "schedules": self._schedule_view(),
                 "programs": [dict(r) for r in self.db.execute("SELECT p.*,t.title FROM programs p JOIN tracks t ON t.id=p.track_id ORDER BY p.next_due,p.id")],
                 "history": [dict(r) for r in self.db.execute("SELECT title,at,event FROM history ORDER BY id DESC LIMIT 30")],
                 "capabilities": {"music_generation": False, "speech_generation": False,
@@ -339,6 +418,7 @@ class Station:
         title = text(title, "Title")
         if not isinstance(artist, str) or len(artist) > 200:
             raise StationError("Artist must be at most 200 characters.")
+        ordinary(artist, "Artist")
         if kind not in ("music", "speech", "ad"):
             raise StationError("Choose music, speech, or ad.")
         if not data or len(data) > MAX_UPLOAD:
@@ -362,6 +442,7 @@ class Station:
         title = text(title, "Title")
         if not isinstance(artist, str) or len(artist) > 200:
             raise StationError("Artist must be at most 200 characters.")
+        ordinary(artist, "Artist")
         if kind not in ("music", "speech", "ad"):
             raise StationError("Choose music, speech, or ad.")
         if not data or len(data) > MAX_UPLOAD:
@@ -408,7 +489,11 @@ class Station:
                                     "duration": frames / RATE, "kind": kind})
         except Exception:
             staged.unlink(missing_ok=True)
-            target.unlink(missing_ok=True)
+            # A commit can report failure after the row is durable. Deleting the file then leaves a library
+            # entry with no audio. A commit that fails before that has no durable row, and the file must go
+            # with it. Startup still removes a file that no row names.
+            if not self._track_durable(track_id):
+                target.unlink(missing_ok=True)
             raise
 
     def action(self, operation, arguments=None):
@@ -434,7 +519,10 @@ class Station:
                     raise StationError(f"Invalid {key}.")
             elif not isinstance(args[key], bool if typ == "boolean" else str):
                 # Queue IDs originate in SQLite, and the UI may send the number.
-                if not (key == "queue_id" and type(args[key]) is int):
+                # SQLite integers are signed 64-bit; anything outside that used to escape as OverflowError.
+                if not (key == "queue_id" and type(args[key]) is int and -(2**63) <= args[key] <= 2**63 - 1):
+                    if key == "queue_id" and type(args[key]) is int:
+                        raise StationError("Queue entry not found.")
                     raise StationError(f"Invalid {key}.")
         # Disconnect remains available even after a latched storage fault.
         if operation == "broadcast.stop":
@@ -462,7 +550,7 @@ class Station:
                 self.broadcast.stop()
                 self.running = False
                 if self.current:
-                    self.db.execute(QUEUE_FRONT, (self.current["id"],))
+                    self._queue_front(self.current["id"])
                 self._finish("stopped")
             elif operation == "transport.skip":
                 self._finish("skipped")
@@ -476,7 +564,7 @@ class Station:
                     self._finish("skipped")
             elif operation == "queue.add":
                 self._track(args["track_id"])
-                if self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= 1000:
+                if self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= QUEUE_LIMIT:
                     raise StationError("Queue is full (1,000 items).")
                 added = self.db.execute(QUEUE_APPEND, (args["track_id"],)).lastrowid
                 if "position" in args:
@@ -539,6 +627,7 @@ class Station:
             elif operation == "schedule.cancel":
                 if not self.db.execute("UPDATE schedules SET status='cancelled' WHERE id=? AND status='pending'", (args["schedule_id"],)).rowcount:
                     raise StationError("Pending schedule not found.")
+                self._prune_schedules()
             self.db.commit()
         if operation in ("transport.start", "transport.stop"):
             self._emit("transport", state="started" if operation == "transport.start" else "stopped")
@@ -632,7 +721,7 @@ class Station:
             # admitted events in reverse order so playback is chronological too.
             due.extend({"id": p["id"], "track_id": p["track_id"], "due": p["next_due"], "program": p} for p in programs)
             due.sort(key=lambda e: (e["due"], e["id"]))
-            slots = max(0, 1000 - self.db.execute('SELECT COUNT(*) FROM queue').fetchone()[0]) if due else 0
+            slots = max(0, QUEUE_LIMIT - self.db.execute('SELECT COUNT(*) FROM queue').fetchone()[0]) if due else 0
             planned = []
             for event in due:
                 # Stale programs are never rebroadcast on restart. Due events while off-air are missed.
@@ -648,14 +737,17 @@ class Station:
                 if isinstance(event, dict) and "program" in event:
                     p = event["program"]
                     # A suspended/offline host never floods the queue with catch-up programs.
-                    upcoming = next_occurrence(p["timezone"], p["local_time"], p["weekdays"], now)
+                    # One program whose zone cannot be resolved must not take the station down with it.
+                    try:
+                        upcoming = next_occurrence(p["timezone"], p["local_time"], p["weekdays"], now)
+                    except ValueError:
+                        upcoming = float(now) + 86400
                     self.db.execute("UPDATE programs SET next_due=?,last_due=?,last_status=? WHERE id=?",
                                     (upcoming, event["due"], status, event["id"]))
                     self._event(self._track(event["track_id"])["title"], "program " + status)
                 else:
                     self.db.execute("UPDATE schedules SET status=? WHERE id=?", (status, event["id"]))
-            if due:
-                self.db.execute("DELETE FROM schedules WHERE status!='pending' AND id NOT IN (SELECT id FROM schedules WHERE status!='pending' ORDER BY due DESC LIMIT 1000)")
+            self._prune_schedules()
             block = bytearray()
             if self.running:
                 # Fill across track boundaries without inserting a silence block.

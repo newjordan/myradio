@@ -313,8 +313,50 @@ function render(s) {
   const structure=JSON.stringify([s.library,s.queue,s.schedules,s.programs,s.history,s.station.auto_fill]);
   if (structure!==lastStructure && !arranging) {renderStructure(s);lastStructure=structure;}
   renderConsole(s);
+  renderAutopilot(s);
   renderGame(s);
 }
+let autopilotWanted = null;
+function extensionStatus(s, name) {
+  const slot = s.extensions && s.extensions[name];
+  return slot && slot.state === 'running' ? slot.status || null : null;
+}
+function renderAutopilot(s) {
+  const director = extensionStatus(s, 'director');
+  const gen = extensionStatus(s, 'generation');
+  const available = !!(director && typeof director.enabled === 'boolean');
+  if (available && autopilotWanted !== null && !!director.enabled === autopilotWanted) autopilotWanted = null;
+  const on = available && (autopilotWanted !== null ? autopilotWanted : !!director.enabled);
+  for (const id of ['autopilot', 'autopilot-inline']) {
+    const button = $(id);
+    button.disabled = !available;
+    button.setAttribute('aria-checked', on ? 'true' : 'false');
+    button.setAttribute('aria-label', available ? (on ? 'Turn the autopilot DJ off' : 'Turn the autopilot DJ on') : 'Autopilot DJ is not available');
+  }
+  $('autopilot').textContent = '';
+  $('autopilot-state').textContent = !available ? 'Unavailable' : on ? 'On' : 'Off';
+  $('autopilot-inline').textContent = on ? 'Autopilot DJ on' : 'Autopilot DJ';
+  $('autopilot-inline-state').textContent = !available
+    ? 'The autopilot DJ is not running in this station.'
+    : on ? 'On. Host breaks, station IDs and news are placed between songs.'
+      : 'Off. Turn it on to place host breaks, station IDs and news between songs.';
+  $('maker-live').textContent = gen && gen.headline ? gen.headline : 'Imported audio plays without a music maker.';
+}
+async function setAutopilot(enabled) {
+  autopilotWanted = enabled;
+  if (state) renderAutopilot(state);
+  try {
+    await api('/api/action', {operation: 'director.configure', arguments: {settings: {enabled}}});
+    notice('');
+    await refresh();
+  } catch (error) {
+    autopilotWanted = null;
+    notice(error.message);
+    if (state) renderAutopilot(state);
+  }
+}
+$('autopilot').addEventListener('click', () => { if (!$('autopilot').disabled) setAutopilot($('autopilot').getAttribute('aria-checked') !== 'true'); });
+$('autopilot-inline').addEventListener('click', () => { if (!$('autopilot-inline').disabled) setAutopilot($('autopilot-inline').getAttribute('aria-checked') !== 'true'); });
 async function refresh() {
   if (polling||!unlocked) return;
   polling=true;

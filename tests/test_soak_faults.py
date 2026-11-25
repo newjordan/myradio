@@ -56,7 +56,7 @@ class FaultMatrix(unittest.TestCase):
 
     def test_departures_from_the_contract_are_recorded_and_still_match(self):
         known = {c.known for c in self.result.cases if c.known and not c.problems}
-        self.assertEqual(known, {"F2", "F3", "F12", "F13"})
+        self.assertEqual(known, {"F2", "F3", "F12"})
 
     def test_a_station_that_does_not_latch_is_caught(self):
         with mock.patch.object(Station, "_fail_safe", lambda self: None):
@@ -126,7 +126,7 @@ class RealFaultsAndScratchSpace(unittest.TestCase):
         headline = result.text().splitlines()[0]
         self.assertTrue(headline.startswith("result: PASS with known departures "), headline)
         self.assertIn("F3", headline)
-        self.assertIn("F13", headline)
+        self.assertNotIn("F13", headline)
 
     def test_the_matrix_removes_each_case_directory_when_its_case_ends(self):
         siblings = []

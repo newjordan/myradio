@@ -1,5 +1,7 @@
 # Lane: soak (load and fault harness for the station engine)
 
+> Later fix: F1, F2, F4, F5, F7, F8, F9, F10, F11, F13 and F14 are fixed in the engine and server, and the matching `@unittest.expectedFailure` markers are gone. F3, F6 and F12 are unchanged. The tables below are the record of the harness pass, not a list of open defects.
+
 Owner paths: `tests/soak_*.py`, `tests/test_soak*.py`, `reports/soak-*`, `docs/lanes/soak.md`. Nothing under `myradio/` was changed; engine defects found are in `reports/soak-findings.md`.
 
 This file describes **harness version 2**, which is the first build (version 1) as changed after two independent reviews. Section 10 lists what the reviews found and what changed. The reports `soak-*-1.txt`, `soak-accelerated-2.txt` and `soak-accelerated-3.txt` were recorded with version 1 and are kept as they were; their run digests differ from version 2 because the directed scenarios and the damage modes changed (`soak-findings.md` is the written account of the engine defects and applies to both).

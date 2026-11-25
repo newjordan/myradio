@@ -538,7 +538,7 @@ class DirectedScenarioMutants(unittest.TestCase):
     def test_a_queue_that_accepts_one_entry_too_many(self):
         def mutant():
             return mock.patch.object(Station, "action", C.source_mutant(
-                Station.action, 'self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= 1000', 'self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= 1001',
+                Station.action, 'self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= QUEUE_LIMIT', 'self.db.execute("SELECT COUNT(*) FROM queue").fetchone()[0] >= 1001',
                 station_module))
 
         self.rejected(("rejection-expected", "queue-fills-to-limit"), "scn_capacity", mutant)
@@ -546,7 +546,7 @@ class DirectedScenarioMutants(unittest.TestCase):
     def test_admission_that_has_one_slot_too_many(self):
         def mutant():
             return mock.patch.object(Station, "_tick", C.source_mutant(
-                Station._tick, "slots = max(0, 1000 - self.db.execute('SELECT COUNT(*) FROM queue').fetchone()[0]) if due else 0",
+                Station._tick, "slots = max(0, QUEUE_LIMIT - self.db.execute('SELECT COUNT(*) FROM queue').fetchone()[0]) if due else 0",
                 "slots = max(0, 1001 - self.db.execute('SELECT COUNT(*) FROM queue').fetchone()[0]) if due else 0", station_module))
 
         self.rejected(("schedule-admission", "queue-law"), "scn_capacity", mutant)
