@@ -10,7 +10,7 @@
 - Opening a directory as a media file no longer leaks a file descriptor.
 - The installed wheel includes the host persona and voice files.
 - The studio shows maker status, a working Autopilot DJ switch, and the monitor volume on a narrow screen.
-- GitHub Actions runs the unit suite. `pip install -e ".[dev]"` installs what the packaging test needs.
+- GitHub Actions runs the unit suite on Ubuntu with Python 3.12 and installs FFmpeg first, so the audio conversion tests and the broadcast clock test run. `pip install -e ".[dev]"` installs what the packaging test needs.
 - Two generation tests wait until a retry is actually back in the queue, and until a catch-up song has taken the music worker, so a busy run does not skip a backoff or miss a buffer dip.
 
 ## 0.5.2 (2026-11-22)

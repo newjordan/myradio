@@ -91,7 +91,7 @@ python3 -m unittest discover -s tests -p "test_*.py"
 node --check myradio/web/app.js
 ```
 
-`.[dev]` installs setuptools so the packaging test can build a wheel and check that host data and the studio files are inside it. The tests are the standard library `unittest` suite under `tests/`. GitHub Actions runs that command on Ubuntu with Python 3.12. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+`.[dev]` installs setuptools so the packaging test can build a wheel and check that host data and the studio files are inside it. The tests are the standard library `unittest` suite under `tests/`. GitHub Actions runs that command on Ubuntu with Python 3.12, after installing FFmpeg, so the conversion tests and the broadcast clock test run there. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Without FFmpeg those conversion tests skip; starting a broadcast still needs it.
 
 Some broadcast tests speak to a real Icecast binary only when `MYRADIO_TEST_ICECAST` points at one. Without it they skip that case. They do not count a missing binary as a pass of the live path.
 
