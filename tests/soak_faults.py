@@ -57,7 +57,8 @@ OS_FAULTS = ("os-nospace", "os-io", "os-denied")
 QUICK_FAULTS = ("sqlite-io", "os-nospace")
 DB_KINDS = ("execute", "commit", "commit-after")  # a statement, a commit that fails, a commit that succeeded and then reports failure
 # What the engine does today that departs from the contract: (operation, failing call) -> finding id.
-KNOWN = {("import", "replace"): "F3", ("import", "wave"): "F3", ("import", "chmod"): "F3", ("import", "commit-after"): "F13",
+# F13 (an import whose commit was saved and then reported failure) no longer deletes the audio file.
+KNOWN = {("import", "replace"): "F3", ("import", "wave"): "F3", ("import", "chmod"): "F3",
          ("library.delete", "unlink"): "F2", ("library.delete", "commit-after"): "F2",
          ("tick.start", "osopen"): "F12", ("tick.start", "read"): "F12", ("tick.boundary", "osopen"): "F12",
          ("tick.boundary", "read"): "F12", ("tick.midtrack", "read"): "F12"}
@@ -302,8 +303,6 @@ def expectation(op, kind):
     known = KNOWN.get((op, kind))
     if op == "status":  # a failed read latches and answers from the last good snapshot, marked stale
         return {"raises": None, "latched": True, "compare": True, "known": known}
-    if (op, kind) == ("import", "commit-after"):  # the row is committed, then the cleanup for a failed import removes its audio file
-        return {"raises": StationError, "latched": True, "compare": True, "known": known, "missing": True}
     if (op, kind) == ("library.delete", "commit-after"):  # the row is gone; the audio file is never removed
         return {"raises": StationError, "latched": True, "compare": True, "known": known, "orphans": True}
     if kind in DB_KINDS or kind == "broadcast":

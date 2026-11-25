@@ -45,7 +45,13 @@ def open_media(path, duration):
         if not O_NOFOLLOW and os.path.islink(path):
             raise MediaError()
         fd = os.open(path, os.O_RDONLY | O_BINARY | O_NONBLOCK | O_NOFOLLOW)
-        source = os.fdopen(fd, 'rb', buffering=READ_BUFFER)
+        try:
+            # fdopen does not close the descriptor if it fails. A directory opens, then fdopen raises,
+            # and the descriptor would leak once per attempt.
+            source = os.fdopen(fd, 'rb', buffering=READ_BUFFER)
+        except Exception:
+            os.close(fd)
+            raise
         size = os.fstat(source.fileno())
         if not stat.S_ISREG(size.st_mode) or not 44 <= size.st_size <= 100 * 1024 * 1024 + 4096:
             raise MediaError()

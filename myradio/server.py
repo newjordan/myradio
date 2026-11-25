@@ -172,6 +172,13 @@ class Server(ThreadingHTTPServer):
         finally:
             self.slots.release()
 
+    def handle_error(self, request, client_address):
+        # A browser that closes the live monitor, or resets an idle connection, is not a station fault.
+        exc = sys.exc_info()[1]
+        if isinstance(exc, (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError)):
+            return
+        super().handle_error(request, client_address)
+
 
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -190,6 +197,14 @@ class Handler(BaseHTTPRequestHandler):
         # Paths, chat text and launch tokens do not belong in logs.
         pass
 
+    def handle_error(self, request, client_address):
+        # A listener that closes while a reply is in flight resets the socket. That is not a station fault.
+        exc = sys.exc_info()[1]
+        if isinstance(exc, (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError)):
+            self.close_connection = True
+            return
+        super().handle_error(request, client_address)
+
     def headers_base(self):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -198,7 +213,14 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 
     def respond(self, status, value, *, content_type="application/json; charset=utf-8", extra=None):
-        data = value if isinstance(value, bytes) else json.dumps(value, ensure_ascii=False).encode()
+        if isinstance(value, bytes):
+            data = value
+        else:
+            try:
+                data = json.dumps(value, ensure_ascii=False).encode("utf-8")
+            except UnicodeEncodeError:
+                # A lone surrogate stored before it was refused must not make every status request fail.
+                data = json.dumps(value, ensure_ascii=True).encode("ascii")
         self.send_response(status)
         self.headers_base()
         self.send_header("Content-Type", content_type)

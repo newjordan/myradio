@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- Stopping the station while the queue is full no longer stores a 1,001st cart. The track that was on air returns to the front, and the last cart is dropped if that is the only way to stay within 1,000.
+- A library delete whose file removal fails no longer leaves that file behind after the next start. An import whose commit was saved and then reported failure keeps the audio file for the saved row.
+- Cancelled schedules are pruned when they are cancelled, not only when some other event comes due. Status lists pending events soonest first, so the next one can be seen and cancelled.
+- A queue id SQLite cannot store, and a title, artist, station name or tagline with a lone surrogate, are refused in plain language. A client that resets its connection does not print a traceback.
+- One recurring program whose time zone cannot be resolved no longer stops the station clock.
+- Opening a directory as a media file no longer leaks a file descriptor.
+- The installed wheel includes the host persona and voice files.
+- The studio shows maker status, a working Autopilot DJ switch, and the monitor volume on a narrow screen.
+- GitHub Actions runs the unit suite. `pip install -e ".[dev]"` installs what the packaging test needs.
+- Two generation tests wait until a retry is actually back in the queue, and until a catch-up song has taken the music worker, so a busy run does not skip a backoff or miss a buffer dip.
+
 ## 0.5.2 (2026-11-22)
 
 - Dashboard sessions are no longer cookies. A browser sends a cookie for 127.0.0.1 to every port on the host, so a

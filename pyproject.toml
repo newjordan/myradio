@@ -1,16 +1,38 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "myradio"
 version = "0.5.2"
-description = "A local-first radio studio with persistent playout and shared agent controls"
+description = "A local-first radio studio: playout, scheduling, optional song and voice makers, and shared agent controls"
+readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
-classifiers = ["License :: OSI Approved :: Apache Software License", "Programming Language :: Python :: 3"]
+authors = [{name = "Omnispace Technologies"}]
+keywords = ["radio", "audio", "playout", "local-first"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+]
 # Windows has no system timezone database; recurring programs and ad flights need the IANA zones from tzdata there.
 dependencies = ["tzdata; sys_platform == 'win32'"]
+
+[project.optional-dependencies]
+dev = ["setuptools>=68"]
+
+[project.urls]
+Homepage = "https://myradio.garden"
+Documentation = "https://github.com/newjordan/myradio/blob/main/docs/REFERENCE.md"
+Source = "https://github.com/newjordan/myradio"
 
 [project.scripts]
 myradio-prompts = "myradio.prompts.__main__:main"
@@ -23,5 +45,5 @@ include = ["myradio*"]
 
 [tool.setuptools.package-data]
 "myradio.prompts" = ["data/*.json"]
+"myradio.hosts" = ["data/*.json"]
 "myradio" = ["web/*.html", "web/*.js", "web/*.css", "web/art/*.png", "web/art/*.webp"]
-
